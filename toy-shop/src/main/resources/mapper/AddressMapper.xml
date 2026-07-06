@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.AddressMapper">
+
+    <insert id="insertAddress"
+            parameterType="com.example.toyshop.domain.Address">
+
+        INSERT INTO address (
+        member_id,
+        receiver_name,
+        receiver_phone,
+        zipcode,
+        address,
+        address_detail,
+        is_default,
+        default_yn
+        )
+        VALUES (
+        #{memberId},
+        #{receiverName},
+        #{receiverPhone},
+        #{zipcode},
+        #{address},
+        #{addressDetail},
+        #{isDefault},
+        #{defaultYn}
+        )
+
+    </insert>
+
+    <select id="findByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Address">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        zipcode,
+        address,
+        address_detail AS addressDetail,
+        is_default AS isDefault,
+        default_yn AS defaultYn,
+        created_at AS createdAt
+        FROM address
+        WHERE member_id = #{memberId}
+        ORDER BY is_default DESC, id DESC
+
+    </select>
+
+    <select id="findDefaultAddress"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Address">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        zipcode,
+        address,
+        address_detail AS addressDetail,
+        is_default AS isDefault,
+        default_yn AS defaultYn,
+        created_at AS createdAt
+        FROM address
+        WHERE member_id = #{memberId}
+        AND is_default = 'Y'
+        LIMIT 1
+
+    </select>
+
+    <select id="findByIdAndMemberId"
+            resultType="com.example.toyshop.domain.Address">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        zipcode,
+        address,
+        address_detail AS addressDetail,
+        is_default AS isDefault,
+        default_yn AS defaultYn,
+        created_at AS createdAt
+        FROM address
+        WHERE id = #{id}
+        AND member_id = #{memberId}
+        LIMIT 1
+
+    </select>
+
+    <update id="updateAddress"
+            parameterType="com.example.toyshop.domain.Address">
+
+        UPDATE address
+        SET
+        receiver_name = #{receiverName},
+        receiver_phone = #{receiverPhone},
+        zipcode = #{zipcode},
+        address = #{address},
+        address_detail = #{addressDetail},
+        is_default = #{isDefault},
+        default_yn = #{defaultYn}
+        WHERE id = #{id}
+        AND member_id = #{memberId}
+
+    </update>
+
+    <delete id="deleteAddress">
+
+        DELETE FROM address
+        WHERE id = #{id}
+        AND member_id = #{memberId}
+
+    </delete>
+
+    <update id="clearDefaultAddress"
+            parameterType="long">
+
+        UPDATE address
+        SET
+        is_default = 'N',
+        default_yn = 'N'
+        WHERE member_id = #{memberId}
+
+    </update>
+
+    <update id="updateDefaultAddress"
+            parameterType="long">
+
+        UPDATE address
+        SET
+        is_default = 'Y',
+        default_yn = 'Y'
+        WHERE id = #{id}
+
+    </update>
+
+</mapper>

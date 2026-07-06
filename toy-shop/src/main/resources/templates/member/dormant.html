@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>휴면회원 전환</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic", sans-serif;
+            background:#fff;
+            color:#333;
+        }
+
+        .wrap{
+            width:700px;
+            margin:80px auto 120px;
+            text-align:center;
+        }
+
+        .title{
+            font-size:34px;
+            font-weight:bold;
+            margin-bottom:35px;
+        }
+
+        .box{
+            border:1px solid #e5e5e5;
+            padding:45px 50px;
+            text-align:left;
+        }
+
+        .box h3{
+            font-size:20px;
+            margin-bottom:20px;
+        }
+
+        .box p{
+            font-size:15px;
+            color:#666;
+            line-height:1.8;
+            margin-bottom:25px;
+        }
+
+        .notice{
+            background:#fafafa;
+            border:1px solid #eee;
+            padding:18px;
+            font-size:14px;
+            color:#777;
+            line-height:1.7;
+            margin-bottom:25px;
+        }
+
+        .agree{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            font-size:14px;
+            margin-bottom:30px;
+        }
+
+        .agree input{
+            width:16px;
+            height:16px;
+        }
+
+        .btn-area{
+            text-align:center;
+        }
+
+        .submit-btn{
+            width:150px;
+            height:46px;
+            border:none;
+            background:#333;
+            color:white;
+            font-size:15px;
+            cursor:pointer;
+        }
+
+        .cancel-btn{
+            display:inline-block;
+            width:150px;
+            height:46px;
+            line-height:46px;
+            border:1px solid #ddd;
+            color:#333;
+            text-decoration:none;
+            margin-left:6px;
+            font-size:15px;
+            text-align:center;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:900px){
+            .wrap{
+                width:92%;
+                margin:55px auto 80px;
+            }
+
+            .title{
+                font-size:29px;
+                margin-bottom:28px;
+            }
+
+            .box{
+                padding:36px 34px;
+            }
+        }
+
+        @media (max-width:768px){
+            .wrap{
+                width:94%;
+                margin:40px auto 65px;
+            }
+
+            .title{
+                font-size:26px;
+                margin-bottom:24px;
+            }
+
+            .box{
+                padding:28px 22px;
+            }
+
+            .box h3{
+                font-size:18px;
+            }
+
+            .box p{
+                font-size:14px;
+            }
+
+            .notice{
+                padding:15px;
+                font-size:13px;
+            }
+
+            .agree{
+                align-items:flex-start;
+                font-size:13px;
+                line-height:1.5;
+            }
+
+            .btn-area{
+                display:flex;
+                gap:8px;
+            }
+
+            .submit-btn,
+            .cancel-btn{
+                flex:1;
+                width:auto;
+                margin-left:0;
+                height:44px;
+                line-height:44px;
+                font-size:14px;
+            }
+        }
+
+        @media (max-width:480px){
+            .wrap{
+                width:100%;
+                padding:0 14px;
+                margin:32px auto 55px;
+                box-sizing:border-box;
+            }
+
+            .title{
+                font-size:23px;
+            }
+
+            .box{
+                padding:22px 16px;
+            }
+
+            .box h3{
+                font-size:17px;
+                margin-bottom:14px;
+            }
+
+            .box p{
+                font-size:13px;
+                line-height:1.7;
+            }
+
+            .notice{
+                font-size:12px;
+                line-height:1.6;
+                margin-bottom:20px;
+            }
+
+            .btn-area{
+                flex-direction:column;
+            }
+
+            .submit-btn,
+            .cancel-btn{
+                width:100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="wrap">
+
+    <div class="title">휴면회원 전환</div>
+
+    <div class="box">
+
+        <h3>휴면회원 전환 안내</h3>
+
+        <p>
+            휴면회원으로 전환하면 해당 계정으로 로그인이 제한됩니다.<br>
+            주문내역, 상품후기, 1:1문의, 상품문의 데이터는 삭제되지 않고 보관됩니다.
+        </p>
+
+        <div class="notice">
+            · 휴면 전환 후에는 다시 로그인할 수 없습니다.<br>
+            · 계정 복구는 관리자 또는 고객센터를 통해 진행할 수 있습니다.<br>
+            · 실제 회원정보는 삭제되지 않으며, 상태값만 DORMANT로 변경됩니다.
+        </div>
+
+        <form action="/member/dormant"
+              method="post"
+              onsubmit="return checkDormant();">
+
+            <label class="agree">
+                <input type="checkbox" id="agree">
+                위 내용을 확인했으며 휴면회원 전환에 동의합니다.
+            </label>
+
+            <div class="btn-area">
+                <button type="submit" class="submit-btn">
+                    휴면회원 전환
+                </button>
+
+                <a href="/member/mypage" class="cancel-btn">
+                    취소
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function checkDormant() {
+        const agree = document.getElementById("agree");
+
+        if (!agree.checked) {
+            alert("휴면회원 전환 안내에 동의해주세요.");
+            return false;
+        }
+
+        return confirm("정말 휴면회원으로 전환하시겠습니까?");
+    }
+</script>
+
+</body>
+</html>

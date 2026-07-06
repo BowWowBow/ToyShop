@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품상세 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        * { box-sizing:border-box; }
+
+        html, body {
+            margin:0;
+            padding:0;
+            min-height:100%;
+            overflow-x:hidden;
+            overflow-y:auto;
+        }
+
+        body{
+            background:#fff;
+            color:#222;
+        }
+
+        .detail-wrap{
+            max-width:1200px;
+            width:94%;
+            margin:70px auto 120px;
+        }
+
+        .detail-box{
+            display:flex;
+            gap:60px;
+            border-top:2px solid #333;
+            padding-top:40px;
+        }
+
+        .detail-img{
+            width:520px;
+            height:520px;
+            border:1px solid #eee;
+            background:#f7f7f7;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            flex-shrink:0;
+        }
+
+        .detail-img img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
+        .detail-info{
+            flex:1;
+            min-width:0;
+        }
+
+        .top-action{
+            display:flex;
+            justify-content:flex-end;
+            gap:15px;
+            margin-bottom:10px;
+        }
+
+        .wish-btn{
+            border:none;
+            background:none;
+            color:#777;
+            font-size:15px;
+            cursor:pointer;
+        }
+
+        .wish-btn.active{
+            color:#ff4d00;
+            font-weight:bold;
+        }
+
+        .category{
+            color:#888;
+            font-size:14px;
+            margin-bottom:10px;
+        }
+
+        .product-name{
+            font-size:32px;
+            font-weight:bold;
+            margin-bottom:20px;
+            line-height:1.3;
+            word-break:keep-all;
+        }
+
+        .price{
+            font-size:30px;
+            font-weight:bold;
+            color:#ff4d00;
+            margin-bottom:25px;
+        }
+
+        .info-row{
+            display:flex;
+            border-top:1px solid #eee;
+            padding:16px 0;
+            font-size:15px;
+        }
+
+        .info-row:last-of-type{
+            border-bottom:1px solid #eee;
+        }
+
+        .info-label{
+            width:120px;
+            color:#777;
+            flex-shrink:0;
+        }
+
+        .qty-box{
+            display:flex;
+            align-items:center;
+            margin:25px 0;
+        }
+
+        .qty-box button{
+            width:36px;
+            height:36px;
+            border:1px solid #ccc;
+            background:white;
+            cursor:pointer;
+            font-size:18px;
+        }
+
+        .qty-box input{
+            width:50px;
+            height:36px;
+            border:1px solid #ccc;
+            text-align:center;
+            margin:0 -1px;
+        }
+
+        .stock-msg{
+            color:#ff4d00;
+            font-size:13px;
+            margin-top:-15px;
+            margin-bottom:10px;
+        }
+
+        .total-price{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border-top:2px solid #333;
+            padding-top:20px;
+            margin-top:20px;
+            font-size:20px;
+            font-weight:bold;
+            gap:15px;
+        }
+
+        .total-price span:last-child{
+            color:#ff4d00;
+            font-size:28px;
+            white-space:nowrap;
+        }
+
+        .btn-box{
+            display:flex;
+            gap:10px;
+            margin-top:30px;
+        }
+
+        .btn-box button{
+            flex:1;
+            height:54px;
+            border:none;
+            font-size:17px;
+            cursor:pointer;
+        }
+
+        .cart-btn{
+            background:white;
+            border:1px solid #333 !important;
+            color:#333;
+        }
+
+        .buy-btn{
+            background:#333;
+            color:white;
+        }
+
+        .desc-box,
+        .review-box{
+            margin-top:80px;
+            border-top:1px solid #ddd;
+            padding-top:40px;
+        }
+
+        .desc-title,
+        .review-title{
+            font-size:24px;
+            font-weight:bold;
+            margin-bottom:20px;
+        }
+
+        .desc-content{
+            font-size:16px;
+            color:#555;
+            line-height:1.8;
+            min-height:160px;
+            white-space:pre-line;
+            word-break:keep-all;
+        }
+
+        .review-empty{
+            border:1px solid #eee;
+            padding:45px 0;
+            text-align:center;
+            color:#999;
+            font-size:15px;
+        }
+
+        .review-list{
+            border-top:2px solid #333;
+        }
+
+        .review-item{
+            display:grid;
+            grid-template-columns:120px 1fr 130px;
+            gap:20px;
+            padding:22px 10px;
+            border-bottom:1px solid #eee;
+            align-items:start;
+        }
+
+        .review-thumb{
+            width:90px;
+            height:90px;
+            border:1px solid #eee;
+            background:#fafafa;
+            overflow:hidden;
+        }
+
+        .review-thumb img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
+        .review-content{
+            min-width:0;
+        }
+
+        .review-head{
+            display:flex;
+            gap:10px;
+            align-items:center;
+            margin-bottom:8px;
+            flex-wrap:wrap;
+        }
+
+        .review-rating{
+            color:#ff9800;
+            font-weight:bold;
+            font-size:14px;
+        }
+
+        .review-subject{
+            font-weight:bold;
+            font-size:15px;
+            color:#222;
+        }
+
+        .review-text{
+            color:#555;
+            font-size:14px;
+            line-height:1.7;
+            white-space:pre-line;
+            word-break:keep-all;
+        }
+
+        .review-meta{
+            text-align:right;
+            color:#777;
+            font-size:13px;
+            line-height:1.8;
+            white-space:nowrap;
+        }
+
+        @media (max-width:1024px){
+            .detail-box{
+                flex-direction:column;
+                gap:30px;
+            }
+
+            .detail-img{
+                width:100%;
+                max-width:520px;
+                height:auto;
+                aspect-ratio:1/1;
+                margin:0 auto;
+            }
+
+            .review-item{
+                grid-template-columns:100px 1fr;
+            }
+
+            .review-meta{
+                grid-column:2 / 3;
+                text-align:left;
+            }
+        }
+
+        @media (max-width:768px){
+            .detail-wrap{
+                width:94%;
+                margin:40px auto 80px;
+            }
+
+            .detail-box{
+                padding-top:25px;
+                gap:25px;
+            }
+
+            .product-name{font-size:26px;}
+            .price{font-size:26px;}
+
+            .info-row{
+                font-size:14px;
+                padding:13px 0;
+            }
+
+            .info-label{width:90px;}
+
+            .btn-box{
+                flex-direction:column;
+            }
+
+            .btn-box button{
+                width:100%;
+            }
+
+            .desc-box,
+            .review-box{
+                margin-top:50px;
+                padding-top:30px;
+            }
+
+            .desc-title,
+            .review-title{
+                font-size:22px;
+            }
+
+            .desc-content{
+                font-size:15px;
+            }
+
+            .review-item{
+                grid-template-columns:80px 1fr;
+                gap:14px;
+                padding:18px 6px;
+            }
+
+            .review-thumb{
+                width:72px;
+                height:72px;
+            }
+
+            .review-subject{
+                font-size:14px;
+            }
+
+            .review-text{
+                font-size:13px;
+            }
+        }
+
+        @media (max-width:480px){
+            .detail-wrap{
+                width:100%;
+                padding:0 15px;
+                margin:30px auto 70px;
+            }
+
+            .product-name{font-size:22px;}
+            .price{font-size:22px;}
+
+            .top-action{
+                justify-content:flex-start;
+            }
+
+            .qty-box{
+                justify-content:center;
+            }
+
+            .qty-box input{
+                width:46px;
+            }
+
+            .total-price{
+                flex-direction:column;
+                align-items:flex-start;
+                gap:8px;
+                font-size:18px;
+            }
+
+            .total-price span:last-child{
+                font-size:24px;
+            }
+
+            .desc-title,
+            .review-title{
+                font-size:20px;
+            }
+
+            .desc-content{
+                font-size:14px;
+                line-height:1.7;
+            }
+
+            .review-item{
+                grid-template-columns:1fr;
+            }
+
+            .review-thumb{
+                width:100%;
+                height:auto;
+                aspect-ratio:1/1;
+                max-width:180px;
+            }
+
+            .review-meta{
+                grid-column:auto;
+                text-align:left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="detail-wrap">
+
+    <div class="detail-box">
+
+        <div class="detail-img">
+    <img th:src="${product.imageUrl}"
+     th:attr="onerror=|this.src='/images/no-image.png'|"
+     alt="상품이미지">
+        </div>
+
+        <div class="detail-info">
+
+            <div class="top-action">
+                <button type="button"
+                        class="wish-btn"
+                        id="wishBtn"
+                        th:data-product-id="${product.id}"
+                        onclick="toggleWish()">
+                    ♡ 찜
+                </button>
+            </div>
+
+            <div class="category" th:text="${product.category}">초합금</div>
+
+            <div class="product-name" th:text="${product.productName}">
+                상품명
+            </div>
+
+            <div class="price"
+                 th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">
+                43,000원
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">배송비</div>
+                <div>3,000원</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">재고</div>
+                <div th:text="${product.stockQty} + '개'">10개</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">카테고리</div>
+                <div th:text="${product.category}">초합금</div>
+            </div>
+
+            <form id="productForm" method="post" onsubmit="return checkStockBeforeSubmit();">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <input type="hidden" name="qty" id="cartQty" value="1">
+
+                <div class="qty-box">
+                    <button type="button" onclick="minusQty()">-</button>
+                    <input type="text" id="qty" value="1" readonly>
+                    <button type="button" onclick="plusQty()">+</button>
+                </div>
+
+                <div class="stock-msg" id="stockMsg"></div>
+
+                <div class="total-price">
+                    <span>총 상품금액</span>
+                    <span id="totalPrice"
+                          th:data-price="${product.price}"
+                          th:data-stock="${product.stockQty}"
+                          th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">
+                        43,000원
+                    </span>
+                </div>
+
+                <div class="btn-box">
+                    <button type="submit"
+                            class="cart-btn"
+                            onclick="setFormAction('/cart/add')">
+                        장바구니 담기
+                    </button>
+
+                    <button type="submit"
+                            class="buy-btn"
+                            onclick="setFormAction('/cart/buy-now')">
+                        바로구매
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="desc-box">
+        <div class="desc-title">상품 상세정보</div>
+        <div class="desc-content" th:text="${product.description}">
+            상품 설명입니다.
+        </div>
+    </div>
+
+    <div class="review-box">
+        <div class="review-title">
+            상품후기
+            <span th:if="${reviewList != null}"
+                  th:text="'(' + ${#lists.size(reviewList)} + ')'">
+                (0)
+            </span>
+        </div>
+
+        <div class="review-empty"
+             th:if="${reviewList == null || #lists.isEmpty(reviewList)}">
+            등록된 상품후기가 없습니다.
+        </div>
+
+        <div class="review-list"
+             th:if="${reviewList != null && !#lists.isEmpty(reviewList)}">
+
+            <div class="review-item" th:each="review : ${reviewList}">
+
+                <div class="review-thumb">
+                    <img th:src="${review.itemImage != null and review.itemImage != ''} ? @{${review.itemImage}} : @{/images/no-image.png}"
+                         alt="후기이미지">
+                </div>
+
+                <div class="review-content">
+                    <div class="review-head">
+                        <span class="review-rating"
+                              th:text="'★ ' + ${review.rating}">
+                            ★ 5
+                        </span>
+
+                        <span class="review-subject"
+                              th:text="${review.title}">
+                            후기 제목
+                        </span>
+                    </div>
+
+                    <div class="review-text"
+                         th:text="${review.content}">
+                        후기 내용
+                    </div>
+                </div>
+
+                <div class="review-meta">
+                    <div th:text="${review.writer}">작성자</div>
+                    <div th:text="${review.createdAt}">2026-07-02</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    const totalPriceEl = document.getElementById("totalPrice");
+    const price = Number(totalPriceEl.dataset.price);
+    const stockQty = Number(totalPriceEl.dataset.stock);
+
+    function setFormAction(actionUrl){
+        document.getElementById("productForm").action = actionUrl;
+    }
+
+    function plusQty(){
+        const qtyInput = document.getElementById("qty");
+        const stockMsg = document.getElementById("stockMsg");
+
+        let qty = Number(qtyInput.value);
+
+        if(qty >= stockQty){
+            stockMsg.innerText = "재고 수량보다 많이 담을 수 없습니다.";
+            alert("현재 재고는 " + stockQty + "개입니다.");
+            return;
+        }
+
+        qty++;
+        qtyInput.value = qty;
+        document.getElementById("cartQty").value = qty;
+        stockMsg.innerText = "";
+        updateTotal(qty);
+    }
+
+    function minusQty(){
+        const qtyInput = document.getElementById("qty");
+        const stockMsg = document.getElementById("stockMsg");
+
+        let qty = Number(qtyInput.value);
+
+        if(qty <= 1){
+            return;
+        }
+
+        qty--;
+        qtyInput.value = qty;
+        document.getElementById("cartQty").value = qty;
+        stockMsg.innerText = "";
+        updateTotal(qty);
+    }
+
+    function updateTotal(qty){
+        const total = price * qty;
+        document.getElementById("totalPrice").innerText =
+            total.toLocaleString() + "원";
+    }
+
+    function checkStockBeforeSubmit(){
+        const qty = Number(document.getElementById("cartQty").value);
+
+        if(stockQty <= 0){
+            alert("품절된 상품입니다.");
+            return false;
+        }
+
+        if(qty > stockQty){
+            alert("재고 수량보다 많이 담을 수 없습니다.");
+            return false;
+        }
+
+        return true;
+    }
+
+    function toggleWish(){
+        const wishBtn = document.getElementById("wishBtn");
+        const productId = wishBtn.dataset.productId;
+
+        fetch("/wishlist/toggle", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "itemId=" + productId
+        })
+            .then(response => response.text())
+            .then(result => {
+                if(result === "login"){
+                    alert("로그인 후 이용해주세요.");
+                    location.href = "/member/login";
+                    return;
+                }
+
+                if(result === "added"){
+                    wishBtn.classList.add("active");
+                    wishBtn.innerText = "♥ 찜완료";
+                    alert("위시리스트에 저장되었습니다.");
+                    return;
+                }
+
+                if(result === "deleted"){
+                    wishBtn.classList.remove("active");
+                    wishBtn.innerText = "♡ 찜";
+                    alert("위시리스트에서 삭제되었습니다.");
+                    return;
+                }
+
+                alert("위시리스트 처리 중 오류가 발생했습니다.");
+            })
+            .catch(error => {
+                console.error(error);
+                alert("서버 통신 중 오류가 발생했습니다.");
+            });
+    }
+</script>
+
+</body>
+</html>

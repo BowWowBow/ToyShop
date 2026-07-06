@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>장바구니 - TOY-SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .mypage-layout{
+            width:1200px;
+            margin:70px auto 90px;
+            display:flex;
+            gap:60px;
+            align-items:flex-start;
+        }
+
+        .side-menu{
+            width:180px;
+            flex-shrink:0;
+        }
+
+        .side-menu h2{
+            font-size:22px;
+            margin-bottom:35px;
+        }
+
+        .menu-section{
+            margin-bottom:30px;
+            border-bottom:1px solid #eee;
+            padding-bottom:15px;
+        }
+
+        .menu-section h3{
+            font-size:16px;
+            margin-bottom:14px;
+            color:#555;
+        }
+
+        .menu-section a{
+            display:block;
+            font-size:14px;
+            color:#777;
+            text-decoration:none;
+            margin:8px 0;
+        }
+
+        .menu-section a:hover,
+        .menu-section a.active{
+            color:#111;
+            font-weight:bold;
+        }
+
+        .cart-wrap{
+            flex:1;
+        }
+
+        .cart-title{
+            text-align:center;
+            font-size:34px;
+            font-weight:bold;
+            margin-bottom:35px;
+        }
+
+        .cart-tabs{
+            display:flex;
+            margin-bottom:30px;
+            border-bottom:1px solid #333;
+        }
+
+        .cart-tabs a{
+            width:170px;
+            height:46px;
+            line-height:46px;
+            text-align:center;
+            text-decoration:none;
+            color:#777;
+            border:1px solid #ddd;
+            border-bottom:none;
+            background:#fafafa;
+            font-size:14px;
+        }
+
+        .cart-tabs a.active{
+            background:#fff;
+            color:#111;
+            font-weight:bold;
+            border:1px solid #333;
+            border-bottom:1px solid #fff;
+            margin-bottom:-1px;
+        }
+
+        .cart-tabs span{
+            display:inline-block;
+            min-width:18px;
+            height:18px;
+            line-height:18px;
+            background:#555;
+            color:#fff;
+            border-radius:10px;
+            font-size:11px;
+            margin-left:4px;
+        }
+
+        .cart-content{
+            display:flex;
+            gap:30px;
+            align-items:flex-start;
+        }
+
+        .cart-left{
+            flex:1;
+        }
+
+        .cart-right{
+            width:320px;
+            flex-shrink:0;
+        }
+
+        .select-all{
+            margin-bottom:15px;
+            font-size:15px;
+        }
+
+        .cart-box{
+            border:1px solid #ddd;
+            background:white;
+        }
+
+        .delivery-row{
+            height:44px;
+            background:#f8f8f8;
+            border-bottom:1px solid #ddd;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 15px;
+            font-size:14px;
+        }
+
+        .delivery-row button{
+            height:28px;
+            border:1px solid #ccc;
+            background:#fff;
+            cursor:pointer;
+            font-size:12px;
+            margin-left:4px;
+        }
+
+        .cart-item{
+            position:relative;
+            display:grid;
+            grid-template-columns:30px 95px 1fr 100px 105px 95px;
+            gap:12px;
+            padding:20px 15px;
+            align-items:center;
+            border-bottom:1px solid #eee;
+        }
+
+        .cart-item img{
+            width:85px;
+            height:85px;
+            object-fit:cover;
+            border:1px solid #ddd;
+        }
+
+        .item-name{
+            font-weight:bold;
+            margin-bottom:8px;
+        }
+
+        .qty-box{
+            display:flex;
+            align-items:center;
+            gap:3px;
+        }
+
+        .qty-box input{
+            width:38px;
+            height:28px;
+            border:1px solid #ccc;
+            text-align:center;
+        }
+
+        .qty-box button{
+            width:28px;
+            height:30px;
+            border:1px solid #ccc;
+            background:white;
+            cursor:pointer;
+        }
+
+        .price-text{
+            font-size:13px;
+            line-height:1.8;
+            color:#555;
+        }
+
+        .final-price{
+            font-size:17px;
+            font-weight:bold;
+            color:#111;
+        }
+
+        .item-btns button{
+            width:86px;
+            height:32px;
+            margin-bottom:6px;
+            border:1px solid #aaa;
+            background:white;
+            cursor:pointer;
+            font-size:12px;
+        }
+
+        .item-btns .buy-btn{
+            background:#333;
+            color:white;
+            border:none;
+        }
+
+        .delete-btn{
+            position:absolute;
+            right:12px;
+            top:12px;
+            border:none;
+            background:none;
+            font-size:24px;
+            color:#aaa;
+            cursor:pointer;
+        }
+
+        .cart-actions{
+            margin-top:12px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .cart-actions button{
+            height:32px;
+            padding:0 12px;
+            border:1px solid #ccc;
+            background:white;
+            cursor:pointer;
+            font-size:13px;
+        }
+
+        .cart-actions .order-selected{
+            background:#333;
+            color:white;
+            border:none;
+        }
+
+        .summary-title{
+            font-size:22px;
+            font-weight:bold;
+            margin-bottom:18px;
+        }
+
+        .summary-box{
+            border:1px solid #bbb;
+            padding:20px;
+            background:white;
+        }
+
+        .summary-row{
+            display:flex;
+            justify-content:space-between;
+            padding:8px 0;
+            font-size:15px;
+            color:#555;
+        }
+
+        .summary-total{
+            border-top:1px solid #ddd;
+            margin-top:12px;
+            padding-top:18px;
+            display:flex;
+            justify-content:space-between;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        .all-order-btn{
+            width:100%;
+            height:48px;
+            margin-top:15px;
+            border:none;
+            background:#333;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        .empty-cart{
+            border:1px solid #ddd;
+            height:220px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#777;
+            font-size:16px;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1240px){
+            .mypage-layout{
+                width:94%;
+                margin:50px auto 70px;
+                gap:35px;
+            }
+
+            .cart-content{
+                flex-direction:column;
+            }
+
+            .cart-right{
+                width:100%;
+            }
+
+            .summary-box{
+                max-width:none;
+            }
+        }
+
+        @media (max-width:1024px){
+            .mypage-layout{
+                flex-direction:column;
+                gap:30px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1 / -1;
+                margin-bottom:10px;
+                text-align:center;
+            }
+
+            .menu-section{
+                margin-bottom:0;
+                padding:14px;
+                border:1px solid #eee;
+                border-radius:8px;
+            }
+
+            .cart-item{
+                grid-template-columns:30px 85px 1fr 90px 95px;
+            }
+
+            .price-text{
+                display:none;
+            }
+        }
+
+        @media (max-width:768px){
+            .mypage-layout{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+
+            .menu-section{
+                padding:12px;
+            }
+
+            .menu-section h3{
+                font-size:14px;
+            }
+
+            .menu-section a{
+                font-size:13px;
+            }
+
+            .cart-title{
+                font-size:28px;
+                margin-bottom:24px;
+            }
+
+            .cart-tabs{
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+
+            .cart-tabs a{
+                min-width:135px;
+                width:auto;
+                padding:0 14px;
+                font-size:13px;
+            }
+
+            .delivery-row{
+                height:auto;
+                flex-direction:column;
+                align-items:flex-start;
+                gap:8px;
+                padding:12px;
+            }
+
+            .cart-item{
+                grid-template-columns:28px 80px 1fr;
+                gap:10px;
+                padding:18px 12px;
+            }
+
+            .cart-item > .price-text{
+                display:none;
+            }
+
+            .cart-item > div:nth-of-type(2){
+                grid-column:2 / 4;
+            }
+
+            .item-btns{
+                grid-column:2 / 4;
+                display:flex;
+                gap:6px;
+                flex-wrap:wrap;
+            }
+
+            .item-btns button{
+                width:auto;
+                min-width:90px;
+                margin-bottom:0;
+            }
+
+            .delete-btn{
+                right:8px;
+                top:8px;
+                font-size:22px;
+            }
+
+            .cart-actions{
+                flex-wrap:wrap;
+            }
+
+            .cart-actions label{
+                width:100%;
+            }
+
+            .cart-actions form,
+            .cart-actions button{
+                flex:1 1 calc(50% - 8px);
+            }
+
+            .cart-actions button{
+                width:100%;
+            }
+
+            .summary-title{
+                font-size:19px;
+            }
+
+            .summary-total{
+                font-size:19px;
+            }
+        }
+
+        @media (max-width:480px){
+            .mypage-layout{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .side-menu h2{
+                font-size:19px;
+            }
+
+            .cart-title{
+                font-size:24px;
+            }
+
+            .cart-tabs a{
+                min-width:120px;
+                height:42px;
+                line-height:42px;
+            }
+
+            .cart-item{
+                grid-template-columns:24px 70px 1fr;
+                padding:16px 10px;
+            }
+
+            .cart-item img{
+                width:68px;
+                height:68px;
+            }
+
+            .item-name{
+                font-size:14px;
+                padding-right:22px;
+            }
+
+            .qty-box input{
+                width:34px;
+            }
+
+            .final-price{
+                font-size:15px;
+            }
+
+            .item-btns button{
+                min-width:82px;
+                height:30px;
+                font-size:11px;
+            }
+
+            .delivery-row{
+                font-size:13px;
+            }
+
+            .delivery-row button{
+                margin-top:4px;
+            }
+
+            .cart-actions{
+                display:grid;
+                grid-template-columns:1fr;
+            }
+
+            .cart-actions form,
+            .cart-actions button{
+                width:100%;
+            }
+
+            .summary-box{
+                padding:16px;
+            }
+
+            .summary-row{
+                font-size:14px;
+            }
+
+            .summary-total{
+                font-size:17px;
+                flex-direction:column;
+                gap:8px;
+            }
+
+            .all-order-btn{
+                height:46px;
+                font-size:15px;
+            }
+
+            .empty-cart{
+                height:180px;
+                font-size:14px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="mypage-layout">
+
+    <aside class="side-menu">
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list">위시리스트</a>
+            <a href="/recent/list">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/dormant">휴면 전환</a>
+        </div>
+    </aside>
+
+    <main class="cart-wrap">
+
+        <div class="cart-title">장바구니</div>
+
+        <div class="cart-tabs">
+            <a href="/cart" class="active">
+                장바구니
+                <span th:text="${cartList != null ? #lists.size(cartList) : 0}">0</span>
+            </a>
+
+            <a href="/wishlist/list">위시리스트</a>
+
+            <a href="/recent/list">최근 본 상품</a>
+        </div>
+
+        <div class="empty-cart" th:if="${cartList == null or #lists.isEmpty(cartList)}">
+            장바구니에 담긴 상품이 없습니다.
+        </div>
+
+        <div class="cart-content" th:if="${cartList != null and !#lists.isEmpty(cartList)}">
+
+            <div class="cart-left">
+
+                <div class="select-all">
+                    <label>
+                        <input type="checkbox" checked>
+                        전체선택
+                    </label>
+                </div>
+
+                <div class="cart-box">
+
+                    <div class="delivery-row">
+                        <div>배송 : 택배 (선불) 3,000원</div>
+                        <div>
+                            <button type="button">묶음배송 상품보기</button>
+                            <button type="button">배송 변경</button>
+                        </div>
+                    </div>
+
+                    <div class="cart-item" th:each="cart : ${cartList}">
+
+                        <input type="checkbox" checked>
+
+                        <a th:href="@{/product/detail/{id}(id=${cart.productId})}">
+                            <img th:src="@{${cart.imageUrl}}" alt="상품이미지">
+                        </a>
+
+                        <div>
+                            <a th:href="@{/product/detail/{id}(id=${cart.productId})}"
+                               class="item-name"
+                               th:text="${cart.productName}"
+                               style="display:block; color:#111; text-decoration:none;">
+                                상품명
+                            </a>
+
+                            <div class="qty-box">
+                                <form action="/cart/update" method="post" style="display:flex;"
+                                      th:if="${cart.qty > 1}">
+                                    <input type="hidden" name="id" th:value="${cart.id}">
+                                    <input type="hidden" name="qty" th:value="${cart.qty - 1}">
+                                    <button type="submit">-</button>
+                                </form>
+
+                                <button type="button" th:if="${cart.qty <= 1}">-</button>
+
+                                <input type="text" th:value="${cart.qty}" readonly>
+
+                                <form action="/cart/update" method="post" style="display:flex;">
+                                    <input type="hidden" name="id" th:value="${cart.id}">
+                                    <input type="hidden" name="qty" th:value="${cart.qty + 1}">
+                                    <button type="submit">+</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="price-text">
+                            상품금액<br>
+                            할인금액<br>
+                            할인적용금액
+                        </div>
+
+                        <div>
+                            <div th:text="${#numbers.formatInteger(cart.price, 3, 'COMMA') + '원'}">
+                                43,000원
+                            </div>
+                            <div>-</div>
+                            <div class="final-price"
+                                 th:text="${#numbers.formatInteger(cart.price * cart.qty, 3, 'COMMA') + '원'}">
+                                43,000원
+                            </div>
+                        </div>
+
+                        <div class="item-btns">
+                            <button type="button">옵션/수량변경</button>
+
+                            <form action="/order/pay" method="get">
+                                <button type="submit" class="buy-btn">바로구매</button>
+                            </form>
+                        </div>
+
+                        <form action="/cart/delete" method="post">
+                            <input type="hidden" name="id" th:value="${cart.id}">
+                            <button type="submit"
+                                    class="delete-btn"
+                                    onclick="return confirm('삭제하시겠습니까?')">
+                                ×
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="cart-actions">
+                    <label>
+                        <input type="checkbox" checked>
+                        전체선택
+                    </label>
+
+                    <form action="/order/pay" method="get">
+                        <button type="submit" class="order-selected">선택상품 주문하기</button>
+                    </form>
+
+                    <button type="button">선택상품 찜</button>
+                    <button type="button">선택상품 삭제</button>
+                </div>
+
+            </div>
+
+            <div class="cart-right">
+                <div class="summary-title">전체 주문시 금액</div>
+
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>총 상품금액</span>
+                        <strong th:text="${#numbers.formatInteger(totalPrice, 3, 'COMMA') + '원'}">
+                            43,000원
+                        </strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>총 배송비</span>
+                        <strong th:text="'(+) ' + ${#numbers.formatInteger(deliveryFee, 3, 'COMMA')} + '원'">
+                            (+) 3,000원
+                        </strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>총 할인</span>
+                        <strong>0원</strong>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>총 결제금액</span>
+                        <span th:text="${#numbers.formatInteger(finalPrice, 3, 'COMMA') + '원'}">
+                            46,000원
+                        </span>
+                    </div>
+                </div>
+
+                <form action="/order/pay" method="get">
+                    <button type="submit" class="all-order-btn">전체 주문하기</button>
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: toyshop-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: toyshop
+      TZ: Asia/Seoul
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./toy-shop.sql:/docker-entrypoint-initdb.d/init.sql
+
+  toy-shop:
+    build:
+      context: ./toy-shop
+    container_name: toy-shop
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+    volumes:
+      - ./toy-shop/src/main/resources/static/images/upload:/app/upload
+
+volumes:
+  mysql_data:

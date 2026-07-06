@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품목록 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .product-wrap{
+            width:1200px;
+            margin:70px auto 100px;
+        }
+
+        .product-title{
+            text-align:center;
+            font-size:34px;
+            font-weight:bold;
+            margin-bottom:45px;
+        }
+
+        .product-grid{
+            display:grid;
+            grid-template-columns:repeat(4, 1fr);
+            gap:30px;
+        }
+
+        .product-card{
+            background:white;
+            border:1px solid #eee;
+            padding:18px;
+            text-decoration:none;
+            color:#222;
+            box-shadow:0 5px 15px rgba(0,0,0,.05);
+            transition:.2s;
+        }
+
+        .product-card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 8px 20px rgba(0,0,0,.12);
+        }
+
+        .product-img{
+            width:100%;
+            height:220px;
+            background:#eee;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            margin-bottom:15px;
+        }
+
+        .product-img img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .product-category{
+            font-size:13px;
+            color:#888;
+            margin-bottom:8px;
+        }
+
+        .product-name{
+            font-size:18px;
+            font-weight:bold;
+            margin-bottom:10px;
+        }
+
+        .product-price{
+            font-size:22px;
+            font-weight:bold;
+            color:#ff4d00;
+        }
+
+        .product-stock{
+            margin-top:8px;
+            font-size:13px;
+            color:#777;
+        }
+
+        .empty-product{
+            text-align:center;
+            padding:80px 0;
+            color:#777;
+            border:1px solid #eee;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1240px){
+            .product-wrap{
+                width:94%;
+                margin:55px auto 80px;
+            }
+
+            .product-grid{
+                gap:22px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .product-grid{
+                grid-template-columns:repeat(3, 1fr);
+            }
+
+            .product-img{
+                height:200px;
+            }
+        }
+
+        @media (max-width:768px){
+            .product-wrap{
+                width:94%;
+                margin:40px auto 65px;
+            }
+
+            .product-title{
+                font-size:28px;
+                margin-bottom:30px;
+            }
+
+            .product-grid{
+                grid-template-columns:repeat(2, 1fr);
+                gap:16px;
+            }
+
+            .product-card{
+                padding:14px;
+            }
+
+            .product-img{
+                height:180px;
+                margin-bottom:12px;
+            }
+
+            .product-name{
+                font-size:16px;
+            }
+
+            .product-price{
+                font-size:19px;
+            }
+
+            .empty-product{
+                padding:60px 0;
+                font-size:14px;
+            }
+        }
+
+        @media (max-width:480px){
+            .product-wrap{
+                width:100%;
+                padding:0 14px;
+                box-sizing:border-box;
+                margin:32px auto 55px;
+            }
+
+            .product-title{
+                font-size:24px;
+                margin-bottom:24px;
+            }
+
+            .product-grid{
+                grid-template-columns:1fr;
+                gap:14px;
+            }
+
+            .product-card{
+                padding:13px;
+            }
+
+            .product-card:hover{
+                transform:none;
+            }
+
+            .product-img{
+                height:230px;
+            }
+
+            .product-category,
+            .product-stock{
+                font-size:12px;
+            }
+
+            .product-name{
+                font-size:15px;
+            }
+
+            .product-price{
+                font-size:18px;
+            }
+
+            .empty-product{
+                padding:45px 0;
+                font-size:13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="product-wrap">
+
+    <div class="product-title">상품목록</div>
+
+    <div class="empty-product" th:if="${#lists.isEmpty(productList)}">
+        등록된 상품이 없습니다.
+    </div>
+
+    <div class="product-grid" th:if="${!#lists.isEmpty(productList)}">
+
+        <a class="product-card"
+           th:each="product : ${productList}"
+           th:href="@{/product/detail/{id}(id=${product.id})}">
+
+            <div class="product-img">
+                <img th:src="${product.imageUrl}" alt="상품이미지">
+            </div>
+
+            <div class="product-category" th:text="${product.category}">초합금</div>
+
+            <div class="product-name" th:text="${product.productName}">
+                레슈프포스 레슈푸드릴
+            </div>
+
+            <div class="product-price"
+                 th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">
+                43,000원
+            </div>
+
+            <div class="product-stock"
+                 th:text="'재고 ' + ${product.stockQty} + '개'">
+                재고 10개
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

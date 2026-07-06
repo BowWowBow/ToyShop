@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 주문관리 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .admin-wrap{
+            width:1450px;
+            margin:70px auto 100px;
+        }
+
+        .admin-title{
+            font-size:32px;
+            font-weight:bold;
+            text-align:center;
+            margin-bottom:25px;
+        }
+
+        .admin-menu{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin-bottom:35px;
+        }
+
+        .admin-menu a{
+            display:inline-block;
+            padding:11px 24px;
+            border:1px solid #ccc;
+            text-decoration:none;
+            color:#333;
+            font-size:14px;
+            background:white;
+        }
+
+        .admin-menu a.active{
+            background:#333;
+            color:white;
+            border-color:#333;
+        }
+
+        .admin-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-end;
+            margin-bottom:15px;
+        }
+
+        .date-form{
+            display:flex;
+            gap:6px;
+            align-items:center;
+        }
+
+        .date-form input{
+            height:38px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            font-size:14px;
+        }
+
+        .date-form button,
+        .date-form a{
+            height:38px;
+            line-height:38px;
+            padding:0 15px;
+            border:none;
+            background:#333;
+            color:white;
+            text-decoration:none;
+            font-size:13px;
+            cursor:pointer;
+        }
+
+        .date-form a{
+            background:#777;
+        }
+
+        .date-wave{
+            color:#777;
+            font-size:14px;
+        }
+
+        .top-info{
+            color:#777;
+            font-size:14px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:2px solid #333;
+        }
+
+        th{
+            background:#f7f7f7;
+            padding:14px 8px;
+            border-bottom:1px solid #ddd;
+            font-size:13px;
+        }
+
+        th a{
+            color:#222;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        th a:hover{
+            text-decoration:underline;
+        }
+
+        .sort-mark{
+            color:#ff7a00;
+            font-size:12px;
+            margin-left:3px;
+        }
+
+        td{
+            padding:14px 8px;
+            border-bottom:1px solid #eee;
+            text-align:center;
+            font-size:13px;
+            vertical-align:middle;
+        }
+
+        .order-no{
+            font-weight:bold;
+            color:#222;
+        }
+
+        .order-link{
+            display:inline-block;
+            color:#222;
+            font-weight:bold;
+            text-decoration:none;
+            padding:6px 8px;
+            border-radius:6px;
+            transition:0.2s;
+        }
+
+        .order-link:hover{
+            color:#ff5a00;
+            background:#fff4ec;
+            text-decoration:underline;
+        }
+
+        .badge{
+            display:inline-block;
+            min-width:70px;
+            padding:6px 10px;
+            border-radius:20px;
+            color:white;
+            font-size:12px;
+            font-weight:bold;
+        }
+
+        .paid{ background:#2f80ed; }
+        .ready{ background:#6c5ce7; }
+        .delivery{ background:#00a8a8; }
+        .done{ background:#ff9f1a; }
+        .waiting{ background:#999; }
+
+        .btn{
+            height:32px;
+            padding:0 12px;
+            border:none;
+            color:white;
+            cursor:pointer;
+            font-size:12px;
+            margin:2px;
+            background:#333;
+        }
+
+        .btn-blue{ background:#2f80ed; }
+        .btn-gray{ background:#6c5ce7; }
+        .btn-orange{ background:#ff9f1a; }
+        .btn-back{ background:#999; }
+        .btn-search{ background:#00c471; }
+
+        .delivery-box{
+            display:inline-block;
+            min-width:135px;
+            padding:8px 10px;
+            border:1px solid #ddd;
+            background:#fafafa;
+            line-height:1.6;
+            font-size:12px;
+        }
+
+        .delivery-company{
+            font-weight:bold;
+            color:#2f80ed;
+        }
+
+        .tracking-no{
+            font-weight:bold;
+            color:#555;
+        }
+
+        .no-delivery{
+            color:#aaa;
+            font-size:12px;
+        }
+
+        .ship-card{
+            width:280px;
+            margin:0 auto;
+            padding:12px;
+            border:1px solid #ddd;
+            background:#fafafa;
+        }
+
+        .ship-title{
+            text-align:left;
+            font-weight:bold;
+            font-size:14px;
+            margin-bottom:10px;
+        }
+
+        .ship-select{
+            width:100%;
+            height:38px;
+            border:1px solid #ddd;
+            padding:0 8px;
+            margin-bottom:8px;
+        }
+
+        .ship-input-wrap{
+            display:flex;
+            margin-bottom:8px;
+        }
+
+        .ship-input{
+            flex:1;
+            height:36px;
+            border:1px solid #ddd;
+            padding:0 8px;
+        }
+
+        .ship-search-icon{
+            width:40px;
+            border:1px solid #ddd;
+            background:white;
+            cursor:pointer;
+        }
+
+        .ship-guide{
+            font-size:11px;
+            color:#999;
+            text-align:left;
+            margin-bottom:8px;
+        }
+
+        .empty{
+            padding:60px 0;
+            text-align:center;
+            color:#777;
+            border-top:2px solid #333;
+            border-bottom:1px solid #eee;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1500px){
+            .admin-wrap{
+                width:95%;
+                margin:50px auto 80px;
+            }
+
+            table{
+                display:block;
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+        }
+
+        @media (max-width:1024px){
+            .admin-title{
+                font-size:28px;
+            }
+
+            .admin-top{
+                flex-direction:column;
+                align-items:stretch;
+                gap:15px;
+            }
+
+            .date-form{
+                flex-wrap:wrap;
+            }
+
+            .top-info{
+                text-align:right;
+            }
+
+            .ship-card{
+                width:240px;
+            }
+        }
+
+        @media (max-width:768px){
+            .admin-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .admin-title{
+                font-size:25px;
+                margin-bottom:20px;
+            }
+
+            .admin-menu{
+                flex-wrap:wrap;
+                gap:8px;
+                margin-bottom:25px;
+            }
+
+            .admin-menu a{
+                flex:1 1 calc(50% - 8px);
+                text-align:center;
+                padding:10px 12px;
+                font-size:13px;
+            }
+
+            .date-form input,
+            .date-form button,
+            .date-form a{
+                width:100%;
+            }
+
+            .date-wave{
+                display:none;
+            }
+
+            th,td{
+                padding:10px 7px;
+                font-size:12px;
+            }
+
+            .badge{
+                min-width:62px;
+                padding:5px 8px;
+                font-size:11px;
+            }
+
+            .btn{
+                height:30px;
+                padding:0 9px;
+                font-size:11px;
+            }
+
+            .delivery-box{
+                min-width:120px;
+                padding:7px 8px;
+                font-size:11px;
+            }
+
+            .ship-card{
+                width:220px;
+                padding:10px;
+            }
+
+            .ship-title{
+                font-size:13px;
+            }
+        }
+
+        @media (max-width:480px){
+            .admin-title{
+                font-size:22px;
+            }
+
+            .admin-menu a{
+                flex:1 1 100%;
+            }
+
+            .top-info{
+                text-align:left;
+                font-size:13px;
+            }
+
+            th,td{
+                font-size:11px;
+            }
+
+            .ship-card{
+                width:205px;
+            }
+
+            .ship-select,
+            .ship-input{
+                height:34px;
+                font-size:12px;
+            }
+
+            .ship-search-icon{
+                width:36px;
+            }
+
+            .empty{
+                padding:45px 0;
+                font-size:13px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-wrap">
+
+    <div class="admin-title">관리자 페이지</div>
+
+    <div class="admin-menu">
+        <a href="/admin/product/list">상품관리</a>
+        <a href="/admin/product/edit-search">상품수정</a>
+        <a href="/admin/order/list" class="active">주문관리</a>
+        <a href="/admin/board/inquiry">게시글관리</a>
+        <a href="/admin/member/list">회원관리</a>
+    </div>
+
+    <div class="admin-top">
+        <form class="date-form" action="/admin/order/list" method="get">
+            <input type="date" name="startDate" th:value="${startDate}">
+            <span class="date-wave">~</span>
+            <input type="date" name="endDate" th:value="${endDate}">
+
+            <input type="hidden" name="sort" th:value="${sort}">
+            <input type="hidden" name="dir" th:value="${dir}">
+
+            <button type="submit">기간조회</button>
+            <a href="/admin/order/list">전체</a>
+        </form>
+
+        <div class="top-info">
+            전체 주문 <strong th:text="${orderCount}">0</strong>건
+        </div>
+    </div>
+
+    <div class="empty" th:if="${orderList == null or #lists.isEmpty(orderList)}">
+        주문 내역이 없습니다.
+    </div>
+
+    <table th:if="${orderList != null and !#lists.isEmpty(orderList)}">
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='orderNo', dir=${sort == 'orderNo' ? nextDir : 'asc'})}">
+                    주문번호
+                    <span class="sort-mark" th:if="${sort == 'orderNo'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='orderName', dir=${sort == 'orderName' ? nextDir : 'asc'})}">
+                    주문자
+                    <span class="sort-mark" th:if="${sort == 'orderName'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='orderPhone', dir=${sort == 'orderPhone' ? nextDir : 'asc'})}">
+                    연락처
+                    <span class="sort-mark" th:if="${sort == 'orderPhone'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='paymentMethod', dir=${sort == 'paymentMethod' ? nextDir : 'asc'})}">
+                    결제수단
+                    <span class="sort-mark" th:if="${sort == 'paymentMethod'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='paymentStatus', dir=${sort == 'paymentStatus' ? nextDir : 'asc'})}">
+                    결제상태
+                    <span class="sort-mark" th:if="${sort == 'paymentStatus'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='orderStatus', dir=${sort == 'orderStatus' ? nextDir : 'asc'})}">
+                    주문상태
+                    <span class="sort-mark" th:if="${sort == 'orderStatus'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>배송정보</th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='finalPrice', dir=${sort == 'finalPrice' ? nextDir : 'asc'})}">
+                    결제금액
+                    <span class="sort-mark" th:if="${sort == 'finalPrice'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/order/list(startDate=${startDate}, endDate=${endDate}, sort='createdAt', dir=${sort == 'createdAt' ? nextDir : 'asc'})}">
+                    주문일
+                    <span class="sort-mark" th:if="${sort == 'createdAt'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>관리</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="order : ${orderList}">
+            <td class="order-no">
+                <a class="order-link"
+                   th:href="@{/admin/order/view/{id}(id=${order.id})}"
+                   th:text="${order.orderNo}">
+                    ORD202606070001
+                </a>
+            </td>
+
+            <td th:text="${order.orderName}">김민훈</td>
+
+            <td th:text="${order.orderPhone}">010-0000-0000</td>
+
+            <td th:text="${order.paymentMethod == 'BANK' ? '무통장입금' : '카드결제'}">
+                무통장입금
+            </td>
+
+            <td>
+                <span class="badge"
+                      th:classappend="${order.paymentStatus == 'PAID'} ? ' paid' : ' waiting'"
+                      th:text="${order.paymentStatus == 'PAID' ? '결제완료' : '입금대기'}">
+                    입금대기
+                </span>
+            </td>
+
+            <td>
+                <span class="badge"
+                      th:classappend="${order.orderStatus == 'PAID'} ? ' paid' :
+                                      (${order.orderStatus == 'READY'} ? ' ready' :
+                                      (${order.orderStatus == 'DELIVERY'} ? ' delivery' :
+                                      (${order.orderStatus == 'DONE'} ? ' done' : ' waiting')))"
+                      th:text="${order.orderStatus == 'ORDERED' ? '주문접수' :
+                               (order.orderStatus == 'PAID' ? '결제완료' :
+                               (order.orderStatus == 'READY' ? '상품준비중' :
+                               (order.orderStatus == 'DELIVERY' ? '배송중' :
+                               (order.orderStatus == 'DONE' ? '배송완료' : order.orderStatus))))}">
+                    주문접수
+                </span>
+            </td>
+
+            <td>
+                <div class="delivery-box"
+                     th:if="${order.deliveryCompany != null and order.deliveryCompany != ''}">
+                    <div class="delivery-company" th:text="${order.deliveryCompany}">CJ대한통운</div>
+                    <div class="tracking-no" th:text="${order.trackingNo}">CJ202606070001</div>
+                </div>
+
+                <span class="no-delivery"
+                      th:if="${order.deliveryCompany == null or order.deliveryCompany == ''}">
+                    배송정보 등록 전
+                </span>
+            </td>
+
+            <td th:text="${#numbers.formatInteger(order.finalPrice, 3, 'COMMA') + '원'}">
+                0원
+            </td>
+
+            <td th:text="${order.createdAt}">2026-06-07</td>
+
+            <td>
+                <form th:if="${order.paymentMethod == 'BANK' and order.paymentStatus != 'PAID'}"
+                      th:action="@{/admin/order/approve/{id}(id=${order.id})}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-blue">입금확인</button>
+                </form>
+
+                <form th:if="${order.paymentStatus == 'PAID' and order.orderStatus == 'PAID'}"
+                      th:action="@{/admin/order/ready/{id}(id=${order.id})}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-gray">상품준비</button>
+                </form>
+
+                <form th:if="${order.orderStatus == 'READY'}"
+                      th:action="@{/admin/order/delivery-info/{id}(id=${order.id})}"
+                      method="post">
+
+                    <div class="ship-card">
+                        <div class="ship-title">택배배송 조회</div>
+
+                        <select name="deliveryCompany" class="ship-select" required>
+                            <option value="">택배사 선택</option>
+                            <option value="CJ대한통운">CJ대한통운</option>
+                            <option value="우체국택배">우체국택배</option>
+                            <option value="한진택배">한진택배</option>
+                            <option value="롯데택배">롯데택배</option>
+                            <option value="로젠택배">로젠택배</option>
+                            <option value="EMS">EMS</option>
+                            <option value="DHL">DHL</option>
+                            <option value="UPS">UPS</option>
+                            <option value="직접배송">직접배송</option>
+                            <option value="테스트택배">테스트택배</option>
+                        </select>
+
+                        <div class="ship-input-wrap">
+                            <input type="text"
+                                   name="trackingNo"
+                                   class="ship-input"
+                                   placeholder="운송장 번호 입력"
+                                   required
+                                   th:value="'CJ' + ${#strings.substring(order.orderNo, 3, 17)}">
+
+                            <button type="button" class="ship-search-icon">⌕</button>
+                        </div>
+
+                        <div class="ship-guide">
+                            포트폴리오용 테스트 운송장번호입니다.
+                        </div>
+
+                        <button type="submit" class="btn btn-search">배송중 처리</button>
+                    </div>
+                </form>
+
+                <form th:if="${order.orderStatus == 'DELIVERY'}"
+                      th:action="@{/admin/order/done/{id}(id=${order.id})}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-orange">배송완료</button>
+                </form>
+
+                <form th:if="${order.orderStatus == 'PAID' or order.orderStatus == 'READY' or order.orderStatus == 'DELIVERY' or order.orderStatus == 'DONE'}"
+                      th:action="@{/admin/order/rollback/{id}(id=${order.id})}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-back">되돌리기</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문/결제 - TOY-SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+
+    <style>
+        body{background:#fff;}
+        .order-wrap{width:1200px;margin:70px auto 100px;}
+        .order-title{text-align:center;font-size:32px;font-weight:bold;margin-bottom:40px;}
+        .order-content{display:flex;gap:35px;align-items:flex-start;}
+        .order-left{flex:1;}
+        .order-right{width:380px;}
+        .section-title{font-size:24px;font-weight:bold;margin:35px 0 15px;}
+
+        .product-box{border:1px solid #ccc;}
+        .delivery-row{background:#f8f8f8;padding:12px 15px;border-bottom:1px solid #ddd;font-size:14px;}
+
+        .order-item{
+            display:grid;
+            grid-template-columns:100px 1fr 130px;
+            gap:15px;
+            padding:15px;
+            border-bottom:1px solid #eee;
+            align-items:center;
+        }
+
+        .order-item img{width:90px;height:90px;object-fit:cover;border:1px solid #ddd;}
+        .item-name{font-weight:bold;margin-bottom:8px;}
+        .item-info{font-size:14px;color:#555;}
+        .item-price{text-align:right;line-height:1.8;font-size:14px;}
+        .item-price strong{font-size:17px;color:#111;}
+
+        .info-box{border-top:1px solid #333;padding-top:15px;}
+        .view-line{margin-bottom:10px;font-size:15px;color:#333;}
+        .view-line strong{display:inline-block;min-width:80px;}
+
+        .small-btn{
+            height:28px;
+            padding:0 10px;
+            border:1px solid #ccc;
+            background:white;
+            cursor:pointer;
+            margin-left:5px;
+            font-size:12px;
+        }
+
+        .save-btn{
+            height:32px;
+            padding:0 16px;
+            border:none;
+            background:#333;
+            color:white;
+            cursor:pointer;
+            font-size:13px;
+            margin-top:8px;
+        }
+
+        .cancel-btn{
+            height:32px;
+            padding:0 16px;
+            border:1px solid #ccc;
+            background:white;
+            cursor:pointer;
+            font-size:13px;
+            margin-top:8px;
+            margin-left:5px;
+        }
+
+        .input-row{margin-bottom:10px;}
+        .input-row label{display:block;font-size:14px;font-weight:bold;margin-bottom:6px;}
+
+        .input-row input,
+        .input-row select{
+            width:100%;
+            height:38px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            box-sizing:border-box;
+        }
+
+        .phone-wrap{display:flex;align-items:center;gap:6px;}
+        .phone-wrap input{width:90px;height:36px;border:1px solid #ccc;text-align:center;}
+
+        .address-row{display:flex;gap:6px;}
+        .address-row input{flex:1;}
+        .address-row button{width:80px;border:1px solid #ccc;background:white;cursor:pointer;}
+
+        .hidden{display:none;}
+
+        .discount-box{border-top:1px solid #333;padding-top:15px;}
+        .discount-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:14px;}
+        .discount-row label{width:90px;}
+        .discount-row input{width:90px;height:30px;border:1px solid #ccc;text-align:right;padding-right:8px;}
+        .discount-row button{height:32px;border:1px solid #ccc;background:white;cursor:pointer;}
+        .red{color:#ff4d00;font-weight:bold;}
+
+        .summary-title{font-size:24px;font-weight:bold;margin-bottom:15px;}
+        .summary-box{border:1px solid #333;padding:20px;}
+        .summary-row{display:flex;justify-content:space-between;padding:8px 0;font-size:15px;}
+
+        .summary-total{
+            border-top:1px solid #ddd;
+            margin-top:12px;
+            padding-top:18px;
+            display:flex;
+            justify-content:space-between;
+            font-size:24px;
+            font-weight:bold;
+        }
+
+        .summary-total span:last-child{color:#ff4d00;}
+
+        .pay-section{margin-top:30px;}
+        .payment-tabs{display:flex;gap:8px;margin-bottom:16px;}
+
+        .payment-tab{
+            flex:1;
+            height:46px;
+            border:1px solid #ccc;
+            background:white;
+            cursor:pointer;
+            font-size:14px;
+            font-weight:bold;
+        }
+
+        .payment-tab.active{background:#333;color:white;border-color:#333;}
+
+        .pay-icon{
+            width:74px;
+            height:74px;
+            border-radius:10px;
+            background:#444;
+            color:white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:28px;
+            margin-bottom:8px;
+        }
+
+        .pay-label{font-weight:bold;margin-bottom:12px;}
+
+        .bank-input,
+        .bank-select{
+            width:100%;
+            height:38px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            box-sizing:border-box;
+            margin-bottom:8px;
+        }
+
+        .card-info-box{
+            border:1px solid #ddd;
+            background:#fafafa;
+            padding:15px;
+            font-size:14px;
+            line-height:1.7;
+            color:#555;
+        }
+
+        .agree-box{margin-top:35px;}
+        .agree-title{font-size:24px;font-weight:bold;margin-bottom:15px;}
+        .agree-box label{display:block;margin-bottom:10px;font-size:14px;}
+        .agree-line{display:flex !important;align-items:center;gap:6px;}
+
+        .view-agree-btn{
+            margin-left:auto;
+            border:none;
+            background:white;
+            color:#555;
+            cursor:pointer;
+            font-size:13px;
+            text-decoration:underline;
+        }
+
+        .pay-btn{
+            width:100%;
+            height:58px;
+            border:none;
+            background:#333;
+            color:white;
+            font-size:24px;
+            font-weight:bold;
+            margin-top:20px;
+            cursor:pointer;
+        }
+
+        .privacy-modal,
+        .address-modal{
+            display:none;
+            position:fixed;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.45);
+            z-index:9999;
+        }
+
+        .privacy-box{
+            width:760px;
+            min-height:390px;
+            background:white;
+            margin:120px auto;
+            padding:35px;
+            position:relative;
+            box-sizing:border-box;
+        }
+
+        .privacy-box h2{font-size:26px;margin-bottom:30px;font-weight:normal;}
+        .privacy-box p{font-size:14px;line-height:1.7;}
+
+        .privacy-close,
+        .address-close{
+            position:absolute;
+            right:25px;
+            top:20px;
+            border:none;
+            background:white;
+            font-size:44px;
+            color:#777;
+            cursor:pointer;
+        }
+
+        .privacy-confirm{
+            position:absolute;
+            left:35px;
+            right:35px;
+            bottom:25px;
+            height:52px;
+            border:none;
+            background:#999;
+            color:white;
+            font-size:20px;
+            cursor:pointer;
+        }
+
+        .address-modal-box{
+            width:680px;
+            max-height:650px;
+            overflow-y:auto;
+            background:white;
+            margin:100px auto;
+            padding:35px;
+            position:relative;
+            box-sizing:border-box;
+        }
+
+        .address-modal-box h2{
+            font-size:26px;
+            margin:0 0 25px;
+            font-weight:bold;
+        }
+
+        .address-item{
+            border:1px solid #ddd;
+            padding:18px;
+            margin-bottom:12px;
+            line-height:1.7;
+            font-size:14px;
+        }
+
+        .address-item:hover{background:#fafafa;}
+        .address-name{font-size:17px;font-weight:bold;margin-bottom:6px;}
+        .address-phone{color:#555;}
+
+        .default-badge{
+            display:inline-block;
+            background:#333;
+            color:white;
+            font-size:12px;
+            padding:2px 7px;
+            margin-right:6px;
+        }
+
+        .join-badge{
+            display:inline-block;
+            background:#777;
+            color:white;
+            font-size:12px;
+            padding:2px 7px;
+            margin-right:6px;
+        }
+
+        .address-empty{
+            padding:40px 0;
+            text-align:center;
+            color:#999;
+            border-top:1px solid #ddd;
+            border-bottom:1px solid #ddd;
+        }
+
+        .select-address-btn{
+            margin-top:12px;
+            height:36px;
+            padding:0 18px;
+            border:none;
+            background:#333;
+            color:white;
+            cursor:pointer;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1240px){
+            .order-wrap{
+                width:94%;
+                margin:50px auto 80px;
+            }
+
+            .order-content{
+                gap:25px;
+            }
+
+            .order-right{
+                width:340px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .order-content{
+                flex-direction:column;
+            }
+
+            .order-left,
+            .order-right{
+                width:100%;
+            }
+
+            .order-right{
+                position:static;
+            }
+
+            .summary-box{
+                max-width:none;
+            }
+
+            .privacy-box,
+            .address-modal-box{
+                width:90%;
+                margin:70px auto;
+            }
+        }
+
+        @media (max-width:768px){
+            .order-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .order-title{
+                font-size:26px;
+                margin-bottom:28px;
+            }
+
+            .section-title,
+            .summary-title,
+            .agree-title{
+                font-size:20px;
+                margin:28px 0 13px;
+            }
+
+            .order-item{
+                grid-template-columns:80px 1fr;
+                gap:12px;
+                padding:14px 12px;
+            }
+
+            .order-item img{
+                width:74px;
+                height:74px;
+            }
+
+            .item-price{
+                grid-column:1 / 3;
+                text-align:left;
+                background:#fafafa;
+                padding:10px;
+                border-radius:6px;
+            }
+
+            .phone-wrap{
+                flex-wrap:wrap;
+            }
+
+            .phone-wrap input{
+                flex:1;
+                min-width:70px;
+            }
+
+            .address-row{
+                flex-direction:column;
+            }
+
+            .address-row button{
+                width:100%;
+                height:38px;
+            }
+
+            .discount-row{
+                flex-wrap:wrap;
+                align-items:flex-start;
+                padding-bottom:8px;
+                border-bottom:1px solid #eee;
+            }
+
+            .discount-row label{
+                width:100%;
+                font-weight:bold;
+            }
+
+            .discount-row input{
+                width:110px;
+            }
+
+            .payment-tabs{
+                flex-direction:column;
+            }
+
+            .payment-tab{
+                width:100%;
+            }
+
+            .pay-icon{
+                width:62px;
+                height:62px;
+                font-size:24px;
+            }
+
+            .agree-line{
+                align-items:flex-start;
+                flex-wrap:wrap;
+            }
+
+            .view-agree-btn{
+                margin-left:0;
+            }
+
+            .pay-btn{
+                height:52px;
+                font-size:20px;
+            }
+
+            .privacy-box,
+            .address-modal-box{
+                width:92%;
+                max-height:80vh;
+                overflow-y:auto;
+                margin:55px auto;
+                padding:26px 20px;
+            }
+
+            .privacy-box{
+                min-height:420px;
+            }
+
+            .privacy-box h2,
+            .address-modal-box h2{
+                font-size:22px;
+                padding-right:38px;
+            }
+
+            .privacy-close,
+            .address-close{
+                right:14px;
+                top:10px;
+                font-size:36px;
+            }
+
+            .privacy-confirm{
+                position:static;
+                width:100%;
+                margin-top:20px;
+            }
+        }
+
+        @media (max-width:480px){
+            .order-wrap{
+                width:100%;
+                padding:0 14px;
+                box-sizing:border-box;
+                margin:30px auto 50px;
+            }
+
+            .order-title{
+                font-size:23px;
+            }
+
+            .section-title,
+            .summary-title,
+            .agree-title{
+                font-size:18px;
+            }
+
+            .delivery-row{
+                font-size:13px;
+                padding:10px 12px;
+            }
+
+            .order-item{
+                grid-template-columns:68px 1fr;
+                gap:10px;
+            }
+
+            .order-item img{
+                width:62px;
+                height:62px;
+            }
+
+            .item-name{
+                font-size:14px;
+            }
+
+            .item-info,
+            .item-price{
+                font-size:13px;
+            }
+
+            .item-price strong{
+                font-size:15px;
+            }
+
+            .view-line{
+                font-size:13px;
+                line-height:1.6;
+            }
+
+            .view-line strong{
+                display:block;
+                min-width:0;
+                margin-bottom:6px;
+            }
+
+            .small-btn{
+                margin:4px 4px 0 0;
+            }
+
+            .save-btn,
+            .cancel-btn{
+                width:100%;
+                margin-left:0;
+                margin-top:7px;
+            }
+
+            .phone-wrap{
+                flex-direction:column;
+                align-items:stretch;
+                gap:6px;
+            }
+
+            .phone-wrap span{
+                display:none;
+            }
+
+            .phone-wrap input{
+                width:100%;
+            }
+
+            .discount-row{
+                flex-direction:column;
+                gap:6px;
+            }
+
+            .discount-row input,
+            .discount-row button{
+                width:100%;
+                height:36px;
+            }
+
+            .summary-box{
+                padding:16px;
+            }
+
+            .summary-row{
+                font-size:14px;
+            }
+
+            .summary-total{
+                flex-direction:column;
+                gap:8px;
+                align-items:flex-start;
+                font-size:19px;
+            }
+
+            .bank-input,
+            .bank-select{
+                height:40px;
+                font-size:13px;
+            }
+
+            .card-info-box{
+                font-size:13px;
+            }
+
+            .agree-box label{
+                font-size:13px;
+                line-height:1.5;
+            }
+
+            .pay-btn{
+                height:48px;
+                font-size:18px;
+            }
+
+            .privacy-box,
+            .address-modal-box{
+                width:100%;
+                height:100vh;
+                max-height:none;
+                margin:0;
+                border-radius:0;
+                padding:24px 16px;
+            }
+
+            .privacy-box h2,
+            .address-modal-box h2{
+                font-size:20px;
+            }
+
+            .privacy-box p,
+            .address-item{
+                font-size:13px;
+            }
+
+            .address-name{
+                font-size:15px;
+            }
+
+            .select-address-btn{
+                width:100%;
+                height:38px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="order-wrap">
+
+    <div class="order-title">주문/결제</div>
+
+    <form action="/order/all" method="post" id="orderForm">
+
+        <input type="hidden" id="originFinalPrice" th:value="${finalPrice}">
+        <input type="hidden" name="paymentMethod" id="paymentMethod" value="BANK">
+
+        <div class="order-content">
+
+            <div class="order-left">
+
+                <div class="section-title">주문상품 정보</div>
+
+                <div class="product-box">
+                    <div class="delivery-row">
+                        배송 : 택배 (선불) 3,000원
+                    </div>
+
+                    <div class="order-item" th:each="cart : ${cartList}">
+                        <img th:src="@{${cart.imageUrl}}" alt="상품이미지">
+
+                        <div>
+                            <div class="item-name" th:text="${cart.productName}">상품명</div>
+                            <div class="item-info"
+                                 th:text="${cart.qty} + '개 (' + ${#numbers.formatInteger(cart.price, 3, 'COMMA')} + '원)'">
+                                1개 (43,000원)
+                            </div>
+                        </div>
+
+                        <div class="item-price">
+                            상품금액
+                            <span th:text="${#numbers.formatInteger(cart.price * cart.qty, 3, 'COMMA') + '원'}">43,000원</span><br>
+                            할인금액 -<br>
+                            할인적용금액
+                            <strong th:text="${#numbers.formatInteger(cart.price * cart.qty, 3, 'COMMA') + '원'}">43,000원</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">주문자</div>
+
+                <div class="info-box">
+                    <div id="orderView">
+                        <div class="view-line">
+                            <strong id="viewOrderName"
+                                    th:text="${loginMember != null ? loginMember.name : '회원'}">회원</strong>
+                            <button type="button" class="small-btn" onclick="showOrderEdit()">수정</button>
+                        </div>
+
+                        <div class="view-line">
+                            <span id="viewOrderPhone"
+                                  th:text="${loginMember != null ? loginMember.phone : ''}">010-0000-0000</span>
+                            /
+                            <span id="viewOrderTel">-</span>
+                        </div>
+
+                        <div class="view-line">
+                            <span id="viewOrderEmail"
+                                  th:text="${loginMember != null ? loginMember.email : ''}">email@email.com</span>
+                        </div>
+                    </div>
+
+                    <div id="orderEdit" class="hidden">
+                        <div class="input-row">
+                            <label>주문자명</label>
+                            <input type="text" name="orderName" id="orderName"
+                                   th:value="${loginMember != null ? loginMember.name : ''}">
+                        </div>
+
+                        <div class="input-row">
+                            <label>휴대폰</label>
+                            <div class="phone-wrap">
+                                <input type="text" id="orderPhone1">
+                                <span>-</span>
+                                <input type="text" id="orderPhone2">
+                                <span>-</span>
+                                <input type="text" id="orderPhone3">
+                            </div>
+                            <input type="hidden" name="orderPhone" id="orderPhone"
+                                   th:value="${loginMember != null ? loginMember.phone : ''}">
+                        </div>
+
+                        <div class="input-row">
+                            <label>일반전화</label>
+                            <div class="phone-wrap">
+                                <input type="text" id="orderTel1">
+                                <span>-</span>
+                                <input type="text" id="orderTel2">
+                                <span>-</span>
+                                <input type="text" id="orderTel3">
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <label>이메일</label>
+                            <input type="text" id="orderEmail"
+                                   th:value="${loginMember != null ? loginMember.email : ''}">
+                        </div>
+
+                        <button type="button" class="save-btn" onclick="saveOrderInfo()">저장</button>
+                        <button type="button" class="cancel-btn" onclick="cancelOrderEdit()">취소</button>
+                    </div>
+                </div>
+
+                <div class="section-title">배송지</div>
+
+                <div class="info-box">
+                    <div id="deliveryView">
+                        <div class="view-line">
+                            <strong id="viewReceiverName"
+                                    th:text="${defaultAddress != null ? defaultAddress.receiverName : loginMember.name}">
+                                회원
+                            </strong>
+                            <button type="button" class="small-btn" onclick="openAddressModal()">다른배송지 선택</button>
+                            <button type="button" class="small-btn" onclick="showDeliveryEdit()">수정</button>
+                        </div>
+
+                        <div class="view-line">
+                            [<span id="viewZipcode"
+                                   th:text="${defaultAddress != null ? defaultAddress.zipcode : loginMember.zipcode}"></span>]
+                            <span id="viewAddress"
+                                  th:text="${defaultAddress != null ? defaultAddress.address : loginMember.address}">주소</span>
+                            <span id="viewDetailAddress"
+                                  th:text="${defaultAddress != null ? defaultAddress.addressDetail : loginMember.addressDetail}">상세주소</span>
+                        </div>
+
+                        <div class="view-line">
+                            <span id="viewReceiverPhone"
+                                  th:text="${defaultAddress != null ? defaultAddress.receiverPhone : loginMember.phone}">
+                                010-0000-0000
+                            </span>
+                            /
+                            <span id="viewReceiverTel">-</span>
+                        </div>
+
+                        <div class="view-line">배송국가 : 대한민국</div>
+
+                        <div class="input-row">
+                            <select name="deliveryMessage">
+                                <option value="">배송 메시지 입력</option>
+                                <option>문 앞에 놓아주세요</option>
+                                <option>부재 시 연락주세요</option>
+                                <option>배송 전 연락주세요</option>
+                                <option>직접 받겠습니다</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="deliveryEdit" class="hidden">
+                        <div class="input-row">
+                            <label>받는 사람</label>
+                            <input type="text" name="receiverName" id="receiverName"
+                                   th:value="${defaultAddress != null ? defaultAddress.receiverName : loginMember.name}">
+                        </div>
+
+                        <div class="input-row">
+                            <label>우편번호</label>
+                            <div class="address-row">
+                                <input type="text" id="zipcode"
+                                       th:value="${defaultAddress != null ? defaultAddress.zipcode : loginMember.zipcode}">
+                                <button type="button">검색</button>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <label>주소</label>
+                            <input type="text" name="address" id="address"
+                                   th:value="${defaultAddress != null ? defaultAddress.address : loginMember.address}">
+                        </div>
+
+                        <div class="input-row">
+                            <label>상세주소</label>
+                            <input type="text" id="detailAddress"
+                                   th:value="${defaultAddress != null ? defaultAddress.addressDetail : loginMember.addressDetail}">
+                        </div>
+
+                        <div class="input-row">
+                            <label>휴대폰</label>
+                            <div class="phone-wrap">
+                                <input type="text" id="receiverPhone1">
+                                <span>-</span>
+                                <input type="text" id="receiverPhone2">
+                                <span>-</span>
+                                <input type="text" id="receiverPhone3">
+                            </div>
+                            <input type="hidden" name="receiverPhone" id="receiverPhone"
+                                   th:value="${defaultAddress != null ? defaultAddress.receiverPhone : loginMember.phone}">
+                        </div>
+
+                        <div class="input-row">
+                            <label>일반전화</label>
+                            <div class="phone-wrap">
+                                <input type="text" id="receiverTel1">
+                                <span>-</span>
+                                <input type="text" id="receiverTel2">
+                                <span>-</span>
+                                <input type="text" id="receiverTel3">
+                            </div>
+                        </div>
+
+                        <button type="button" class="save-btn" onclick="saveDeliveryInfo()">저장</button>
+                        <button type="button" class="cancel-btn" onclick="cancelDeliveryEdit()">취소</button>
+                    </div>
+                </div>
+
+                <div class="section-title">할인</div>
+
+                <div class="discount-box">
+                    <div class="discount-row">
+                        <label>마일리지</label>
+                        <input type="text" id="useMileage" name="useMileage" value="0" oninput="calcFinalPrice()">
+                        <span class="red">원</span>
+                        <button type="button" onclick="useMileageBtn()">사용</button>
+                        <button type="button" onclick="useAllMileage()">모두사용</button>
+                        <span>
+                            (보유
+                            <span id="myMileage"
+                                  th:text="${#numbers.formatInteger(mileage, 3, 'COMMA')}">0</span>원)
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="order-right">
+
+                <div class="summary-title">결제 금액</div>
+
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>상품금액</span>
+                        <strong th:text="${#numbers.formatInteger(totalPrice, 3, 'COMMA') + '원'}">0원</strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>배송비</span>
+                        <strong th:text="'(+) ' + ${#numbers.formatInteger(deliveryFee, 3, 'COMMA')} + '원'">
+                            (+) 0원
+                        </strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>할인금액</span>
+                        <strong class="red" id="discountText">(-) 0원</strong>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>최종 결제금액</span>
+                        <span id="finalPriceText"
+                              th:text="${#numbers.formatInteger(finalPrice, 3, 'COMMA') + '원'}">0원</span>
+                    </div>
+                </div>
+
+                <div class="pay-section">
+                    <div class="summary-title">결제 수단</div>
+
+                    <div class="payment-tabs">
+                        <button type="button" id="bankTab" class="payment-tab active" onclick="selectPayment('BANK')">
+                            무통장입금
+                        </button>
+
+                        <button type="button" id="cardTab" class="payment-tab" onclick="selectPayment('CARD')">
+                            카드/간편결제
+                        </button>
+                    </div>
+
+                    <div id="bankPayBox">
+                        <div class="pay-icon">▣</div>
+                        <div class="pay-label">무통장입금</div>
+
+                        <input class="bank-input" type="text" name="depositorName" id="depositorName"
+                               placeholder="입금자명을 입력하세요">
+
+                        <select class="bank-select" name="bankInfo" id="bankInfo">
+                            <option value="">은행 선택</option>
+                            <option>국민은행 563445-12-125545 예금주: 토이샵</option>
+                            <option>농협은행 179885-05-423556 예금주: 토이샵</option>
+                            <option>카카오뱅크 2213-12-2599566 예금주: 토이샵</option>
+                        </select>
+                    </div>
+
+                    <div id="cardPayBox" class="hidden">
+                        <div class="pay-icon">💳</div>
+                        <div class="pay-label">카드/간편결제</div>
+
+                        <div class="card-info-box">
+                            카드, 체크카드, 토스페이 등은 토스페이먼츠 테스트 결제창에서 선택할 수 있습니다.<br>
+                            현재는 실제 돈이 나가지 않는 테스트 결제입니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agree-box">
+                    <div class="agree-title">약관 동의</div>
+
+                    <label>
+                        <input type="checkbox" id="agreeAll" onclick="toggleAgreeAll()">
+                        전체동의
+                    </label>
+
+                    <label class="agree-line">
+                        <input type="checkbox" class="agree-check">
+                        개인정보 제3자 제공 동의 (필수)
+                        <button type="button" class="view-agree-btn" onclick="openPrivacyModal()">보기</button>
+                    </label>
+
+                    <label>
+                        <input type="checkbox" class="agree-check">
+                        주문 상품 및 결제금액 확인
+                    </label>
+                </div>
+
+                <button type="button" class="pay-btn" onclick="startPay()">결제하기</button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<div id="addressModal" class="address-modal">
+    <div class="address-modal-box">
+        <button type="button" class="address-close" onclick="closeAddressModal()">×</button>
+
+        <h2>배송주소록 선택</h2>
+
+        <!-- 회원가입 주소 선택 -->
+        <div class="address-item">
+            <div class="address-name">
+                <span class="join-badge">회원</span>
+                회원가입 주소
+            </div>
+
+            <div>
+                [<span th:text="${loginMember.zipcode}">00000</span>]
+                <span th:text="${loginMember.address}">주소</span>
+                <span th:text="${loginMember.addressDetail}">상세주소</span>
+            </div>
+
+            <div class="address-phone" th:text="${loginMember.phone}">
+                010-0000-0000
+            </div>
+
+            <button type="button"
+                    class="select-address-btn"
+                    th:data-receiver-name="${loginMember.name}"
+                    th:data-zipcode="${loginMember.zipcode}"
+                    th:data-address="${loginMember.address}"
+                    th:data-detail-address="${loginMember.addressDetail}"
+                    th:data-receiver-phone="${loginMember.phone}"
+                    onclick="selectAddressFromButton(this)">
+                회원가입 주소 선택
+            </button>
+        </div>
+
+        <div class="address-empty" th:if="${addressList == null or #lists.isEmpty(addressList)}">
+            등록된 배송지가 없습니다.
+        </div>
+
+        <div class="address-item" th:each="addr : ${addressList}">
+            <div class="address-name">
+                <span class="default-badge" th:if="${addr.isDefault == 'Y'}">기본</span>
+                <span th:text="${addr.receiverName}">받는사람</span>
+            </div>
+
+            <div>
+                [<span th:text="${addr.zipcode}">00000</span>]
+                <span th:text="${addr.address}">주소</span>
+                <span th:text="${addr.addressDetail}">상세주소</span>
+            </div>
+
+            <div class="address-phone" th:text="${addr.receiverPhone}">010-0000-0000</div>
+
+            <button type="button"
+                    class="select-address-btn"
+                    th:data-receiver-name="${addr.receiverName}"
+                    th:data-zipcode="${addr.zipcode}"
+                    th:data-address="${addr.address}"
+                    th:data-detail-address="${addr.addressDetail}"
+                    th:data-receiver-phone="${addr.receiverPhone}"
+                    onclick="selectAddressFromButton(this)">
+                이 배송지 선택
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="privacyModal" class="privacy-modal">
+    <div class="privacy-box">
+        <button type="button" class="privacy-close" onclick="closePrivacyModal()">×</button>
+
+        <h2>개인정보 제3자 제공 동의</h2>
+
+        <p>&lt;본 양식은 퍼스트몰에서 제공하는 샘플입니다. 운영 정책에 맞게 수정하시어 이용하시기 바랍니다.&gt;</p>
+
+        <p>
+            제공 받는 자 : ㈜OO<br>
+            목적 : 상품 및 경품 배송, 제품 설치, 반품, 환불, 고객상담 등 정보통신서비스 제공계약 및 전자상거래 계약의 이행을 위해 필요한 업무의 처리<br>
+            항목 : 성명, 전화번호, 휴대폰번호, 배송지 주소, 이메일주소<br>
+            보유기간 : 서비스 이용기간 동안 보관
+        </p>
+
+        <p>
+            ※ 개인정보 제3자 제공에 대한 동의를 하지 않을 권리가 있으며,
+            동의 거부 시 주문이 불가합니다.
+        </p>
+
+        <button type="button" class="privacy-confirm" onclick="closePrivacyModal()">확인</button>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    const clientKey = "test_ck_d46qopOB89x42XnQKQbOrZmM75y0";
+    const tossPayments = TossPayments(clientKey);
+
+    window.onload = function(){
+        initPhoneInput("orderPhone", "orderPhone1", "orderPhone2", "orderPhone3");
+        initPhoneInput("receiverPhone", "receiverPhone1", "receiverPhone2", "receiverPhone3");
+    };
+
+    function initPhoneInput(hiddenId, input1Id, input2Id, input3Id){
+        const hidden = document.getElementById(hiddenId);
+
+        if(!hidden){
+            return;
+        }
+
+        const phone = hidden.value;
+
+        if(phone && phone.indexOf("-") > -1){
+            const arr = phone.split("-");
+
+            document.getElementById(input1Id).value = arr[0] || "";
+            document.getElementById(input2Id).value = arr[1] || "";
+            document.getElementById(input3Id).value = arr[2] || "";
+        }
+    }
+
+    function openAddressModal(){
+        document.getElementById("addressModal").style.display = "block";
+    }
+
+    function closeAddressModal(){
+        document.getElementById("addressModal").style.display = "none";
+    }
+
+    function selectAddressFromButton(button){
+        const receiverName = button.dataset.receiverName || "";
+        const zipcode = button.dataset.zipcode || "";
+        const address = button.dataset.address || "";
+        const detailAddress = button.dataset.detailAddress || "";
+        const receiverPhone = button.dataset.receiverPhone || "";
+
+        selectAddress(receiverName, zipcode, address, detailAddress, receiverPhone);
+    }
+
+    function selectAddress(receiverName, zipcode, address, detailAddress, receiverPhone){
+
+        document.getElementById("receiverName").value = receiverName;
+        document.getElementById("zipcode").value = zipcode;
+        document.getElementById("address").value = address;
+        document.getElementById("detailAddress").value = detailAddress;
+        document.getElementById("receiverPhone").value = receiverPhone;
+
+        document.getElementById("viewReceiverName").innerText = receiverName;
+        document.getElementById("viewZipcode").innerText = zipcode;
+        document.getElementById("viewAddress").innerText = address;
+        document.getElementById("viewDetailAddress").innerText = detailAddress;
+        document.getElementById("viewReceiverPhone").innerText = receiverPhone;
+        document.getElementById("viewReceiverTel").innerText = "-";
+
+        if(receiverPhone && receiverPhone.indexOf("-") > -1){
+            const arr = receiverPhone.split("-");
+            document.getElementById("receiverPhone1").value = arr[0] || "";
+            document.getElementById("receiverPhone2").value = arr[1] || "";
+            document.getElementById("receiverPhone3").value = arr[2] || "";
+        }
+
+        closeAddressModal();
+    }
+
+    function selectPayment(method){
+        document.getElementById("paymentMethod").value = method;
+
+        const bankTab = document.getElementById("bankTab");
+        const cardTab = document.getElementById("cardTab");
+        const bankPayBox = document.getElementById("bankPayBox");
+        const cardPayBox = document.getElementById("cardPayBox");
+
+        if(method === "BANK"){
+            bankTab.classList.add("active");
+            cardTab.classList.remove("active");
+            bankPayBox.classList.remove("hidden");
+            cardPayBox.classList.add("hidden");
+        } else {
+            cardTab.classList.add("active");
+            bankTab.classList.remove("active");
+            cardPayBox.classList.remove("hidden");
+            bankPayBox.classList.add("hidden");
+        }
+    }
+
+    function showOrderEdit(){
+        document.getElementById("orderView").classList.add("hidden");
+        document.getElementById("orderEdit").classList.remove("hidden");
+    }
+
+    function cancelOrderEdit(){
+        document.getElementById("orderEdit").classList.add("hidden");
+        document.getElementById("orderView").classList.remove("hidden");
+    }
+
+    function saveOrderInfo(){
+        const name = document.getElementById("orderName").value.trim();
+
+        const phone =
+            document.getElementById("orderPhone1").value.trim() + "-" +
+            document.getElementById("orderPhone2").value.trim() + "-" +
+            document.getElementById("orderPhone3").value.trim();
+
+        const tel =
+            document.getElementById("orderTel1").value.trim() + "-" +
+            document.getElementById("orderTel2").value.trim() + "-" +
+            document.getElementById("orderTel3").value.trim();
+
+        const email = document.getElementById("orderEmail").value.trim();
+
+        document.getElementById("orderPhone").value = phone;
+        document.getElementById("viewOrderName").innerText = name;
+        document.getElementById("viewOrderPhone").innerText = phone;
+        document.getElementById("viewOrderTel").innerText = tel === "--" ? "-" : tel;
+        document.getElementById("viewOrderEmail").innerText = email;
+
+        cancelOrderEdit();
+    }
+
+    function showDeliveryEdit(){
+        document.getElementById("deliveryView").classList.add("hidden");
+        document.getElementById("deliveryEdit").classList.remove("hidden");
+    }
+
+    function cancelDeliveryEdit(){
+        document.getElementById("deliveryEdit").classList.add("hidden");
+        document.getElementById("deliveryView").classList.remove("hidden");
+    }
+
+    function saveDeliveryInfo(){
+        const receiverName = document.getElementById("receiverName").value.trim();
+        const zipcode = document.getElementById("zipcode").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const detailAddress = document.getElementById("detailAddress").value.trim();
+
+        const phone =
+            document.getElementById("receiverPhone1").value.trim() + "-" +
+            document.getElementById("receiverPhone2").value.trim() + "-" +
+            document.getElementById("receiverPhone3").value.trim();
+
+        const tel =
+            document.getElementById("receiverTel1").value.trim() + "-" +
+            document.getElementById("receiverTel2").value.trim() + "-" +
+            document.getElementById("receiverTel3").value.trim();
+
+        document.getElementById("receiverPhone").value = phone;
+        document.getElementById("viewReceiverName").innerText = receiverName;
+        document.getElementById("viewZipcode").innerText = zipcode;
+        document.getElementById("viewAddress").innerText = address;
+        document.getElementById("viewDetailAddress").innerText = detailAddress;
+        document.getElementById("viewReceiverPhone").innerText = phone;
+        document.getElementById("viewReceiverTel").innerText = tel === "--" ? "-" : tel;
+
+        cancelDeliveryEdit();
+    }
+
+    function toggleAgreeAll(){
+        const agreeAll = document.getElementById("agreeAll");
+        const checks = document.querySelectorAll(".agree-check");
+
+        checks.forEach(check => {
+            check.checked = agreeAll.checked;
+        });
+    }
+
+    function numberFormat(num){
+        return Number(num).toLocaleString();
+    }
+
+    function getMileageNumber(){
+        const text = document.getElementById("myMileage").innerText;
+        return Number(text.replaceAll(",", ""));
+    }
+
+    function calcFinalPrice(){
+        const originFinalPrice = Number(document.getElementById("originFinalPrice").value);
+        const myMileage = getMileageNumber();
+
+        let useMileage = Number(document.getElementById("useMileage").value);
+
+        if(isNaN(useMileage) || useMileage < 0){
+            useMileage = 0;
+        }
+
+        if(useMileage > myMileage){
+            alert("보유 마일리지보다 많이 사용할 수 없습니다.");
+            useMileage = myMileage;
+            document.getElementById("useMileage").value = useMileage;
+        }
+
+        if(useMileage > originFinalPrice){
+            useMileage = originFinalPrice;
+            document.getElementById("useMileage").value = useMileage;
+        }
+
+        const finalPrice = originFinalPrice - useMileage;
+
+        document.getElementById("discountText").innerText = "(-) " + numberFormat(useMileage) + "원";
+        document.getElementById("finalPriceText").innerText = numberFormat(finalPrice) + "원";
+    }
+
+    function useMileageBtn(){
+        calcFinalPrice();
+    }
+
+    function useAllMileage(){
+        const originFinalPrice = Number(document.getElementById("originFinalPrice").value);
+        const myMileage = getMileageNumber();
+
+        let useMileage = myMileage;
+
+        if(useMileage > originFinalPrice){
+            useMileage = originFinalPrice;
+        }
+
+        document.getElementById("useMileage").value = useMileage;
+        calcFinalPrice();
+    }
+
+    function openPrivacyModal(){
+        document.getElementById("privacyModal").style.display = "block";
+    }
+
+    function closePrivacyModal(){
+        document.getElementById("privacyModal").style.display = "none";
+    }
+
+    function getFinalPriceNumber(){
+        const text = document.getElementById("finalPriceText").innerText;
+        return Number(text.replaceAll(",", "").replace("원", "").trim());
+    }
+
+    function startPay(){
+        saveOrderInfo();
+        saveDeliveryInfo();
+        calcFinalPrice();
+
+        const valid = checkOrderForm();
+
+        if(!valid){
+            return;
+        }
+
+        const paymentMethod = document.getElementById("paymentMethod").value;
+
+        if(paymentMethod === "BANK"){
+            document.getElementById("orderForm").submit();
+            return;
+        }
+
+        const amount = getFinalPriceNumber();
+
+        if(amount <= 0){
+            alert("결제금액은 0원보다 커야 합니다.");
+            return;
+        }
+
+        const tossOrderId = "TOYSHOP_" + new Date().getTime();
+        const tossOrderName = "TOY-SHOP 상품 결제";
+        const customerName = document.getElementById("orderName").value.trim();
+
+        const orderName = encodeURIComponent(document.getElementById("orderName").value.trim());
+        const orderPhone = encodeURIComponent(document.getElementById("orderPhone").value.trim());
+        const receiverName = encodeURIComponent(document.getElementById("receiverName").value.trim());
+        const receiverPhone = encodeURIComponent(document.getElementById("receiverPhone").value.trim());
+        const address = encodeURIComponent(document.getElementById("address").value.trim());
+        const deliveryMessage = encodeURIComponent(
+            document.querySelector("select[name='deliveryMessage']").value
+        );
+        const useMileage = encodeURIComponent(document.getElementById("useMileage").value);
+
+        const successUrl =
+            window.location.origin
+            + "/toss/success"
+            + "?orderName=" + orderName
+            + "&orderPhone=" + orderPhone
+            + "&receiverName=" + receiverName
+            + "&receiverPhone=" + receiverPhone
+            + "&address=" + address
+            + "&deliveryMessage=" + deliveryMessage
+            + "&useMileage=" + useMileage;
+
+        tossPayments.requestPayment("카드", {
+            amount: amount,
+            orderId: tossOrderId,
+            orderName: tossOrderName,
+            customerName: customerName,
+            successUrl: successUrl,
+            failUrl: window.location.origin + "/toss/fail"
+        });
+    }
+
+    function checkOrderForm(){
+        const paymentMethod = document.getElementById("paymentMethod").value;
+
+        const orderName = document.getElementById("orderName").value.trim();
+        const orderPhone = document.getElementById("orderPhone").value.trim();
+        const receiverName = document.getElementById("receiverName").value.trim();
+        const receiverPhone = document.getElementById("receiverPhone").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const depositorName = document.getElementById("depositorName").value.trim();
+        const bankInfo = document.getElementById("bankInfo").value;
+        const checks = document.querySelectorAll(".agree-check");
+
+        if(orderName === ""){
+            alert("주문자명을 입력해 주세요.");
+            return false;
+        }
+
+        if(orderPhone === "" || orderPhone === "--"){
+            alert("주문자 연락처를 입력해 주세요.");
+            return false;
+        }
+
+        if(receiverName === ""){
+            alert("받는 사람을 입력해 주세요.");
+            return false;
+        }
+
+        if(receiverPhone === "" || receiverPhone === "--"){
+            alert("받는 사람 연락처를 입력해 주세요.");
+            return false;
+        }
+
+        if(address === ""){
+            alert("배송지 주소를 입력해 주세요.");
+            return false;
+        }
+
+        if(paymentMethod === "BANK"){
+            if(depositorName === ""){
+                alert("입금자명을 입력해 주세요.");
+                return false;
+            }
+
+            if(bankInfo === ""){
+                alert("은행을 선택해 주세요.");
+                return false;
+            }
+        }
+
+        for(const check of checks){
+            if(!check.checked){
+                alert("필수 약관에 동의해 주세요.");
+                return false;
+            }
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

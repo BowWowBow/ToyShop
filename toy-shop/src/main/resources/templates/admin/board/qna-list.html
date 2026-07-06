@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품문의관리 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        *{box-sizing:border-box;}
+        body{background:#fff;color:#333;}
+
+        .admin-wrap{
+            width:1200px;
+            margin:70px auto 100px;
+        }
+
+        .admin-title{
+            font-size:32px;
+            font-weight:bold;
+            text-align:center;
+            margin-bottom:25px;
+        }
+
+        .admin-menu{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin-bottom:20px;
+            flex-wrap:wrap;
+        }
+
+        .admin-menu a{
+            display:inline-block;
+            padding:11px 24px;
+            border:1px solid #ccc;
+            text-decoration:none;
+            color:#333;
+            font-size:14px;
+            background:white;
+        }
+
+        .admin-menu a.active{
+            background:#333;
+            color:white;
+            border-color:#333;
+        }
+
+        .board-tabs{
+            display:flex;
+            justify-content:center;
+            gap:8px;
+            margin-bottom:35px;
+            flex-wrap:wrap;
+        }
+
+        .board-tabs a{
+            display:inline-block;
+            padding:10px 22px;
+            border:1px solid #ddd;
+            text-decoration:none;
+            color:#444;
+            font-size:14px;
+            background:#fafafa;
+            border-radius:30px;
+        }
+
+        .board-tabs a.active{
+            background:#ffb400;
+            color:#111;
+            border-color:#ffb400;
+            font-weight:bold;
+        }
+
+        .admin-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:15px;
+            gap:12px;
+        }
+
+        .page-sub-title{
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        .top-info{
+            color:#777;
+            font-size:14px;
+        }
+
+        .table-scroll{
+            width:100%;
+            overflow-x:auto;
+        }
+
+        table{
+            width:100%;
+            min-width:860px;
+            border-collapse:collapse;
+            border-top:2px solid #333;
+        }
+
+        th{
+            background:#f7f7f7;
+            padding:14px 10px;
+            border-bottom:1px solid #ddd;
+            font-size:14px;
+            white-space:nowrap;
+        }
+
+        td{
+            padding:14px 10px;
+            border-bottom:1px solid #eee;
+            text-align:center;
+            font-size:14px;
+            vertical-align:middle;
+        }
+
+        .left{text-align:left;}
+
+        .title-link{
+            color:#222;
+            text-decoration:none;
+            font-weight:bold;
+            display:inline-block;
+            max-width:420px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            vertical-align:middle;
+        }
+
+        .title-link:hover{text-decoration:underline;}
+
+        .content-preview{
+            color:#777;
+            font-size:13px;
+            margin-top:5px;
+            max-width:460px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .badge{
+            display:inline-block;
+            padding:5px 12px;
+            border-radius:20px;
+            font-size:12px;
+            color:white;
+            font-weight:bold;
+            white-space:nowrap;
+        }
+
+        .waiting{background:#999;}
+        .done{background:#2f80ed;}
+
+        .answer-btn{
+            border:0;
+            background:#333;
+            color:white;
+            padding:7px 13px;
+            border-radius:18px;
+            font-size:12px;
+            cursor:pointer;
+            font-weight:bold;
+            white-space:nowrap;
+        }
+
+        .answer-btn:hover{
+            background:#111;
+        }
+
+        .answer-row{
+            display:none;
+            background:#fafafa;
+        }
+
+        .answer-cell{
+            padding:22px 28px;
+            text-align:left;
+            border-bottom:1px solid #ddd;
+        }
+
+        .answer-box-title{
+            font-size:15px;
+            font-weight:bold;
+            margin-bottom:10px;
+        }
+
+        .answer-original{
+            background:white;
+            border:1px solid #eee;
+            padding:14px;
+            border-radius:8px;
+            margin-bottom:14px;
+            color:#555;
+            line-height:1.6;
+        }
+
+        .answer-form textarea{
+            width:100%;
+            height:120px;
+            resize:vertical;
+            border:1px solid #ccc;
+            border-radius:8px;
+            padding:12px;
+            font-size:14px;
+            font-family:"Malgun Gothic", sans-serif;
+            outline:none;
+        }
+
+        .answer-form textarea:focus{
+            border-color:#ffb400;
+        }
+
+        .answer-actions{
+            display:flex;
+            justify-content:flex-end;
+            gap:8px;
+            margin-top:10px;
+        }
+
+        .submit-btn{
+            border:0;
+            background:#ffb400;
+            color:#111;
+            padding:9px 18px;
+            border-radius:6px;
+            font-size:13px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        .cancel-btn{
+            border:1px solid #ccc;
+            background:white;
+            color:#333;
+            padding:9px 18px;
+            border-radius:6px;
+            font-size:13px;
+            cursor:pointer;
+        }
+
+        .saved-answer{
+            margin-top:12px;
+            background:#fff;
+            border:1px solid #e0e0e0;
+            border-left:4px solid #2f80ed;
+            padding:12px;
+            border-radius:6px;
+            color:#333;
+            line-height:1.6;
+        }
+
+        .empty{
+            padding:60px 0;
+            text-align:center;
+            color:#777;
+        }
+
+        @media (max-width:1240px){
+            .admin-wrap{width:94%;}
+        }
+
+        @media (max-width:1024px){
+            .admin-wrap{
+                margin:45px auto 75px;
+            }
+
+            .table-scroll{
+                border-top:2px solid #333;
+            }
+
+            table{
+                border-top:none;
+            }
+        }
+
+        @media (max-width:768px){
+            .admin-title{
+                font-size:26px;
+            }
+
+            .admin-menu a{
+                flex:1 1 calc(50% - 10px);
+                text-align:center;
+            }
+
+            .board-tabs a{
+                flex:1 1 calc(33.333% - 8px);
+                text-align:center;
+                padding:10px 8px;
+            }
+
+            .admin-top{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+
+            .page-sub-title{
+                font-size:18px;
+            }
+
+            .top-info{
+                width:100%;
+                text-align:right;
+            }
+
+            th,td{
+                padding:11px 8px;
+                font-size:13px;
+            }
+
+            .title-link{
+                max-width:280px;
+            }
+
+            .content-preview{
+                max-width:320px;
+            }
+
+            .answer-cell{
+                padding:18px;
+            }
+        }
+
+        @media (max-width:480px){
+            .admin-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:35px auto 60px;
+            }
+
+            .admin-title{
+                font-size:22px;
+            }
+
+            .admin-menu a{
+                flex:1 1 100%;
+            }
+
+            .board-tabs{
+                gap:6px;
+            }
+
+            .board-tabs a{
+                font-size:12px;
+                padding:9px 6px;
+            }
+
+            table{
+                min-width:820px;
+            }
+
+            th,td{
+                font-size:12px;
+            }
+
+            .title-link{
+                max-width:220px;
+            }
+
+            .content-preview{
+                max-width:250px;
+                font-size:12px;
+            }
+
+            .answer-form textarea{
+                height:100px;
+                font-size:13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-wrap">
+
+    <div class="admin-title">관리자 페이지</div>
+
+    <div class="admin-menu">
+        <a href="/admin/product/list">상품관리</a>
+        <a href="/admin/product/edit-search">상품수정</a>
+        <a href="/admin/order/list">주문관리</a>
+        <a href="/admin/board/inquiry" class="active">게시글관리</a>
+        <a href="/admin/member/list">회원관리</a>
+    </div>
+
+    <div class="board-tabs">
+        <a href="/admin/board/inquiry">1:1 문의</a>
+        <a href="/admin/board/qna" class="active">상품문의</a>
+        <a href="/admin/board/review">상품후기</a>
+    </div>
+
+    <div class="admin-top">
+        <div class="page-sub-title">상품문의 전체 목록</div>
+        <div class="top-info">
+            전체 상품문의 <strong th:text="${#lists.size(qnaList)}">0</strong>건
+        </div>
+    </div>
+
+    <div class="table-scroll">
+        <table>
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>작성자</th>
+                <th>제목/내용</th>
+                <th>답변상태</th>
+                <th>작성일</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${#lists.isEmpty(qnaList)}">
+                <td colspan="6" class="empty">등록된 상품문의가 없습니다.</td>
+            </tr>
+
+            <th:block th:each="qna, stat : ${qnaList}">
+                <tr>
+                    <td th:text="${stat.count}">1</td>
+
+                    <td th:text="${qna.writer}">홍길동</td>
+
+                    <td class="left">
+                        <a class="title-link"
+                           th:href="@{/admin/board/qna/detail/{id}(id=${qna.id})}"
+                           th:text="${qna.title}">
+                        </a>
+
+                        <div class="content-preview" th:text="${qna.content}">
+                            상품문의 내용
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="badge"
+                              th:classappend="${qna.answerStatus == '답변완료' || qna.answerStatus == 'ANSWERED'} ? ' done' : ' waiting'"
+                              th:text="${qna.answerStatus}">답변대기</span>
+                    </td>
+
+                    <td th:text="${qna.createdAt}">2026-07-02</td>
+
+                    <td>
+                        <button type="button"
+                                class="answer-btn"
+                                th:onclick="'toggleAnswer(' + ${qna.id} + ')'"
+                                th:text="${qna.answerContent != null && !#strings.isEmpty(qna.answerContent)} ? '답변수정' : '답변하기'">
+                            답변하기
+                        </button>
+                    </td>
+                </tr>
+
+                <tr class="answer-row" th:id="'answerBox-' + ${qna.id}">
+                    <td colspan="6" class="answer-cell">
+
+                        <div class="answer-box-title">문의 내용</div>
+
+                        <div class="answer-original">
+                            <strong th:text="${qna.title}">문의 제목</strong>
+                            <br>
+                            <span th:text="${qna.content}">문의 내용</span>
+                        </div>
+
+                        <form class="answer-form"
+                              th:action="@{/admin/board/qna/answer}"
+                              method="post">
+
+                            <input type="hidden" name="id" th:value="${qna.id}">
+
+                            <div class="answer-box-title">관리자 답변</div>
+
+                            <textarea name="answerContent"
+                                      placeholder="회원에게 보낼 답변을 입력하세요."
+                                      required
+                                      th:text="${qna.answerContent}"></textarea>
+
+                            <div class="answer-actions">
+                                <button type="button"
+                                        class="cancel-btn"
+                                        th:onclick="'toggleAnswer(' + ${qna.id} + ')'">
+                                    닫기
+                                </button>
+
+                                <button type="submit" class="submit-btn">
+                                    답변등록
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="saved-answer"
+                             th:if="${qna.answerContent != null && !#strings.isEmpty(qna.answerContent)}">
+                            <strong>현재 등록된 답변</strong>
+                            <br>
+                            <span th:text="${qna.answerContent}">답변내용</span>
+                        </div>
+
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function toggleAnswer(id) {
+        const box = document.getElementById('answerBox-' + id);
+
+        if (!box) {
+            return;
+        }
+
+        if (box.style.display === 'table-row') {
+            box.style.display = 'none';
+        } else {
+            box.style.display = 'table-row';
+        }
+    }
+</script>
+
+</body>
+</html>

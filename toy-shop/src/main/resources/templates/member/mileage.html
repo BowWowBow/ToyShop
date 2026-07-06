@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마일리지 - TOY-SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Malgun Gothic", sans-serif;
+            background: #fff;
+            color: #333;
+        }
+
+        .mypage-wrap {
+            width: 1100px;
+            margin: 60px auto 100px;
+            display: flex;
+            gap: 60px;
+        }
+
+        .side-menu {
+            width: 180px;
+            flex-shrink:0;
+        }
+
+        .side-menu h2 {
+            font-size: 22px;
+            margin-bottom: 35px;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .menu-section h3 {
+            font-size: 16px;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        .menu-section a {
+            display: block;
+            font-size: 14px;
+            color: #777;
+            text-decoration: none;
+            margin: 8px 0;
+        }
+
+        .menu-section a:hover,
+        .menu-section a.active {
+            color: #111;
+            font-weight: bold;
+        }
+
+        .mileage-content {
+            flex: 1;
+            min-width:0;
+        }
+
+        .page-title {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .mileage-box {
+            border: 1px solid #ddd;
+            padding: 35px;
+            text-align: center;
+            margin-bottom: 35px;
+            background: #fafafa;
+        }
+
+        .mileage-box .label {
+            font-size: 15px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .mileage-box .point {
+            font-size: 34px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        .mileage-box .point span {
+            font-size: 18px;
+            margin-left: 4px;
+        }
+
+        .history-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 12px;
+        }
+
+        .mileage-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .mileage-table th {
+            border-bottom: 1px solid #333;
+            padding: 13px 8px;
+            font-size: 14px;
+            background: #fafafa;
+            white-space:nowrap;
+        }
+
+        .mileage-table td {
+            border-bottom: 1px solid #eee;
+            padding: 14px 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .plus {
+            color: #1d70b8;
+            font-weight: bold;
+        }
+
+        .minus {
+            color: #d33;
+            font-weight: bold;
+        }
+
+        .empty-box {
+            height: 180px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 15px;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1200px){
+            .mypage-wrap{
+                width:94%;
+                gap:35px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .mypage-wrap{
+                flex-direction:column;
+                margin:45px auto 75px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1 / -1;
+                margin-bottom:8px;
+                text-align:center;
+            }
+
+            .menu-section{
+                border:1px solid #eee;
+                border-radius:8px;
+                margin-bottom:0;
+                padding:14px;
+            }
+        }
+
+        @media (max-width:768px){
+            .mypage-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+
+            .menu-section{
+                padding:12px;
+            }
+
+            .menu-section h3{
+                font-size:14px;
+            }
+
+            .menu-section a{
+                font-size:13px;
+            }
+
+            .page-title{
+                font-size:25px;
+                margin-bottom:26px;
+            }
+
+            .mileage-box{
+                padding:28px 18px;
+                margin-bottom:28px;
+            }
+
+            .mileage-box .point{
+                font-size:29px;
+            }
+
+            .history-title{
+                font-size:16px;
+            }
+
+            .mileage-table{
+                display:block;
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+
+            .mileage-table th,
+            .mileage-table td{
+                padding:11px 8px;
+                font-size:13px;
+            }
+
+            .empty-box{
+                height:150px;
+                font-size:14px;
+            }
+        }
+
+        @media (max-width:480px){
+            .mypage-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .side-menu h2{
+                font-size:19px;
+            }
+
+            .page-title{
+                font-size:22px;
+            }
+
+            .mileage-box{
+                padding:24px 14px;
+            }
+
+            .mileage-box .label{
+                font-size:13px;
+            }
+
+            .mileage-box .point{
+                font-size:25px;
+            }
+
+            .mileage-box .point span{
+                font-size:15px;
+            }
+
+            .mileage-table th,
+            .mileage-table td{
+                padding:9px 7px;
+                font-size:12px;
+            }
+
+            .empty-box{
+                height:130px;
+                font-size:13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="mypage-wrap">
+
+    <aside class="side-menu">
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list">위시리스트</a>
+            <a href="/recent/list">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/change-password">
+                비밀번호 변경
+            </a>
+            <a href="/member/dormant">휴면 전환</a>
+        </div>
+    </aside>
+
+    <main class="mileage-content">
+
+        <h2 class="page-title">마일리지</h2>
+
+        <div class="mileage-box">
+            <div class="label">사용 가능한 마일리지</div>
+            <div class="point">
+                <span th:text="${#numbers.formatInteger(mileage, 3, 'COMMA')}">0</span>
+                <span>P</span>
+            </div>
+        </div>
+
+        <h3 class="history-title">마일리지 내역</h3>
+
+        <div class="empty-box" th:if="${historyList == null or #lists.isEmpty(historyList)}">
+            마일리지 내역이 없습니다.
+        </div>
+
+        <table class="mileage-table" th:if="${historyList != null and !#lists.isEmpty(historyList)}">
+            <thead>
+            <tr>
+                <th>일자</th>
+                <th>구분</th>
+                <th>내용</th>
+                <th>마일리지</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="history : ${historyList}">
+                <td th:text="${#temporals.format(history.createdAt, 'yyyy-MM-dd HH:mm')}">
+                    2026-06-06 12:00
+                </td>
+
+                <td th:switch="${history.type}">
+                    <span th:case="'JOIN'">회원가입</span>
+                    <span th:case="'ORDER'">구매적립</span>
+                    <span th:case="'USE'">사용</span>
+                    <span th:case="*">기타</span>
+                </td>
+
+                <td th:text="${history.description}">
+                    내용
+                </td>
+
+                <td th:class="${history.amount > 0 ? 'plus' : 'minus'}"
+                    th:text="${history.amount > 0 ? '+' + #numbers.formatInteger(history.amount, 3, 'COMMA') + 'P' : #numbers.formatInteger(history.amount, 3, 'COMMA') + 'P'}">
+                    +2,000P
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

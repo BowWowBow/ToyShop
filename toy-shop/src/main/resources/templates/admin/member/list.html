@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원관리 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .admin-wrap{
+            width:1200px;
+            margin:70px auto 100px;
+        }
+
+        .admin-title{
+            font-size:32px;
+            font-weight:bold;
+            text-align:center;
+            margin-bottom:25px;
+        }
+
+        .admin-menu{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin-bottom:35px;
+        }
+
+        .admin-menu a{
+            display:inline-block;
+            padding:11px 24px;
+            border:1px solid #ccc;
+            text-decoration:none;
+            color:#333;
+            font-size:14px;
+            background:white;
+        }
+
+        .admin-menu a.active{
+            background:#333;
+            color:white;
+            border-color:#333;
+        }
+
+        .admin-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-end;
+            margin-bottom:15px;
+        }
+
+        .date-form{
+            display:flex;
+            gap:6px;
+            align-items:center;
+        }
+
+        .date-form input{
+            height:38px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            font-size:14px;
+        }
+
+        .date-form button,
+        .date-form a{
+            height:38px;
+            line-height:38px;
+            padding:0 15px;
+            border:none;
+            background:#333;
+            color:white;
+            text-decoration:none;
+            font-size:13px;
+            cursor:pointer;
+        }
+
+        .date-form a{
+            background:#777;
+        }
+
+        .date-wave{
+            color:#777;
+            font-size:14px;
+        }
+
+        .top-info{
+            color:#777;
+            font-size:14px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:2px solid #333;
+        }
+
+        th{
+            background:#f7f7f7;
+            padding:14px 10px;
+            border-bottom:1px solid #ddd;
+            font-size:14px;
+        }
+
+        th a{
+            color:#222;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        th a:hover{
+            text-decoration:underline;
+        }
+
+        .sort-mark{
+            color:#ff7a00;
+            font-size:12px;
+            margin-left:3px;
+        }
+
+        td{
+            padding:14px 10px;
+            border-bottom:1px solid #eee;
+            text-align:center;
+            font-size:14px;
+        }
+
+        .badge{
+            display:inline-block;
+            padding:5px 12px;
+            border-radius:20px;
+            font-size:12px;
+            color:white;
+            font-weight:bold;
+        }
+
+        .admin{
+            background:#333;
+        }
+
+        .user{
+            background:#2f80ed;
+        }
+
+        .normal{
+            background:#00a86b;
+        }
+
+        .stop{
+            background:#999;
+        }
+
+        .empty{
+            padding:60px 0;
+            text-align:center;
+            color:#777;
+        }
+
+        .dash{
+            color:#999;
+            font-weight:bold;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1024px){
+            .admin-wrap{
+                width:95%;
+                margin:40px auto 70px;
+            }
+
+            .admin-top{
+                flex-direction:column;
+                align-items:stretch;
+                gap:15px;
+            }
+
+            .date-form{
+                flex-wrap:wrap;
+            }
+
+            .top-info{
+                text-align:right;
+            }
+
+            table{
+                display:block;
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+        }
+
+        @media (max-width:768px){
+            .admin-title{
+                font-size:26px;
+            }
+
+            .admin-menu{
+                flex-wrap:wrap;
+            }
+
+            .admin-menu a{
+                flex:1 1 calc(50% - 10px);
+                text-align:center;
+            }
+
+            .date-form input,
+            .date-form button,
+            .date-form a{
+                width:100%;
+            }
+
+            .date-wave{
+                display:none;
+            }
+
+            th,td{
+                padding:10px 8px;
+                font-size:13px;
+            }
+        }
+
+        @media (max-width:480px){
+            .admin-title{
+                font-size:22px;
+            }
+
+            .admin-menu a{
+                flex:1 1 100%;
+            }
+
+            th,td{
+                font-size:12px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-wrap">
+
+    <div class="admin-title">관리자 페이지</div>
+
+    <div class="admin-menu">
+        <a href="/admin/product/list">상품관리</a>
+        <a href="/admin/product/edit-search">상품수정</a>
+        <a href="/admin/order/list">주문관리</a>
+        <a href="/admin/board/inquiry">게시글관리</a>
+        <a href="/admin/member/list" class="active">회원관리</a>
+    </div>
+
+    <div class="admin-top">
+        <form class="date-form" action="/admin/member/list" method="get">
+            <input type="date" name="startDate" th:value="${startDate}">
+            <span class="date-wave">~</span>
+            <input type="date" name="endDate" th:value="${endDate}">
+
+            <input type="hidden" name="sort" th:value="${sort}">
+            <input type="hidden" name="dir" th:value="${dir}">
+
+            <button type="submit">기간조회</button>
+            <a href="/admin/member/list">전체</a>
+        </form>
+
+        <div class="top-info">
+            전체 회원 <strong th:text="${memberCount}">0</strong>명
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='id', dir=${sort == 'id' ? nextDir : 'asc'})}">
+                    번호
+                    <span class="sort-mark" th:if="${sort == 'id'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='loginId', dir=${sort == 'loginId' ? nextDir : 'asc'})}">
+                    아이디
+                    <span class="sort-mark" th:if="${sort == 'loginId'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='name', dir=${sort == 'name' ? nextDir : 'asc'})}">
+                    이름
+                    <span class="sort-mark" th:if="${sort == 'name'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='phone', dir=${sort == 'phone' ? nextDir : 'asc'})}">
+                    연락처
+                    <span class="sort-mark" th:if="${sort == 'phone'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='email', dir=${sort == 'email' ? nextDir : 'asc'})}">
+                    이메일
+                    <span class="sort-mark" th:if="${sort == 'email'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='totalOrderAmount', dir=${sort == 'totalOrderAmount' ? nextDir : 'asc'})}">
+                    누적금액
+                    <span class="sort-mark" th:if="${sort == 'totalOrderAmount'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='mileage', dir=${sort == 'mileage' ? nextDir : 'asc'})}">
+                    마일리지
+                    <span class="sort-mark" th:if="${sort == 'mileage'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='role', dir=${sort == 'role' ? nextDir : 'asc'})}">
+                    권한
+                    <span class="sort-mark" th:if="${sort == 'role'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='status', dir=${sort == 'status' ? nextDir : 'asc'})}">
+                    상태
+                    <span class="sort-mark" th:if="${sort == 'status'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+
+            <th>
+                <a th:href="@{/admin/member/list(startDate=${startDate}, endDate=${endDate}, sort='createdAt', dir=${sort == 'createdAt' ? nextDir : 'asc'})}">
+                    가입일
+                    <span class="sort-mark" th:if="${sort == 'createdAt'}" th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:if="${#lists.isEmpty(memberList)}">
+            <td colspan="10" class="empty">가입된 회원이 없습니다.</td>
+        </tr>
+
+        <tr th:each="member, stat : ${memberList}">
+            <td th:text="${stat.count}">1</td>
+
+            <td th:text="${member.loginId}">test</td>
+
+            <td th:text="${member.name}">홍길동</td>
+
+            <td th:text="${member.phone}">010-0000-0000</td>
+
+            <td th:text="${member.email}">test@test.com</td>
+
+            <td>
+                <span th:if="${member.role == 'ADMIN'}" class="dash">-</span>
+                <span th:unless="${member.role == 'ADMIN'}"
+                      th:text="${#numbers.formatInteger(member.totalOrderAmount, 3, 'COMMA') + '원'}">
+                    0원
+                </span>
+            </td>
+
+            <td>
+                <span th:if="${member.role == 'ADMIN'}" class="dash">-</span>
+                <span th:unless="${member.role == 'ADMIN'}"
+                      th:text="${#numbers.formatInteger(member.mileage, 3, 'COMMA') + 'P'}">
+                    0P
+                </span>
+            </td>
+
+            <td>
+                <span class="badge"
+                      th:classappend="${member.role == 'ADMIN'} ? ' admin' : ' user'"
+                      th:text="${member.role == 'ADMIN'} ? '관리자' : '일반회원'">
+                    일반회원
+                </span>
+            </td>
+
+            <td>
+                <span class="badge"
+                      th:classappend="${member.status == 'ACTIVE'} ? ' normal' : ' stop'"
+                      th:text="${member.status == 'ACTIVE'} ? '정상' : '중지'">
+                    정상
+                </span>
+            </td>
+
+            <td th:text="${member.createdAt}">2026-06-07</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

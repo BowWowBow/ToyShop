@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원정보 수정</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic",sans-serif;
+            background:#fff;
+            color:#333;
+        }
+
+        .edit-wrap{
+            width:1100px;
+            margin:70px auto 100px;
+        }
+
+        .page-title{
+            text-align:center;
+            font-size:32px;
+            font-weight:bold;
+            margin-bottom:70px;
+        }
+
+        .section-title{
+            font-size:24px;
+            margin-bottom:15px;
+        }
+
+        .section-desc{
+            font-size:13px;
+            color:#555;
+            margin-bottom:45px;
+        }
+
+        .form-title{
+            font-size:24px;
+            margin-bottom:18px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:1px solid #ddd;
+        }
+
+        th{
+            width:150px;
+            background:#f7f7f7;
+            text-align:left;
+            padding:14px 10px;
+            border-bottom:1px solid #ddd;
+            font-size:14px;
+            font-weight:normal;
+        }
+
+        th .check{
+            float:right;
+            color:#ff4d00;
+            font-weight:bold;
+        }
+
+        td{
+            padding:10px;
+            border-bottom:1px solid #ddd;
+            font-size:14px;
+        }
+
+        input{
+            height:34px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            box-sizing:border-box;
+            font-size:14px;
+        }
+
+        .input-sm{
+            width:90px;
+        }
+
+        .input-md{
+            width:220px;
+        }
+
+        .input-lg{
+            width:100%;
+            margin-top:6px;
+        }
+
+        .readonly{
+            background:#f3f3f3;
+        }
+
+        .zipcode-box{
+            display:flex;
+            gap:6px;
+            margin-bottom:6px;
+        }
+
+        .addr-btn{
+            height:34px;
+            border:1px solid #333;
+            background:white;
+            cursor:pointer;
+            padding:0 12px;
+        }
+
+        .gender-box{
+            display:flex;
+            gap:8px;
+        }
+
+        .gender-box label{
+            display:inline-block;
+            padding:8px 16px;
+            border:1px solid #ccc;
+            border-radius:20px;
+            cursor:pointer;
+        }
+
+        .gender-box input{
+            display:none;
+        }
+
+        .gender-box input:checked + span{
+            color:#fff;
+            background:#1e73d8;
+            border-radius:20px;
+            padding:8px 16px;
+            margin:-8px -16px;
+            display:inline-block;
+        }
+
+        .btn-area{
+            text-align:center;
+            margin-top:35px;
+        }
+
+        .submit-btn{
+            width:110px;
+            height:46px;
+            border:none;
+            background:#333;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        .cancel-btn{
+            display:inline-block;
+            width:110px;
+            height:46px;
+            line-height:46px;
+            border:1px solid #ddd;
+            color:#333;
+            text-decoration:none;
+            margin-left:4px;
+            font-size:16px;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1024px){
+            .edit-wrap{
+                width:92%;
+                margin:50px auto 70px;
+            }
+
+            .page-title{
+                font-size:28px;
+                margin-bottom:45px;
+            }
+
+            .section-title,
+            .form-title{
+                font-size:22px;
+            }
+        }
+
+        @media (max-width:768px){
+            .edit-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .page-title{
+                font-size:25px;
+                margin-bottom:30px;
+            }
+
+            .section-title,
+            .form-title{
+                font-size:20px;
+            }
+
+            .section-desc{
+                margin-bottom:25px;
+            }
+
+            table,
+            tbody,
+            tr,
+            th,
+            td{
+                display:block;
+                width:100%;
+            }
+
+            tr{
+                border-bottom:1px solid #ddd;
+                padding:10px 0;
+            }
+
+            th{
+                border-bottom:none;
+                background:#fff;
+                padding:8px 4px;
+            }
+
+            td{
+                border-bottom:none;
+                padding:5px 0 10px;
+            }
+
+            input,
+            .input-sm,
+            .input-md,
+            .input-lg{
+                width:100%;
+            }
+
+            .zipcode-box{
+                flex-direction:column;
+            }
+
+            .addr-btn{
+                width:100%;
+                height:40px;
+            }
+
+            .gender-box{
+                flex-wrap:wrap;
+            }
+
+            .gender-box label{
+                flex:1;
+                text-align:center;
+            }
+
+            .btn-area{
+                display:flex;
+                gap:8px;
+            }
+
+            .submit-btn,
+            .cancel-btn{
+                flex:1;
+                width:auto;
+                margin-left:0;
+            }
+        }
+
+        @media (max-width:480px){
+            .edit-wrap{
+                width:100%;
+                padding:0 14px;
+                box-sizing:border-box;
+            }
+
+            .page-title{
+                font-size:22px;
+            }
+
+            .section-title,
+            .form-title{
+                font-size:18px;
+            }
+
+            th,
+            td{
+                font-size:13px;
+            }
+
+            input{
+                font-size:13px;
+                height:40px;
+            }
+
+            .btn-area{
+                flex-direction:column;
+            }
+
+            .submit-btn,
+            .cancel-btn{
+                width:100%;
+                height:44px;
+                line-height:44px;
+                font-size:14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="edit-wrap">
+
+    <div class="page-title">회원정보 수정</div>
+
+    <div class="section-title">SNS 계정 사용</div>
+    <div class="section-desc">
+        사용하고 계신 SNS 또는 외부 계정으로 간편하게 로그인하여 쇼핑몰을 이용하실 수 있습니다.
+    </div>
+
+    <div class="form-title">회원정보</div>
+
+    <form action="/member/edit"
+          method="post"
+          id="editForm"
+          onsubmit="return checkForm();"
+          th:data-origin-email="${member.email}"
+          th:data-origin-phone="${member.phone}"
+          th:data-origin-zipcode="${member.zipcode}"
+          th:data-origin-address="${member.address}"
+          th:data-origin-address-detail="${member.addressDetail}"
+          th:data-origin-birth="${member.birth}"
+          th:data-origin-gender="${member.gender}">
+
+        <table>
+            <tr>
+                <th>아이디 <span class="check">✓</span></th>
+                <td>
+                    <input type="text"
+                           class="input-md readonly"
+                           th:value="${member.loginId}"
+                           readonly>
+                </td>
+            </tr>
+
+            <tr>
+                <th>비밀번호 <span class="check">✓</span></th>
+                <td>
+                    <input type="password"
+                           class="input-md"
+                           id="password"
+                           name="password"
+                           placeholder="비밀번호 입력">
+                </td>
+            </tr>
+
+            <tr>
+                <th>비밀번호 확인 <span class="check">✓</span></th>
+                <td>
+                    <input type="password"
+                           class="input-md"
+                           id="passwordConfirm"
+                           placeholder="비밀번호 다시 입력">
+                </td>
+            </tr>
+
+            <tr>
+                <th>이름 <span class="check">✓</span></th>
+                <td>
+                    <input type="text"
+                           class="input-md readonly"
+                           id="name"
+                           name="name"
+                           th:value="${member.name}"
+                           readonly>
+                </td>
+            </tr>
+
+            <tr>
+                <th>이메일 <span class="check">✓</span></th>
+                <td>
+                    <input type="text"
+                           class="input-md"
+                           id="email"
+                           name="email"
+                           th:value="${member.email}">
+                </td>
+            </tr>
+
+            <tr>
+                <th>휴대폰번호 <span class="check">✓</span></th>
+                <td>
+                    <input type="text"
+                           class="input-md"
+                           id="phone"
+                           name="phone"
+                           th:value="${member.phone}">
+                </td>
+            </tr>
+
+            <tr>
+                <th>주소 <span class="check">✓</span></th>
+                <td>
+                    <div class="zipcode-box">
+                        <input type="text"
+                               id="zipcode"
+                               class="input-sm"
+                               name="zipcode"
+                               th:value="${member.zipcode}"
+                               readonly>
+
+                        <button type="button"
+                                class="addr-btn"
+                                onclick="searchAddress()">
+                            주소찾기
+                        </button>
+                    </div>
+
+                    <input type="text"
+                           id="address"
+                           class="input-lg"
+                           name="address"
+                           th:value="${member.address}"
+                           readonly>
+
+                    <input type="text"
+                           id="addressDetail"
+                           class="input-lg"
+                           name="addressDetail"
+                           th:value="${member.addressDetail}"
+                           placeholder="상세주소 입력">
+                </td>
+            </tr>
+
+            <tr>
+                <th>생년월일 <span class="check">✓</span></th>
+                <td>
+                    <input type="text"
+                           class="input-md"
+                           id="birth"
+                           name="birth"
+                           th:value="${member.birth}">
+                </td>
+            </tr>
+
+            <tr>
+                <th>성별 <span class="check">✓</span></th>
+                <td>
+                    <div class="gender-box">
+                        <label>
+                            <input type="radio"
+                                   name="gender"
+                                   value="남성"
+                                   th:checked="${member.gender == '남성'}">
+                            <span>남성</span>
+                        </label>
+
+                        <label>
+                            <input type="radio"
+                                   name="gender"
+                                   value="여성"
+                                   th:checked="${member.gender == '여성'}">
+                            <span>여성</span>
+                        </label>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="btn-area">
+            <button type="submit" class="submit-btn">확인</button>
+            <a href="/member/mypage" class="cancel-btn">취소</a>
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<script>
+    function searchAddress() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                document.getElementById("zipcode").value = data.zonecode;
+                document.getElementById("address").value = data.roadAddress;
+                document.getElementById("addressDetail").focus();
+            }
+        }).open();
+    }
+
+    function getGenderValue() {
+        const checkedGender = document.querySelector("input[name='gender']:checked");
+        return checkedGender ? checkedGender.value : "";
+    }
+
+    function checkForm() {
+        const form = document.getElementById("editForm");
+
+        const password = document.getElementById("password").value.trim();
+        const passwordConfirm = document.getElementById("passwordConfirm").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const zipcode = document.getElementById("zipcode").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const addressDetail = document.getElementById("addressDetail").value.trim();
+        const birth = document.getElementById("birth").value.trim();
+        const gender = getGenderValue();
+
+        const originEmail = form.dataset.originEmail || "";
+        const originPhone = form.dataset.originPhone || "";
+        const originZipcode = form.dataset.originZipcode || "";
+        const originAddress = form.dataset.originAddress || "";
+        const originAddressDetail = form.dataset.originAddressDetail || "";
+        const originBirth = form.dataset.originBirth || "";
+        const originGender = form.dataset.originGender || "";
+
+        if (password === "") {
+            alert("비밀번호를 입력해주세요.");
+            document.getElementById("password").focus();
+            return false;
+        }
+
+        if (passwordConfirm === "") {
+            alert("비밀번호 확인을 입력해주세요.");
+            document.getElementById("passwordConfirm").focus();
+            return false;
+        }
+
+        if (password !== passwordConfirm) {
+            alert("비밀번호가 일치하지 않습니다.");
+            document.getElementById("passwordConfirm").focus();
+            return false;
+        }
+
+        if (email === "") {
+            alert("이메일을 입력해주세요.");
+            document.getElementById("email").focus();
+            return false;
+        }
+
+        if (phone === "") {
+            alert("휴대폰번호를 입력해주세요.");
+            document.getElementById("phone").focus();
+            return false;
+        }
+
+        if (zipcode === "") {
+            alert("우편번호를 입력해주세요.");
+            return false;
+        }
+
+        if (address === "") {
+            alert("주소를 입력해주세요.");
+            return false;
+        }
+
+        if (addressDetail === "") {
+            alert("상세주소를 입력해주세요.");
+            document.getElementById("addressDetail").focus();
+            return false;
+        }
+
+        if (birth === "") {
+            alert("생년월일을 입력해주세요.");
+            document.getElementById("birth").focus();
+            return false;
+        }
+
+        if (gender === "") {
+            alert("성별을 선택해주세요.");
+            return false;
+        }
+
+        const isChanged =
+            email !== originEmail ||
+            phone !== originPhone ||
+            zipcode !== originZipcode ||
+            address !== originAddress ||
+            addressDetail !== originAddressDetail ||
+            birth !== originBirth ||
+            gender !== originGender ||
+            password !== "";
+
+        if (!isChanged) {
+            alert("변경된 내용이 없습니다.");
+            return false;
+        }
+
+        alert("회원정보가 수정되었습니다.");
+        return true;
+    }
+</script>
+
+</body>
+</html>

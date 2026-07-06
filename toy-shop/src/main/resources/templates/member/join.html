@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .join-wrap{
+            width:430px;
+            margin:70px auto 80px;
+        }
+
+        .join-title{
+            text-align:center;
+            font-size:30px;
+            margin-bottom:45px;
+            font-weight:bold;
+        }
+
+        .check-all{
+            margin-bottom:15px;
+            font-size:16px;
+            font-weight:bold;
+        }
+
+        .agree-box{
+            border:1px solid #ddd;
+            margin-bottom:15px;
+        }
+
+        .agree-row{
+            height:44px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 12px;
+            border-bottom:1px solid #eee;
+            font-size:15px;
+        }
+
+        .agree-row:last-child{
+            border-bottom:none;
+        }
+
+        .agree-row button{
+            border:none;
+            background:none;
+            color:#333;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .agree-row button:hover{
+            text-decoration:underline;
+        }
+
+        .agree-sub{
+            padding:12px 20px;
+            display:flex;
+            gap:20px;
+            font-size:14px;
+            border-top:1px solid #eee;
+        }
+
+        input[type="checkbox"]{
+            width:16px;
+            height:16px;
+            vertical-align:middle;
+            margin-right:5px;
+        }
+
+        .age-check{
+            margin:18px 0 30px;
+            font-size:18px;
+        }
+
+        .required{
+            color:#2b5ea8;
+        }
+
+        .next-btn{
+            width:100%;
+            height:50px;
+            border:none;
+            background:#3f3f3f;
+            color:white;
+            font-size:17px;
+            cursor:pointer;
+        }
+
+        .next-btn:hover{
+            background:#222;
+        }
+
+        .modal-bg{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,.45);
+            z-index:1000;
+        }
+
+        .modal{
+            width:820px;
+            height:820px;
+            background:white;
+            position:absolute;
+            left:50%;
+            top:50%;
+            transform:translate(-50%, -50%);
+            padding:30px;
+        }
+
+        .modal-title{
+            font-size:28px;
+            margin-bottom:30px;
+            font-weight:400;
+        }
+
+        .modal-close{
+            position:absolute;
+            right:25px;
+            top:20px;
+            font-size:42px;
+            cursor:pointer;
+            color:#777;
+            font-weight:300;
+        }
+
+        .modal-content{
+            height:640px;
+            overflow-y:auto;
+            line-height:1.8;
+            color:#666;
+            font-size:15px;
+            padding-right:18px;
+        }
+
+        .modal-content p{
+            margin-bottom:18px;
+        }
+
+        .modal-content .space{
+            height:25px;
+        }
+
+        .modal-btn{
+            width:100%;
+            height:54px;
+            margin-top:20px;
+            border:none;
+            background:#999;
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:900px){
+            .join-wrap{
+                width:92%;
+                margin:50px auto 70px;
+            }
+
+            .modal{
+                width:92%;
+                height:85vh;
+                padding:20px;
+                box-sizing:border-box;
+            }
+
+            .modal-title{
+                font-size:24px;
+            }
+
+            .modal-content{
+                height:calc(85vh - 150px);
+                font-size:14px;
+            }
+        }
+
+        @media (max-width:768px){
+            .join-title{
+                font-size:26px;
+                margin-bottom:30px;
+            }
+
+            .agree-row{
+                height:auto;
+                padding:12px;
+                gap:10px;
+                align-items:flex-start;
+            }
+
+            .agree-sub{
+                flex-direction:column;
+                gap:10px;
+            }
+
+            .age-check{
+                font-size:16px;
+            }
+
+            .next-btn{
+                height:48px;
+                font-size:16px;
+            }
+
+            .modal-close{
+                font-size:34px;
+                right:15px;
+            }
+        }
+
+        @media (max-width:480px){
+            .join-wrap{
+                width:100%;
+                padding:0 14px;
+                box-sizing:border-box;
+                margin:35px auto 50px;
+            }
+
+            .join-title{
+                font-size:22px;
+            }
+
+            .check-all,
+            .agree-row,
+            .agree-sub,
+            .age-check{
+                font-size:13px;
+            }
+
+            .agree-row{
+                flex-direction:column;
+            }
+
+            .agree-row button{
+                align-self:flex-end;
+            }
+
+            .modal{
+                width:100%;
+                height:100vh;
+                border-radius:0;
+            }
+
+            .modal-title{
+                font-size:20px;
+            }
+
+            .modal-content{
+                height:calc(100vh - 145px);
+                font-size:13px;
+            }
+
+            .modal-btn{
+                height:46px;
+                font-size:15px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="join-wrap">
+
+    <div class="join-title">약관 동의</div>
+
+    <div class="check-all">
+        <label>
+            <input type="checkbox" id="checkAll">
+            약관 전체 동의
+        </label>
+    </div>
+
+    <div class="agree-box">
+
+        <div class="agree-row">
+            <label>
+                <input type="checkbox" class="agree required-check">
+                쇼핑몰 이용약관 <span class="required">(필수)</span>
+            </label>
+            <button type="button" onclick="openModal('terms')">보기</button>
+        </div>
+
+        <div class="agree-row">
+            <label>
+                <input type="checkbox" class="agree required-check">
+                개인정보 수집 및 이용 <span class="required">(필수)</span>
+            </label>
+            <button type="button" onclick="openModal('privacy')">보기</button>
+        </div>
+
+        <div class="agree-row">
+            <label>
+                <input type="checkbox" class="agree">
+                개인정보 수집 및 이용 <span>(선택)</span>
+            </label>
+            <button type="button" onclick="openModal('optional')">보기</button>
+        </div>
+
+        <div class="agree-row">
+            <label>
+                <input type="checkbox" class="agree">
+                마케팅 및 광고 활용 동의 <span>(선택)</span>
+            </label>
+            <button type="button" onclick="openModal('marketing')">보기</button>
+        </div>
+
+        <div class="agree-sub">
+            <label><input type="checkbox" class="agree"> 이메일 수신</label>
+            <label><input type="checkbox" class="agree"> SMS 수신</label>
+        </div>
+
+    </div>
+
+    <div class="age-check">
+        <label>
+            <input type="checkbox" id="ageCheck">
+            만 14세 이상입니다. <span class="required">(필수)</span>
+        </label>
+    </div>
+
+    <button type="button" class="next-btn" onclick="goNext()">다음 단계</button>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<div class="modal-bg" id="agreeModal">
+    <div class="modal">
+        <div class="modal-close" onclick="closeModal()">×</div>
+        <div class="modal-title" id="modalTitle">쇼핑몰 이용약관</div>
+        <div class="modal-content" id="modalContent"></div>
+        <button type="button" class="modal-btn" onclick="closeModal()">확인</button>
+    </div>
+</div>
+
+<script>
+    const checkAll = document.getElementById("checkAll");
+    const agreeChecks = document.querySelectorAll(".agree");
+
+    checkAll.addEventListener("change", function(){
+        agreeChecks.forEach(function(chk){
+            chk.checked = checkAll.checked;
+        });
+    });
+
+    agreeChecks.forEach(function(chk){
+        chk.addEventListener("change", function(){
+            checkAll.checked = Array.from(agreeChecks).every(function(item){
+                return item.checked;
+            });
+        });
+    });
+
+    function goNext(){
+        const requiredChecks = document.querySelectorAll(".required-check");
+        const ageCheck = document.getElementById("ageCheck");
+
+        for(let i = 0; i < requiredChecks.length; i++){
+            if(!requiredChecks[i].checked){
+                alert("필수 약관에 동의해주세요.");
+                return;
+            }
+        }
+
+        if(!ageCheck.checked){
+            alert("만 14세 이상 여부를 확인해주세요.");
+            return;
+        }
+
+        location.href = "/member/join-form";
+    }
+
+    function openModal(type){
+        const modal = document.getElementById("agreeModal");
+        const title = document.getElementById("modalTitle");
+        const content = document.getElementById("modalContent");
+
+        if(type === "terms"){
+            title.innerText = "쇼핑몰 이용약관";
+            content.innerHTML = `
+                <p>전자상거래(인터넷사이버몰) 표준약관</p>
+                <p>표준약관 제10023호<br>(2015. 6. 26. 개정)</p>
+                <div class="space"></div>
+                <p>제1조(목적) 이 약관은 TOY-SHOP이 운영하는 인터넷 쇼핑몰에서 제공하는 인터넷 관련 서비스를 이용함에 있어 쇼핑몰과 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+                <p>제2조(정의)</p>
+                <p>① 쇼핑몰이란 회사가 재화 또는 용역을 이용자에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 재화 등을 거래할 수 있도록 설정한 가상의 영업장을 말합니다.</p>
+                <p>② 이용자란 쇼핑몰에 접속하여 이 약관에 따라 회사가 제공하는 서비스를 받는 회원 및 비회원을 말합니다.</p>
+                <p>③ 회원이라 함은 쇼핑몰에 회원등록을 한 자로서 계속적으로 쇼핑몰이 제공하는 서비스를 이용할 수 있는 자를 말합니다.</p>
+                <p>④ 비회원이라 함은 회원에 가입하지 않고 쇼핑몰이 제공하는 서비스를 이용하는 자를 말합니다.</p>
+                <p>제3조(약관 등의 명시와 설명 및 개정)</p>
+                <p>회사는 이 약관의 내용과 상호, 대표자 성명, 영업소 소재지 주소, 전화번호, 전자우편주소, 사업자등록번호 등을 이용자가 쉽게 알 수 있도록 초기 화면에 게시합니다.</p>
+                <p>제4조(서비스의 제공 및 변경)</p>
+                <p>회사는 재화 또는 용역에 대한 정보 제공, 구매계약의 체결, 결제, 배송, 주문조회, 고객상담 등의 서비스를 제공합니다.</p>
+                <p>제5조(서비스의 중단)</p>
+                <p>회사는 시스템 점검, 고장, 통신 두절 등의 사유가 발생한 경우 서비스 제공을 일시적으로 중단할 수 있습니다.</p>
+                <p>제6조(회원가입)</p>
+                <p>이용자는 회사가 정한 가입 양식에 따라 회원정보를 기입한 후 이 약관에 동의함으로써 회원가입을 신청합니다.</p>
+                <p>제7조(회원 탈퇴 및 자격 상실)</p>
+                <p>회원은 언제든지 탈퇴를 요청할 수 있으며, 회사는 관련 법령과 내부 정책에 따라 이를 처리합니다.</p>
+                <p>제8조(구매신청)</p>
+                <p>이용자는 상품 선택, 수량 선택, 배송지 입력, 결제방법 선택 등의 절차를 통해 상품 구매를 신청할 수 있습니다.</p>
+            `;
+        }
+
+        if(type === "privacy"){
+            title.innerText = "개인정보 수집 및 이용";
+            content.innerHTML = `
+                <p>TOY-SHOP은 고객님의 개인정보를 중요시하며, 정보통신망 이용촉진 및 정보보호에 관한 법률을 준수하고 있습니다.</p>
+                <div class="space"></div>
+                <p>[개인정보의 수집 및 이용목적]</p>
+                <p>회사는 수집한 개인정보를 다음의 목적을 위해 활용합니다.</p>
+                <p>ㅇ 서비스 제공에 관한 계약 이행 및 서비스 제공에 따른 요금정산</p>
+                <p>콘텐츠 제공, 구매 및 요금 결제, 물품배송 또는 청구지 등 발송, 금융거래 본인 인증 및 금융 서비스</p>
+                <p>ㅇ 회원 관리</p>
+                <p>회원제 서비스 이용에 따른 본인확인, 개인 식별, 불량회원의 부정 이용 방지, 가입 의사 확인, 연령확인, 불만처리 등 민원처리, 고지사항 전달</p>
+                <p>ㅇ 마케팅 및 광고에 활용</p>
+                <p>이벤트 등 광고성 정보 전달, 접속 빈도 파악 또는 회원의 서비스 이용에 대한 통계</p>
+                <div class="space"></div>
+                <p>[개인정보의 보유 및 이용기간]</p>
+                <p>원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.</p>
+                <p>보존 항목 : 이름, 로그인ID, 비밀번호, 자택 주소, 휴대전화번호, 이메일, 결제기록</p>
+                <p>보존 근거 : 전자상거래등에서의 소비자보호에 관한 법률</p>
+                <p>보존 기간 : 5년</p>
+                <p>표시/광고에 관한 기록 : 6개월</p>
+                <p>계약 또는 청약철회 등에 관한 기록 : 5년</p>
+                <p>대금결제 및 재화 등의 공급에 관한 기록 : 5년</p>
+                <p>소비자의 불만 또는 분쟁처리에 관한 기록 : 3년</p>
+                <div class="space"></div>
+                <p>[개인정보의 파기절차 및 방법]</p>
+                <p>전자적 파일형태로 저장된 개인정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제합니다.</p>
+                <p>종이에 출력된 개인정보는 분쇄기로 분쇄하거나 소각을 통하여 파기합니다.</p>
+            `;
+        }
+
+        if(type === "optional"){
+            title.innerText = "개인정보 수집 및 이용";
+            content.innerHTML = `
+                <p>TOY-SHOP은 더 나은 서비스 제공을 위해 선택 개인정보를 수집 및 이용할 수 있습니다.</p>
+                <div class="space"></div>
+                <p>[개인정보의 수집 및 이용목적]</p>
+                <p>ㅇ 맞춤형 서비스 제공</p>
+                <p>회원의 관심 상품, 구매 이력, 접속 빈도, 서비스 이용 기록 등을 바탕으로 맞춤형 상품 추천 및 쇼핑 편의 기능을 제공합니다.</p>
+                <p>ㅇ 이벤트 및 혜택 제공</p>
+                <p>이벤트 참여 확인, 쿠폰 지급, 사은품 발송, 할인 혜택 안내 등 회원 맞춤형 혜택 제공을 위해 활용합니다.</p>
+                <p>ㅇ 서비스 개선 및 통계 분석</p>
+                <p>회원의 서비스 이용 기록과 접속 빈도를 분석하여 쇼핑몰의 상품 구성, 화면 개선, 서비스 품질 향상에 활용합니다.</p>
+                <div class="space"></div>
+                <p>[수집하는 선택 개인정보 항목]</p>
+                <p>생년월일, 성별, 관심 카테고리, 추천인 정보, 이벤트 참여 기록, 서비스 이용 기록, 접속 로그 등</p>
+                <div class="space"></div>
+                <p>[동의 거부 권리]</p>
+                <p>선택 항목에 동의하지 않아도 회원가입 및 기본 서비스 이용에는 제한이 없습니다.</p>
+                <p>다만, 맞춤형 상품 추천, 이벤트 혜택 안내 등 일부 부가 서비스 이용이 제한될 수 있습니다.</p>
+            `;
+        }
+
+        if(type === "marketing"){
+            title.innerText = "마케팅 및 광고 활용 동의";
+            content.innerHTML = `
+                <p>TOY-SHOP은 이벤트, 할인쿠폰, 신상품, 기획전 정보를 안내하기 위해 마케팅 정보를 활용할 수 있습니다.</p>
+                <div class="space"></div>
+                <p>[마케팅 활용 항목]</p>
+                <p>이름, 휴대전화번호, 이메일, 서비스 이용 기록, 구매 내역, 관심 상품, 접속 로그, 쿠키 정보</p>
+                <div class="space"></div>
+                <p>[마케팅 정보 수신 방법]</p>
+                <p>회사는 이메일, SMS, 알림 메시지, 쇼핑몰 화면 안내 등을 통해 이벤트, 할인쿠폰, 신상품, 기획전 정보를 안내할 수 있습니다.</p>
+                <div class="space"></div>
+                <p>[개인정보의 보유 및 이용기간]</p>
+                <p>마케팅 활용 동의 정보는 회원 탈퇴 또는 동의 철회 시 지체 없이 파기합니다.</p>
+                <p>표시/광고에 관한 기록 : 6개월</p>
+                <p>계약 또는 청약철회 등에 관한 기록 : 5년</p>
+                <p>대금결제 및 재화 등의 공급에 관한 기록 : 5년</p>
+                <div class="space"></div>
+                <p>[동의 철회]</p>
+                <p>이용자는 언제든지 마케팅 및 광고 활용 동의를 철회할 수 있습니다.</p>
+                <p>동의 철회 후에는 광고성 정보가 발송되지 않으며, 기본적인 회원 서비스 이용에는 제한이 없습니다.</p>
+            `;
+        }
+
+        modal.style.display = "block";
+    }
+
+    function closeModal(){
+        document.getElementById("agreeModal").style.display = "none";
+    }
+</script>
+
+</body>
+</html>

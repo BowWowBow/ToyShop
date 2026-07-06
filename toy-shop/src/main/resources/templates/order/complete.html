@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문완료 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .complete-wrap{
+            width:760px;
+            margin:90px auto 120px;
+            text-align:center;
+        }
+
+        .complete-title{
+            font-size:36px;
+            font-weight:bold;
+            margin-bottom:14px;
+        }
+
+        .complete-message{
+            font-size:17px;
+            color:#666;
+            margin-bottom:35px;
+        }
+
+        .complete-card{
+            border:1px solid #ddd;
+            padding:35px 40px;
+            text-align:left;
+            background:#fff;
+        }
+
+        .order-no{
+            text-align:center;
+            padding-bottom:25px;
+            border-bottom:1px solid #eee;
+            margin-bottom:25px;
+        }
+
+        .order-no span{
+            display:block;
+            color:#777;
+            margin-bottom:8px;
+        }
+
+        .order-no strong{
+            font-size:20px;
+            color:#ff4d00;
+            word-break:break-all;
+        }
+
+        .info-section{
+            margin-bottom:25px;
+        }
+
+        .info-title{
+            font-size:18px;
+            font-weight:bold;
+            margin-bottom:12px;
+        }
+
+        .info-row{
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+            padding:9px 0;
+            font-size:15px;
+            border-bottom:1px solid #f0f0f0;
+        }
+
+        .info-row span:first-child{
+            color:#666;
+            flex-shrink:0;
+        }
+
+        .info-row strong{
+            text-align:right;
+            color:#222;
+            word-break:break-all;
+        }
+
+        .mileage-minus{
+            color:#1d70b8 !important;
+        }
+
+        .product-row{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            padding:14px 0;
+            border-bottom:1px solid #f0f0f0;
+        }
+
+        .product-info{
+            display:flex;
+            flex-direction:column;
+            gap:5px;
+        }
+
+        .product-info strong{
+            font-size:15px;
+            color:#222;
+            word-break:break-all;
+        }
+
+        .product-info span{
+            font-size:14px;
+            color:#777;
+        }
+
+        .product-price{
+            font-size:15px;
+            color:#222;
+            font-weight:bold;
+            white-space:nowrap;
+        }
+
+        .empty-product{
+            padding:16px;
+            text-align:center;
+            color:#999;
+            border:1px solid #eee;
+            background:#fafafa;
+            font-size:14px;
+        }
+
+        .price-total{
+            margin-top:18px;
+            padding-top:18px;
+            border-top:2px solid #333;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        .price-total strong{
+            color:#ff4d00;
+            font-size:26px;
+            white-space:nowrap;
+        }
+
+        .deposit-notice{
+            margin-top:25px;
+            padding:18px;
+            background:#fff8f3;
+            border:1px solid #ffd8c2;
+            font-size:15px;
+            line-height:1.7;
+            color:#444;
+        }
+
+        .deposit-notice strong{
+            color:#ff4d00;
+        }
+
+        .card-notice{
+            margin-top:25px;
+            padding:18px;
+            background:#f7f9ff;
+            border:1px solid #d6e0ff;
+            font-size:15px;
+            line-height:1.7;
+            color:#444;
+        }
+
+        .card-notice strong{
+            color:#2457d6;
+        }
+
+        .btn-area{
+            display:flex;
+            justify-content:center;
+            gap:12px;
+            margin-top:35px;
+        }
+
+        .btn{
+            width:180px;
+            height:48px;
+            border:none;
+            cursor:pointer;
+            font-size:15px;
+        }
+
+        .main-btn{
+            background:#333;
+            color:white;
+        }
+
+        .list-btn{
+            background:white;
+            border:1px solid #ccc;
+            color:#333;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:900px){
+            .complete-wrap{
+                width:92%;
+                margin:60px auto 85px;
+            }
+
+            .complete-title{
+                font-size:31px;
+            }
+
+            .complete-card{
+                padding:30px 26px;
+            }
+        }
+
+        @media (max-width:768px){
+            .complete-wrap{
+                width:94%;
+                margin:45px auto 70px;
+            }
+
+            .complete-title{
+                font-size:27px;
+            }
+
+            .complete-message{
+                font-size:15px;
+                margin-bottom:28px;
+            }
+
+            .complete-card{
+                padding:24px 20px;
+            }
+
+            .info-title{
+                font-size:16px;
+            }
+
+            .info-row{
+                flex-direction:column;
+                gap:5px;
+                font-size:14px;
+            }
+
+            .info-row strong{
+                text-align:left;
+            }
+
+            .product-row{
+                align-items:flex-start;
+            }
+
+            .price-total{
+                font-size:19px;
+            }
+
+            .price-total strong{
+                font-size:22px;
+            }
+
+            .deposit-notice,
+            .card-notice{
+                font-size:14px;
+            }
+
+            .btn{
+                height:46px;
+                font-size:14px;
+            }
+        }
+
+        @media (max-width:480px){
+            .complete-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:35px auto 55px;
+                box-sizing:border-box;
+            }
+
+            .complete-title{
+                font-size:23px;
+                line-height:1.4;
+            }
+
+            .complete-message{
+                font-size:13px;
+            }
+
+            .complete-card{
+                padding:20px 15px;
+            }
+
+            .order-no strong{
+                font-size:17px;
+            }
+
+            .info-section{
+                margin-bottom:22px;
+            }
+
+            .info-title{
+                font-size:15px;
+            }
+
+            .info-row{
+                font-size:13px;
+            }
+
+            .product-row{
+                flex-direction:column;
+                gap:6px;
+            }
+
+            .product-price{
+                white-space:normal;
+                font-size:14px;
+            }
+
+            .price-total{
+                flex-direction:column;
+                align-items:flex-start;
+                gap:8px;
+                font-size:17px;
+            }
+
+            .price-total strong{
+                font-size:20px;
+            }
+
+            .deposit-notice,
+            .card-notice{
+                padding:14px;
+                font-size:13px;
+            }
+
+            .btn-area{
+                flex-direction:column;
+                gap:8px;
+                margin-top:28px;
+            }
+
+            .btn{
+                width:100%;
+                height:44px;
+                font-size:13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="complete-wrap">
+
+    <div class="complete-title">주문이 완료되었습니다.</div>
+
+    <div class="complete-message" th:if="${order.paymentMethod == 'BANK'}">
+        입금 확인 후 배송이 준비됩니다.
+    </div>
+
+    <div class="complete-message" th:if="${order.paymentMethod == 'CARD'}">
+        결제가 완료되었습니다. 배송이 준비됩니다.
+    </div>
+
+    <div class="complete-card">
+
+        <div class="order-no">
+            <span>주문번호</span>
+            <strong th:text="${order.orderNo}">ORD20260604120000</strong>
+        </div>
+
+        <div class="info-section" th:if="${order.paymentMethod == 'BANK'}">
+            <div class="info-title">입금 정보</div>
+
+            <div class="info-row">
+                <span>입금자명</span>
+                <strong th:text="${order.depositorName}">정경수</strong>
+            </div>
+
+            <div class="info-row">
+                <span>입금계좌</span>
+                <strong th:text="${order.bankInfo}">국민은행 563445-12-125545 예금주: 토이샵</strong>
+            </div>
+        </div>
+
+        <div class="info-section" th:if="${order.paymentMethod == 'CARD'}">
+            <div class="info-title">결제 정보</div>
+
+            <div class="info-row">
+                <span>결제수단</span>
+                <strong>카드/간편결제</strong>
+            </div>
+
+            <div class="info-row">
+                <span>결제상태</span>
+                <strong>결제완료</strong>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">배송 정보</div>
+
+            <div class="info-row">
+                <span>받는 사람</span>
+                <strong th:text="${order.receiverName}">정경수</strong>
+            </div>
+
+            <div class="info-row">
+                <span>배송지</span>
+                <strong th:text="${order.address}">경상남도 김해시</strong>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">상품 내역</div>
+
+            <div th:if="${orderItemList == null or #lists.isEmpty(orderItemList)}"
+                 class="empty-product">
+                주문 상품 내역이 없습니다.
+            </div>
+
+            <div th:each="item : ${orderItemList}" class="product-row">
+                <div class="product-info">
+                    <strong th:text="${item.productName}">상품명</strong>
+                    <span th:text="'수량 ' + ${item.qty} + '개'">수량 1개</span>
+                </div>
+
+                <div class="product-price"
+                     th:text="${#numbers.formatInteger(item.price * item.qty, 3, 'COMMA') + '원'}">
+                    10,000원
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-title">결제 금액</div>
+
+            <div class="info-row">
+                <span>상품금액</span>
+                <strong th:text="${#numbers.formatInteger(order.totalPrice, 3, 'COMMA') + '원'}">43,000원</strong>
+            </div>
+
+            <div class="info-row">
+                <span>배송비</span>
+                <strong th:text="${#numbers.formatInteger(order.deliveryFee, 3, 'COMMA') + '원'}">3,000원</strong>
+            </div>
+
+            <div class="info-row"
+                 th:if="${(order.totalPrice + order.deliveryFee - order.finalPrice) > 0}">
+                <span>마일리지 사용</span>
+                <strong class="mileage-minus"
+                        th:text="'-' + ${#numbers.formatInteger(order.totalPrice + order.deliveryFee - order.finalPrice, 3, 'COMMA')} + '원'">
+                    -2,000원
+                </strong>
+            </div>
+
+            <div class="price-total">
+                <span th:if="${order.paymentMethod == 'BANK'}">총 입금금액</span>
+                <span th:if="${order.paymentMethod == 'CARD'}">총 결제금액</span>
+
+                <strong th:text="${#numbers.formatInteger(order.finalPrice, 3, 'COMMA') + '원'}">46,000원</strong>
+            </div>
+        </div>
+
+        <div class="deposit-notice" th:if="${order.paymentMethod == 'BANK'}">
+            선택하신 계좌로 <strong>총 입금금액</strong>을 입금해 주세요.<br>
+            입금자명이 다를 경우 입금 확인이 지연될 수 있습니다.
+        </div>
+
+        <div class="card-notice" th:if="${order.paymentMethod == 'CARD'}">
+            카드/간편결제로 <strong>결제가 완료</strong>되었습니다.<br>
+            결제 확인 후 배송이 준비됩니다.
+        </div>
+
+    </div>
+
+    <div class="btn-area">
+        <button type="button" class="btn main-btn" onclick="location.href='/'">
+            메인으로
+        </button>
+
+        <button type="button" class="btn list-btn" onclick="location.href='/product/list'">
+            쇼핑 계속하기
+        </button>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

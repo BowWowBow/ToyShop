@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>휴면회원 안내</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        .dormant-wrap{
+            width:500px;
+            margin:100px auto;
+            text-align:center;
+            border:1px solid #e5e5e5;
+            padding:50px;
+            border-radius:10px;
+            background:#fff;
+            box-sizing:border-box;
+        }
+
+        .dormant-title{
+            font-size:28px;
+            font-weight:700;
+            margin-bottom:20px;
+        }
+
+        .dormant-text{
+            font-size:16px;
+            color:#666;
+            line-height:1.8;
+            margin-bottom:35px;
+        }
+
+        .btn-area{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+        }
+
+        .btn{
+            width:150px;
+            height:48px;
+            border:none;
+            cursor:pointer;
+            border-radius:5px;
+            font-size:15px;
+        }
+
+        .btn-release{
+            background:#111;
+            color:white;
+        }
+
+        .btn-cancel{
+            background:#ddd;
+            color:#333;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:768px){
+            .dormant-wrap{
+                width:92%;
+                margin:70px auto;
+                padding:42px 32px;
+            }
+
+            .dormant-title{
+                font-size:25px;
+            }
+
+            .dormant-text{
+                font-size:15px;
+                margin-bottom:30px;
+            }
+
+            .btn-area{
+                gap:8px;
+            }
+
+            .btn-area form{
+                flex:1;
+            }
+
+            .btn{
+                width:100%;
+                height:46px;
+                font-size:14px;
+            }
+
+            .btn-cancel{
+                flex:1;
+            }
+        }
+
+        @media (max-width:480px){
+            .dormant-wrap{
+                width:100%;
+                margin:45px auto;
+                padding:34px 18px;
+                border-left:none;
+                border-right:none;
+                border-radius:0;
+            }
+
+            .dormant-title{
+                font-size:22px;
+                margin-bottom:16px;
+            }
+
+            .dormant-text{
+                font-size:14px;
+                line-height:1.7;
+                margin-bottom:26px;
+            }
+
+            .btn-area{
+                flex-direction:column;
+            }
+
+            .btn-area form,
+            .btn{
+                width:100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dormant-wrap">
+
+    <div class="dormant-title">
+        휴면회원 안내
+    </div>
+
+    <div class="dormant-text">
+        현재 계정은 휴면 상태입니다.<br>
+        휴면 해제 후 로그인하시겠습니까?
+    </div>
+
+    <div class="btn-area">
+
+        <form th:action="@{/member/dormant-release}" method="post">
+
+            <input type="hidden"
+                   name="id"
+                   th:value="${dormantMember.id}">
+
+            <button type="submit"
+                    class="btn btn-release">
+                휴면 해제
+            </button>
+
+        </form>
+
+        <button type="button"
+                class="btn btn-cancel"
+                onclick="location.href='/'">
+            취소
+        </button>
+
+    </div>
+
+</div>
+
+</body>
+</html>

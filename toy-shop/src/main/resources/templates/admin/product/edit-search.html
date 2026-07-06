@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품수정 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{ background:#fff; }
+
+        .admin-wrap{
+            width:760px;
+            margin:70px auto 100px;
+        }
+
+        .admin-title{
+            text-align:center;
+            font-size:32px;
+            font-weight:bold;
+            margin-bottom:25px;
+        }
+
+        .admin-menu{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin-bottom:35px;
+        }
+
+        .admin-menu a{
+            display:inline-block;
+            padding:11px 24px;
+            border:1px solid #ccc;
+            text-decoration:none;
+            color:#333;
+            font-size:14px;
+            background:white;
+        }
+
+        .admin-menu a.active{
+            background:#333;
+            color:white;
+            border-color:#333;
+        }
+
+        .search-area{
+            margin-bottom:30px;
+            position:relative;
+            border-top:2px solid #333;
+            padding-top:20px;
+        }
+
+        .search-label{
+            font-weight:bold;
+            margin-bottom:10px;
+            display:block;
+            font-size:15px;
+        }
+
+        .search-box-admin{
+            display:flex;
+            gap:8px;
+        }
+
+        .search-box-admin input{
+            flex:1;
+            height:44px;
+            border:1px solid #ddd;
+            padding:0 14px;
+            font-size:14px;
+            box-sizing:border-box;
+        }
+
+        .search-box-admin button{
+            width:110px;
+            height:44px;
+            border:none;
+            background:#333;
+            color:white;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .result-box{
+            position:absolute;
+            top:96px;
+            left:0;
+            width:calc(100% - 118px);
+            background:white;
+            border:1px solid #ddd;
+            z-index:20;
+            display:none;
+            max-height:260px;
+            overflow-y:auto;
+            box-shadow:0 8px 18px rgba(0,0,0,0.08);
+        }
+
+        .result-item{
+            padding:13px 15px;
+            border-bottom:1px solid #eee;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .result-item:hover,
+        .result-item.active{
+            background:#f7f7f7;
+        }
+
+        .result-empty{
+            padding:13px 15px;
+            color:#999;
+            font-size:14px;
+        }
+
+        .message{
+            background:#e8fff1;
+            border:1px solid #00c471;
+            color:#008a4e;
+            padding:13px;
+            margin-bottom:20px;
+            text-align:center;
+            font-weight:bold;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:2px solid #333;
+        }
+
+        th{
+            width:150px;
+            background:#f7f7f7;
+            text-align:left;
+            padding:14px 12px;
+            border-bottom:1px solid #ddd;
+            font-size:14px;
+        }
+
+        td{
+            padding:10px 12px;
+            border-bottom:1px solid #ddd;
+        }
+
+        input, select, textarea{
+            width:100%;
+            border:1px solid #ddd;
+            padding:10px;
+            font-size:14px;
+            outline:none;
+            box-sizing:border-box;
+        }
+
+        input, select{ height:40px; }
+
+        textarea{
+            height:140px;
+            resize:none;
+        }
+
+        .preview-box{
+            margin-top:10px;
+            width:170px;
+            height:170px;
+            border:1px solid #ddd;
+            background:#fafafa;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            color:#999;
+            font-size:13px;
+        }
+
+        .preview-box img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .btn-box{
+            display:flex;
+            gap:10px;
+            margin-top:25px;
+        }
+
+        .btn{
+            flex:1;
+            height:50px;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .save-btn{
+            background:#333;
+            color:white;
+        }
+
+        .cancel-btn{
+            background:white;
+            border:1px solid #aaa;
+            color:#333;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:900px){
+            .admin-wrap{
+                width:92%;
+                margin:45px auto 70px;
+            }
+
+            .admin-title{
+                font-size:28px;
+            }
+
+            .admin-menu{
+                flex-wrap:wrap;
+                gap:8px;
+                margin-bottom:28px;
+            }
+
+            .admin-menu a{
+                flex:1 1 calc(50% - 8px);
+                text-align:center;
+                padding:10px 12px;
+            }
+
+            .search-box-admin{
+                gap:6px;
+            }
+
+            .result-box{
+                width:100%;
+            }
+        }
+
+        @media (max-width:768px){
+            .admin-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .admin-title{
+                font-size:25px;
+                margin-bottom:20px;
+            }
+
+            .search-area{
+                padding-top:16px;
+                margin-bottom:24px;
+            }
+
+            .search-box-admin{
+                flex-direction:column;
+            }
+
+            .search-box-admin input,
+            .search-box-admin button{
+                width:100%;
+            }
+
+            .result-box{
+                position:static;
+                margin-top:8px;
+                max-height:220px;
+            }
+
+            table,
+            tbody,
+            tr,
+            th,
+            td{
+                display:block;
+                width:100%;
+            }
+
+            table{
+                border-top:2px solid #333;
+            }
+
+            tr{
+                border-bottom:1px solid #ddd;
+                padding:10px 0;
+            }
+
+            th{
+                border-bottom:none;
+                background:white;
+                padding:8px 4px 5px;
+                font-size:13px;
+                color:#333;
+            }
+
+            td{
+                border-bottom:none;
+                padding:5px 0 10px;
+            }
+
+            input,
+            select,
+            textarea{
+                font-size:13px;
+            }
+
+            .preview-box{
+                width:150px;
+                height:150px;
+            }
+
+            .btn-box{
+                flex-direction:column;
+                gap:8px;
+            }
+
+            .btn{
+                height:46px;
+                font-size:15px;
+            }
+        }
+
+        @media (max-width:480px){
+            .admin-title{
+                font-size:22px;
+            }
+
+            .admin-menu a{
+                flex:1 1 100%;
+                font-size:13px;
+            }
+
+            .search-label{
+                font-size:14px;
+            }
+
+            .search-box-admin input,
+            .search-box-admin button{
+                height:42px;
+                font-size:13px;
+            }
+
+            .result-item,
+            .result-empty{
+                font-size:13px;
+                padding:12px;
+            }
+
+            textarea{
+                height:120px;
+            }
+
+            .preview-box{
+                width:130px;
+                height:130px;
+            }
+
+            .message{
+                font-size:13px;
+                padding:11px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-wrap">
+
+    <div class="admin-title">관리자 페이지</div>
+
+    <div class="admin-menu">
+        <a href="/admin/product/list">상품관리</a>
+        <a href="/admin/product/edit-search" class="active">상품수정</a>
+        <a href="/admin/order/list">주문관리</a>
+        <a href="/admin/board/inquiry">게시글관리</a>
+        <a href="/admin/member/list">회원관리</a>
+    </div>
+
+    <div class="message" th:if="${message != null}" th:text="${message}">
+        수정되었습니다
+    </div>
+
+    <div class="search-area">
+        <label class="search-label">상품명 검색</label>
+
+        <div class="search-box-admin">
+            <input type="text"
+                   id="keyword"
+                   placeholder="상품명을 입력하면 자동으로 검색됩니다"
+                   autocomplete="off">
+
+            <button type="button" onclick="searchProduct()">검색</button>
+        </div>
+
+        <div id="resultBox" class="result-box"></div>
+    </div>
+
+    <form action="/admin/product/update" method="post">
+
+        <input type="hidden" name="id" id="productId"
+               th:value="${product != null ? product.id : ''}">
+
+        <table>
+            <tr>
+                <th>상품명</th>
+                <td>
+                    <input type="text"
+                           name="productName"
+                           id="productName"
+                           placeholder="상품명을 입력하세요"
+                           th:value="${product != null ? product.productName : ''}"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <th>카테고리</th>
+                <td>
+                    <select name="category" id="category" required>
+                        <option value="">카테고리 선택</option>
+                        <option value="초합금" th:selected="${product != null and product.category == '초합금'}">초합금</option>
+                        <option value="프라모델" th:selected="${product != null and product.category == '프라모델'}">프라모델</option>
+                        <option value="피규어" th:selected="${product != null and product.category == '피규어'}">피규어</option>
+                        <option value="레이싱카" th:selected="${product != null and product.category == '레이싱카'}">레이싱카</option>
+                        <option value="인형" th:selected="${product != null and product.category == '인형'}">인형</option>
+                        <option value="게임기" th:selected="${product != null and product.category == '게임기'}">게임기</option>
+                        <option value="기타" th:selected="${product != null and product.category == '기타'}">기타</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>가격</th>
+                <td>
+                    <input type="number"
+                           name="price"
+                           id="price"
+                           th:value="${product != null ? product.price : ''}"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <th>재고</th>
+                <td>
+                    <input type="number"
+                           name="stockQty"
+                           id="stockQty"
+                           th:value="${product != null ? product.stockQty : ''}"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <th>이미지 경로</th>
+                <td>
+                    <input type="text"
+                           name="imageUrl"
+                           id="imageUrl"
+                           th:value="${product != null ? product.imageUrl : ''}"
+                           oninput="changePreview()"
+                           required>
+
+                    <div class="preview-box">
+                        <img id="previewImg"
+                             th:if="${product != null}"
+                             th:src="${product.imageUrl}"
+                             alt="상품이미지">
+                        <span id="previewText" th:if="${product == null}">이미지 미리보기</span>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th>상품설명</th>
+                <td>
+                    <textarea name="description"
+                              id="description"
+                              placeholder="상품 설명을 입력하세요"
+                              th:text="${product != null ? product.description : ''}"></textarea>
+                </td>
+            </tr>
+        </table>
+
+        <div class="btn-box">
+            <button type="submit" class="btn save-btn" onclick="return checkProductSelected()">수정확정</button>
+            <button type="button" class="btn cancel-btn" onclick="location.href='/admin/product/list'">취소</button>
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    const keywordInput = document.getElementById("keyword");
+    const resultBox = document.getElementById("resultBox");
+
+    let searchTimer = null;
+    let currentIndex = -1;
+    let currentProducts = [];
+
+    keywordInput.addEventListener("input", function () {
+        clearTimeout(searchTimer);
+
+        const keyword = keywordInput.value.trim();
+
+        if (keyword.length === 0) {
+            resultBox.style.display = "none";
+            resultBox.innerHTML = "";
+            currentProducts = [];
+            currentIndex = -1;
+            return;
+        }
+
+        searchTimer = setTimeout(function () {
+            searchProduct();
+        }, 250);
+    });
+
+    keywordInput.addEventListener("keydown", function (e) {
+        const items = document.querySelectorAll(".result-item");
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+
+            if (items.length === 0) return;
+
+            currentIndex++;
+
+            if (currentIndex >= items.length) {
+                currentIndex = 0;
+            }
+
+            setActiveItem(items);
+        }
+
+        if (e.key === "ArrowUp") {
+            e.preventDefault();
+
+            if (items.length === 0) return;
+
+            currentIndex--;
+
+            if (currentIndex < 0) {
+                currentIndex = items.length - 1;
+            }
+
+            setActiveItem(items);
+        }
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+
+            if (currentIndex >= 0 && currentProducts[currentIndex]) {
+                selectProduct(currentProducts[currentIndex]);
+            } else if (currentProducts.length > 0) {
+                selectProduct(currentProducts[0]);
+            } else {
+                searchProduct();
+            }
+        }
+
+        if (e.key === "Escape") {
+            resultBox.style.display = "none";
+        }
+    });
+
+    function setActiveItem(items) {
+        items.forEach(item => item.classList.remove("active"));
+
+        if (items[currentIndex]) {
+            items[currentIndex].classList.add("active");
+        }
+    }
+
+    function searchProduct() {
+        const keyword = keywordInput.value.trim();
+
+        if (keyword.length === 0) {
+            resultBox.style.display = "none";
+            return;
+        }
+
+        fetch("/admin/product/search?keyword=" + encodeURIComponent(keyword))
+            .then(response => response.json())
+            .then(data => {
+                currentProducts = data;
+                currentIndex = -1;
+                resultBox.innerHTML = "";
+
+                if (data.length === 0) {
+                    resultBox.style.display = "block";
+                    resultBox.innerHTML = "<div class='result-empty'>검색 결과가 없습니다.</div>";
+                    return;
+                }
+
+                data.forEach(product => {
+                    const div = document.createElement("div");
+                    div.className = "result-item";
+
+                    div.innerHTML =
+                        "<strong>" + product.productName + "</strong>" +
+                        " / " + product.category +
+                        " / " + product.price.toLocaleString() + "원" +
+                        " / 재고 " + product.stockQty + "개";
+
+                    div.onclick = function () {
+                        selectProduct(product);
+                    };
+
+                    resultBox.appendChild(div);
+                });
+
+                resultBox.style.display = "block";
+            });
+    }
+
+    function selectProduct(product) {
+        loadProduct(product.id);
+        resultBox.style.display = "none";
+        keywordInput.value = product.productName;
+    }
+
+    function loadProduct(id) {
+        fetch("/admin/product/api/" + id)
+            .then(response => response.json())
+            .then(product => {
+                document.getElementById("productId").value = product.id;
+                document.getElementById("productName").value = product.productName;
+                document.getElementById("category").value = product.category;
+                document.getElementById("price").value = product.price;
+                document.getElementById("stockQty").value = product.stockQty;
+                document.getElementById("imageUrl").value = product.imageUrl;
+                document.getElementById("description").value = product.description || "";
+
+                setPreview(product.imageUrl);
+            });
+    }
+
+    function changePreview() {
+        const imageUrl = document.getElementById("imageUrl").value;
+        setPreview(imageUrl);
+    }
+
+    function setPreview(imageUrl) {
+        const previewBox = document.querySelector(".preview-box");
+        previewBox.innerHTML = "";
+
+        if (imageUrl && imageUrl.trim() !== "") {
+            const img = document.createElement("img");
+            img.id = "previewImg";
+            img.src = imageUrl;
+            img.alt = "상품이미지";
+            previewBox.appendChild(img);
+        } else {
+            const span = document.createElement("span");
+            span.id = "previewText";
+            span.innerText = "이미지 미리보기";
+            previewBox.appendChild(span);
+        }
+    }
+
+    function checkProductSelected() {
+        const productId = document.getElementById("productId").value;
+
+        if (!productId) {
+            alert("먼저 수정할 상품을 검색해서 선택하세요.");
+            return false;
+        }
+
+        alert("수정되었습니다.");
+        return true;
+    }
+
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest(".search-area")) {
+            resultBox.style.display = "none";
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>위시리스트 - TOY-SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        .wishlist-wrap {
+            width: 1100px;
+            margin: 60px auto 100px;
+            display: flex;
+            gap: 60px;
+        }
+
+        .side-menu {
+            width: 180px;
+        }
+
+        .side-menu h2 {
+            font-size: 22px;
+            margin-bottom: 35px;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .menu-section h3 {
+            font-size: 16px;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        .menu-section a {
+            display: block;
+            font-size: 14px;
+            color: #777;
+            text-decoration: none;
+            margin: 8px 0;
+        }
+
+        .menu-section a:hover,
+        .menu-section a.active {
+            color: #111;
+            font-weight: bold;
+        }
+
+        .wishlist-content {
+            flex: 1;
+        }
+
+        .page-title {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .wishlist-tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 25px;
+        }
+
+        .wishlist-tabs a {
+            width: 160px;
+            height: 44px;
+            line-height: 44px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            color: #777;
+            text-decoration: none;
+            font-size: 14px;
+            background: #fafafa;
+        }
+
+        .wishlist-tabs a.active {
+            color: #111;
+            font-weight: bold;
+            background: #fff;
+            border-color: #333;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
+        }
+
+        .top-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .select-delete-btn {
+            border: 1px solid #bbb;
+            background: #fff;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .wish-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 35px 25px;
+        }
+
+        .wish-item {
+            position: relative;
+        }
+
+        .wish-img-box {
+            width: 100%;
+            height: 230px;
+            border: 1px solid #eee;
+            background: #fafafa;
+            overflow: hidden;
+        }
+
+        .wish-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .wish-check {
+            margin-top: 10px;
+        }
+
+        .wish-name {
+            display: block;
+            margin-top: 6px;
+            font-size: 15px;
+            color: #222;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .wish-name:hover {
+            text-decoration: underline;
+        }
+
+        .wish-price {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .wish-mileage {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .wish-btns {
+            margin-top: 12px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .wish-btns button {
+            border: none;
+            padding: 6px 9px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .cart-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background: #999;
+            color: #fff;
+        }
+
+        .empty-box {
+            height: 250px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 15px;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 45px;
+        }
+
+        .pagination span {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            line-height: 34px;
+            border: 1px solid #333;
+            font-size: 14px;
+        }
+
+
+        /* ================= Responsive ================= */
+        @media (max-width:1200px){
+            .wishlist-wrap{width:94%;gap:35px;}
+            .wish-grid{gap:28px 18px;}
+        }
+        @media (max-width:1024px){
+            .wishlist-wrap{flex-direction:column;margin:45px auto 75px;}
+            .side-menu{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+            .side-menu h2{grid-column:1/-1;text-align:center;margin-bottom:8px;}
+            .menu-section{border:1px solid #eee;border-radius:8px;padding:14px;margin-bottom:0;}
+            .wish-grid{grid-template-columns:repeat(3,1fr);}
+        }
+        @media (max-width:768px){
+            .wishlist-wrap{width:94%;margin:35px auto 60px;}
+            .side-menu{grid-template-columns:repeat(2,1fr);}
+            .page-title{font-size:25px;}
+            .wishlist-tabs{overflow-x:auto;white-space:nowrap;}
+            .wishlist-tabs a{min-width:130px;width:auto;padding:0 12px;font-size:13px;}
+            .top-control{flex-wrap:wrap;font-size:13px;}
+            .wish-grid{grid-template-columns:repeat(2,1fr);gap:22px 14px;}
+            .wish-img-box{height:190px;}
+            .wish-btns{flex-direction:column;}
+            .wish-btns button{width:100%;}
+        }
+        @media (max-width:480px){
+            .wishlist-wrap{width:100%;padding:0 14px;box-sizing:border-box;margin:30px auto 50px;}
+            .side-menu{grid-template-columns:1fr;}
+            .page-title{font-size:22px;}
+            .wishlist-tabs a{min-width:115px;height:40px;line-height:40px;font-size:12px;}
+            .wish-grid{grid-template-columns:1fr;gap:18px;}
+            .wish-img-box{height:240px;}
+            .empty-box{height:170px;font-size:13px;}
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="wishlist-wrap">
+
+    <aside class="side-menu">
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list" class="active">위시리스트</a>
+            <a href="/recent/list">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/change-password">
+                비밀번호 변경
+            </a>
+            <a href="/member/dormant">휴면 전환</a>
+        </div>
+    </aside>
+
+    <main class="wishlist-content">
+
+        <h2 class="page-title">위시리스트</h2>
+
+        <div class="wishlist-tabs">
+            <a href="/cart">장바구니</a>
+
+            <a href="/wishlist/list" class="active">
+                위시리스트
+                <span th:text="${wishlist != null ? #lists.size(wishlist) : 0}">0</span>
+            </a>
+
+            <a href="/recent/list">최근 본 상품</a>
+        </div>
+
+        <div class="top-control" th:if="${wishlist != null and !#lists.isEmpty(wishlist)}">
+            <input type="checkbox" id="checkAll">
+            <label for="checkAll">전체선택</label>
+            <button type="button" class="select-delete-btn" onclick="deleteSelected()">선택삭제</button>
+        </div>
+
+        <div class="empty-box" th:if="${wishlist == null or #lists.isEmpty(wishlist)}">
+            위시리스트에 담긴 상품이 없습니다.
+        </div>
+
+        <div class="wish-grid" th:if="${wishlist != null and !#lists.isEmpty(wishlist)}">
+
+            <div class="wish-item" th:each="wish : ${wishlist}">
+
+                <a th:href="@{/product/detail/{id}(id=${wish.productId})}">
+                    <div class="wish-img-box">
+                        <img th:src="@{${wish.imageUrl}}" alt="상품이미지">
+                    </div>
+                </a>
+
+                <div class="wish-check">
+                    <input type="checkbox"
+                           class="wish-checkbox"
+                           th:value="${wish.productId}">
+                </div>
+
+                <a class="wish-name"
+                   th:href="@{/product/detail/{id}(id=${wish.productId})}"
+                   th:text="${wish.productName}">
+                    상품명
+                </a>
+
+                <div class="wish-price"
+                     th:text="${#numbers.formatInteger(wish.price, 3, 'COMMA') + '원'}">
+                    0원
+                </div>
+
+                <div class="wish-mileage"
+                     th:text="${(wish.price / 100) + '원 적립'}">
+                    0원 적립
+                </div>
+
+                <div class="wish-btns">
+                    <button type="button"
+                            class="cart-btn"
+                            th:onclick="|addCart(${wish.productId})|">
+                        장바구니 담기
+                    </button>
+
+                    <button type="button"
+                            class="delete-btn"
+                            th:onclick="|deleteWishlist(${wish.productId})|">
+                        삭제
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="pagination" th:if="${wishlist != null and !#lists.isEmpty(wishlist)}">
+            <span>1</span>
+        </div>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    const checkAll = document.getElementById("checkAll");
+
+    if (checkAll) {
+        checkAll.addEventListener("change", function () {
+            const checkboxes = document.querySelectorAll(".wish-checkbox");
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = checkAll.checked;
+            });
+        });
+    }
+
+    function deleteWishlist(productId) {
+        if (!confirm("위시리스트에서 삭제하시겠습니까?")) {
+            return;
+        }
+
+        fetch("/wishlist/delete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "itemId=" + productId
+        })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "login") {
+                    alert("로그인 후 이용해주세요.");
+                    location.href = "/member/login";
+                    return;
+                }
+
+                alert("위시리스트에서 삭제되었습니다.");
+                location.reload();
+            });
+    }
+
+    function deleteSelected() {
+        const checkedList = document.querySelectorAll(".wish-checkbox:checked");
+
+        if (checkedList.length === 0) {
+            alert("삭제할 상품을 선택해주세요.");
+            return;
+        }
+
+        if (!confirm("선택한 상품을 삭제하시겠습니까?")) {
+            return;
+        }
+
+        let count = 0;
+
+        checkedList.forEach(function (checkbox) {
+            fetch("/wishlist/delete", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "itemId=" + checkbox.value
+            })
+                .then(response => response.text())
+                .then(() => {
+                    count++;
+
+                    if (count === checkedList.length) {
+                        alert("선택한 상품이 삭제되었습니다.");
+                        location.reload();
+                    }
+                });
+        });
+    }
+
+    function addCart(productId) {
+
+        fetch("/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "productId=" + productId + "&qty=1"
+        })
+            .then(response => response.text())
+            .then(result => {
+
+                if(result === "login"){
+                    alert("로그인 후 이용해주세요.");
+                    location.href="/member/login";
+                    return;
+                }
+
+                alert("장바구니에 담았습니다.");
+            });
+    }
+</script>
+
+</body>
+</html>

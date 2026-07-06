@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.ProductQnaMapper">
+
+    <insert id="insertProductQna"
+            parameterType="com.example.toyshop.domain.ProductQna">
+        INSERT INTO product_qna (
+        member_id,
+        product_id,
+        writer,
+        title,
+        content,
+        answer_status
+        ) VALUES (
+        #{memberId},
+        #{productId},
+        #{writer},
+        #{title},
+        #{content},
+        #{answerStatus}
+        )
+    </insert>
+
+    <select id="findAll"
+            resultType="com.example.toyshop.domain.ProductQna">
+        SELECT
+        q.id,
+        q.member_id AS memberId,
+        q.product_id AS productId,
+        q.writer,
+        q.title,
+        q.content,
+        q.answer_status AS answerStatus,
+        q.answer_content AS answerContent,
+        q.answered_at AS answeredAt,
+        q.created_at AS createdAt
+        FROM product_qna q
+        ORDER BY q.id DESC
+    </select>
+
+    <select id="findById"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.ProductQna">
+        SELECT
+        q.id,
+        q.member_id AS memberId,
+        q.product_id AS productId,
+        q.writer,
+        q.title,
+        q.content,
+        q.answer_status AS answerStatus,
+        q.answer_content AS answerContent,
+        q.answered_at AS answeredAt,
+        q.created_at AS createdAt
+        FROM product_qna q
+        WHERE q.id = #{id}
+    </select>
+
+    <select id="findByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.ProductQna">
+        SELECT
+        q.id,
+        q.member_id AS memberId,
+        q.product_id AS productId,
+        p.product_name AS productName,
+        q.writer,
+        q.title,
+        q.content,
+        q.answer_status AS answerStatus,
+        q.created_at AS createdAt
+        FROM product_qna q
+        LEFT JOIN product p
+        ON q.product_id = p.id
+        WHERE q.member_id = #{memberId}
+        ORDER BY q.id DESC
+    </select>
+
+    <update id="updateAnswer"
+            parameterType="com.example.toyshop.domain.ProductQna">
+
+        UPDATE product_qna
+        SET
+        answer_content = #{answerContent},
+        answer_status = '답변완료',
+        answered_at = NOW()
+        WHERE id = #{id}
+
+    </update>
+
+</mapper>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원정보 입력 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .join-form-wrap{
+            width:620px;
+            margin:70px auto 80px;
+        }
+
+        .join-title{
+            text-align:center;
+            font-size:30px;
+            font-weight:bold;
+            margin-bottom:10px;
+        }
+
+        .join-desc{
+            text-align:center;
+            font-size:14px;
+            color:#777;
+            margin-bottom:35px;
+        }
+
+        .orange{
+            color:#ff5a00;
+            font-weight:bold;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:1px solid #ddd;
+        }
+
+        th{
+            width:140px;
+            background:#f7f7f7;
+            text-align:left;
+            padding:14px 12px;
+            font-size:14px;
+            border-bottom:1px solid #e5e5e5;
+        }
+
+        td{
+            padding:10px 12px;
+            border-bottom:1px solid #e5e5e5;
+        }
+
+        input, select{
+            height:34px;
+            border:1px solid #ddd;
+            padding:0 10px;
+            outline:none;
+            box-sizing:border-box;
+        }
+
+        .w-full{width:100%}
+        .w-mid{width:200px}
+        .w-small{width:75px}
+
+        .check{
+            color:#ff5a00;
+            font-weight:bold;
+            float:right;
+        }
+
+        .email-box,
+        .phone-box{
+            display:flex;
+            align-items:center;
+            gap:6px;
+        }
+
+        .addr-box input{
+            margin-bottom:8px;
+        }
+
+        .small-btn{
+            height:34px;
+            padding:0 14px;
+            border:1px solid #aaa;
+            background:white;
+            cursor:pointer;
+        }
+
+        .gender-btn{
+            display:inline-block;
+            padding:8px 16px;
+            border:1px solid #ddd;
+            border-radius:20px;
+            margin-right:6px;
+            cursor:pointer;
+            font-size:14px;
+            background:white;
+        }
+
+        .gender-btn input{
+            display:none;
+        }
+
+        .gender-btn:has(input:checked){
+            background:#333;
+            color:white;
+        }
+
+        .submit-btn{
+            width:100%;
+            height:50px;
+            margin-top:20px;
+            border:none;
+            background:#3f3f3f;
+            color:white;
+            font-size:17px;
+            cursor:pointer;
+        }
+
+        .submit-btn:hover{
+            background:#222;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:768px){
+            .join-form-wrap{
+                width:92%;
+                margin:50px auto 70px;
+            }
+
+            .join-title{
+                font-size:26px;
+            }
+
+            .join-desc{
+                margin-bottom:28px;
+            }
+
+            table,
+            tbody,
+            tr,
+            th,
+            td{
+                display:block;
+                width:100%;
+            }
+
+            tr{
+                border-bottom:1px solid #e5e5e5;
+                padding:10px 0;
+            }
+
+            th{
+                border-bottom:none;
+                background:#fff;
+                padding:8px 4px;
+                font-size:14px;
+            }
+
+            td{
+                border-bottom:none;
+                padding:5px 0 10px;
+            }
+
+            .check{
+                float:none;
+                margin-left:4px;
+            }
+
+            .w-mid,
+            .w-small,
+            .w-full{
+                width:100%;
+            }
+
+            input,
+            select,
+            .small-btn{
+                height:40px;
+                font-size:14px;
+            }
+
+            .email-box,
+            .phone-box{
+                flex-wrap:wrap;
+            }
+
+            .email-box input,
+            .email-box select{
+                flex:1 1 calc(50% - 8px);
+            }
+
+            .email-box span{
+                flex:0 0 auto;
+            }
+
+            .phone-box input{
+                flex:1;
+            }
+
+            .addr-box .w-small{
+                width:45%;
+            }
+
+            .small-btn{
+                width:50%;
+            }
+
+            .gender-btn{
+                margin-bottom:6px;
+            }
+
+            .submit-btn{
+                height:48px;
+                font-size:16px;
+            }
+        }
+
+        @media (max-width:480px){
+            .join-form-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:35px auto 55px;
+                box-sizing:border-box;
+            }
+
+            .join-title{
+                font-size:22px;
+            }
+
+            .join-desc{
+                font-size:13px;
+            }
+
+            th{
+                font-size:13px;
+            }
+
+            input,
+            select{
+                width:100%;
+                font-size:13px;
+            }
+
+            .email-box,
+            .phone-box{
+                flex-direction:column;
+                align-items:stretch;
+                gap:6px;
+            }
+
+            .email-box span,
+            .phone-box span{
+                display:none;
+            }
+
+            .email-box input,
+            .email-box select,
+            .phone-box input{
+                width:100%;
+                flex:none;
+            }
+
+            .addr-box .w-small,
+            .small-btn{
+                width:100%;
+            }
+
+            .gender-btn{
+                width:100%;
+                text-align:center;
+                box-sizing:border-box;
+            }
+
+            .submit-btn{
+                height:46px;
+                font-size:15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="join-form-wrap">
+
+    <div class="join-title">회원정보 입력</div>
+    <div class="join-desc">
+        <span class="orange">✔</span> 항목은 필수 입력 항목입니다.
+    </div>
+
+    <form action="/member/join-save" method="post" onsubmit="return checkForm()">
+
+        <table>
+            <tr>
+                <th>아이디 <span class="check">✔</span></th>
+                <td>
+                    <input type="text" name="loginId" id="loginId" class="w-mid"
+                           placeholder="공백 없는 영문/숫자 포함 6~20자">
+                </td>
+            </tr>
+
+            <tr>
+                <th>비밀번호 <span class="check">✔</span></th>
+                <td>
+                    <input type="password" name="password" id="password" class="w-mid">
+                </td>
+            </tr>
+
+            <tr>
+                <th>비밀번호 확인 <span class="check">✔</span></th>
+                <td>
+                    <input type="password" id="passwordCheck" class="w-mid">
+                </td>
+            </tr>
+
+            <tr>
+                <th>이름 <span class="check">✔</span></th>
+                <td>
+                    <input type="text" name="name" id="name" class="w-mid">
+                </td>
+            </tr>
+
+            <tr>
+                <th>이메일 <span class="check">✔</span></th>
+                <td>
+                    <div class="email-box">
+                        <input type="text" name="emailId" id="emailId" class="w-small">
+                        <span>@</span>
+                        <input type="text" name="emailDomain" id="emailDomain" class="w-small">
+                        <select onchange="selectEmail(this)">
+                            <option value="">직접입력</option>
+                            <option value="naver.com">naver.com</option>
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="daum.net">daum.net</option>
+                            <option value="kakao.com">kakao.com</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th>휴대폰번호 <span class="check">✔</span></th>
+                <td>
+                    <div class="phone-box">
+                        <input type="text" name="phone1" id="phone1" class="w-small" maxlength="3">
+                        <span>-</span>
+                        <input type="text" name="phone2" id="phone2" class="w-small" maxlength="4">
+                        <span>-</span>
+                        <input type="text" name="phone3" id="phone3" class="w-small" maxlength="4">
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th>주소 <span class="check">✔</span></th>
+                <td class="addr-box">
+                    <input type="text" name="zipcode" id="zipcode" class="w-small" readonly>
+                    <button type="button" class="small-btn" onclick="findAddress()">주소찾기</button>
+                    <input type="text" name="address1" id="address1" class="w-full" readonly>
+                    <input type="text" name="address2" id="address2" class="w-full" placeholder="상세주소 입력">
+                </td>
+            </tr>
+
+            <tr>
+                <th>생년월일 <span class="check">✔</span></th>
+                <td>
+                    <input type="text" name="birth" id="birth" class="w-mid" placeholder="예: 19900101">
+                </td>
+            </tr>
+
+            <tr>
+                <th>성별</th>
+                <td>
+                    <label class="gender-btn">
+                        <input type="radio" name="gender" value="M"> 남성
+                    </label>
+                    <label class="gender-btn">
+                        <input type="radio" name="gender" value="F"> 여성
+                    </label>
+                </td>
+            </tr>
+        </table>
+
+        <button type="submit" class="submit-btn">입력 완료</button>
+
+    </form>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    function selectEmail(select){
+        const emailDomain = document.getElementById("emailDomain");
+
+        emailDomain.value = select.value;
+
+        if(select.value !== ""){
+            emailDomain.readOnly = true;
+        }else{
+            emailDomain.readOnly = false;
+            emailDomain.focus();
+        }
+    }
+
+    function findAddress(){
+
+        new daum.Postcode({
+
+            oncomplete: function(data) {
+
+                document.getElementById("zipcode").value = data.zonecode;
+                document.getElementById("address1").value = data.address;
+                document.getElementById("address2").focus();
+
+            }
+
+        }).open();
+    }
+
+    function checkForm(){
+        const loginId = document.getElementById("loginId").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const passwordCheck = document.getElementById("passwordCheck").value.trim();
+        const name = document.getElementById("name").value.trim();
+        const emailId = document.getElementById("emailId").value.trim();
+        const emailDomain = document.getElementById("emailDomain").value.trim();
+        const phone1 = document.getElementById("phone1").value.trim();
+        const phone2 = document.getElementById("phone2").value.trim();
+        const phone3 = document.getElementById("phone3").value.trim();
+        const zipcode = document.getElementById("zipcode").value.trim();
+        const address1 = document.getElementById("address1").value.trim();
+        const address2 = document.getElementById("address2").value.trim();
+        const birth = document.getElementById("birth").value.trim();
+
+        if(loginId === ""){
+            alert("아이디를 입력해주세요.");
+            return false;
+        }
+
+        if(password === ""){
+            alert("비밀번호를 입력해주세요.");
+            return false;
+        }
+
+        if(password !== passwordCheck){
+            alert("비밀번호가 일치하지 않습니다.");
+            return false;
+        }
+
+        if(name === ""){
+            alert("이름을 입력해주세요.");
+            return false;
+        }
+
+        if(emailId === "" || emailDomain === ""){
+            alert("이메일을 입력해주세요.");
+            return false;
+        }
+
+        if(phone1 === "" || phone2 === "" || phone3 === ""){
+            alert("휴대폰번호를 입력해주세요.");
+            return false;
+        }
+
+        if(zipcode === "" || address1 === ""){
+            alert("주소찾기를 통해 주소를 입력해주세요.");
+            return false;
+        }
+
+        if(address2 === ""){
+            alert("상세주소를 입력해주세요.");
+            return false;
+        }
+
+        if(birth === ""){
+            alert("생년월일을 입력해주세요.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

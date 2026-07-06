@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.CartMapper">
+
+    <insert id="insertCart"
+            parameterType="com.example.toyshop.domain.Cart">
+        INSERT INTO cart (
+        member_id,
+        product_id,
+        qty
+        ) VALUES (
+        #{memberId},
+        #{productId},
+        #{qty}
+        )
+    </insert>
+
+    <select id="findById"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Cart">
+        SELECT
+        id,
+        member_id AS memberId,
+        product_id AS productId,
+        qty,
+        created_at AS createdAt
+        FROM cart
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByProductIdAndMemberId"
+            resultType="com.example.toyshop.domain.Cart">
+        SELECT
+        id,
+        member_id AS memberId,
+        product_id AS productId,
+        qty,
+        created_at AS createdAt
+        FROM cart
+        WHERE product_id = #{productId}
+        AND member_id = #{memberId}
+        LIMIT 1
+    </select>
+
+    <select id="findStockQtyByProductId"
+            parameterType="long"
+            resultType="int">
+        SELECT stock_qty
+        FROM product
+        WHERE id = #{productId}
+    </select>
+
+    <update id="increaseQty">
+        UPDATE cart
+        SET qty = qty + #{qty}
+        WHERE product_id = #{productId}
+        AND member_id = #{memberId}
+    </update>
+
+    <update id="updateQty">
+        UPDATE cart
+        SET qty = #{qty}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAllByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Cart">
+        SELECT
+        c.id,
+        c.member_id AS memberId,
+        c.product_id AS productId,
+        c.qty,
+        c.created_at AS createdAt,
+        p.product_name AS productName,
+        p.image_url AS imageUrl,
+        p.price,
+        p.stock_qty AS stockQty
+        FROM cart c
+        JOIN product p ON c.product_id = p.id
+        WHERE c.member_id = #{memberId}
+        ORDER BY c.id DESC
+    </select>
+
+    <delete id="deleteCart">
+        DELETE FROM cart
+        WHERE id = #{id}
+        AND member_id = #{memberId}
+    </delete>
+
+    <delete id="deleteAllByMemberId"
+            parameterType="long">
+        DELETE FROM cart
+        WHERE member_id = #{memberId}
+    </delete>
+
+</mapper>

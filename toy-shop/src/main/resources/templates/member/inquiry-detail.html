@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1문의 상세</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic",sans-serif;
+            background:#fff;
+            color:#333;
+        }
+
+        .mypage-wrap{
+            width:1100px;
+            margin:60px auto 100px;
+            display:flex;
+            gap:60px;
+        }
+
+        .side-menu{
+            width:180px;
+            flex-shrink:0;
+        }
+
+        .side-menu h2{
+            font-size:22px;
+            margin-bottom:35px;
+        }
+
+        .menu-section{
+            border-bottom:1px solid #eee;
+            margin-bottom:25px;
+            padding-bottom:15px;
+        }
+
+        .menu-section h3{
+            font-size:16px;
+            margin-bottom:12px;
+        }
+
+        .menu-section a{
+            display:block;
+            text-decoration:none;
+            color:#777;
+            margin:8px 0;
+            font-size:14px;
+        }
+
+        .menu-section a:hover,
+        .active{
+            color:#111 !important;
+            font-weight:bold;
+        }
+
+        .content{
+            flex:1;
+            min-width:0;
+        }
+
+        .page-title{
+            text-align:center;
+            font-size:40px;
+            font-weight:bold;
+            margin-bottom:40px;
+        }
+
+        .detail-box{
+            border-top:2px solid #333;
+        }
+
+        .detail-row{
+            display:flex;
+            border-bottom:1px solid #eee;
+        }
+
+        .detail-label{
+            width:130px;
+            background:#fafafa;
+            padding:15px;
+            font-weight:bold;
+            box-sizing:border-box;
+            flex-shrink:0;
+        }
+
+        .detail-value{
+            flex:1;
+            padding:15px;
+            box-sizing:border-box;
+            word-break:break-all;
+        }
+
+        .content-box{
+            min-height:220px;
+            white-space:pre-line;
+            line-height:1.7;
+        }
+
+        .answer-box{
+            background:#fffdf5;
+            border-left:4px solid #ffb400;
+        }
+
+        .answer-empty{
+            color:#999;
+        }
+
+        .answered-date{
+            display:block;
+            margin-top:10px;
+            font-size:12px;
+            color:#888;
+        }
+
+        .status{
+            display:inline-block;
+            padding:4px 10px;
+            background:#333;
+            color:white;
+            border-radius:12px;
+            font-size:12px;
+        }
+
+        .btn-area{
+            margin-top:20px;
+            text-align:right;
+        }
+
+        .btn-area a{
+            display:inline-block;
+            background:#333;
+            color:white;
+            text-decoration:none;
+            padding:10px 18px;
+            font-size:14px;
+        }
+
+        @media (max-width:1200px){
+            .mypage-wrap{
+                width:94%;
+                gap:35px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .mypage-wrap{
+                flex-direction:column;
+                margin:45px auto 75px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1 / -1;
+                margin-bottom:8px;
+                text-align:center;
+            }
+
+            .menu-section{
+                border:1px solid #eee;
+                border-radius:8px;
+                margin-bottom:0;
+                padding:14px;
+            }
+
+            .page-title{
+                font-size:34px;
+            }
+        }
+
+        @media (max-width:768px){
+            .mypage-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+
+            .menu-section{
+                padding:12px;
+            }
+
+            .menu-section h3{
+                font-size:14px;
+            }
+
+            .menu-section a{
+                font-size:13px;
+            }
+
+            .page-title{
+                font-size:29px;
+                margin-bottom:28px;
+            }
+
+            .detail-row{
+                flex-direction:column;
+            }
+
+            .detail-label{
+                width:100%;
+                padding:11px 12px;
+                border-bottom:1px solid #eee;
+            }
+
+            .detail-value{
+                width:100%;
+                padding:13px 12px;
+            }
+
+            .content-box{
+                min-height:180px;
+            }
+
+            .btn-area a{
+                width:100%;
+                text-align:center;
+                box-sizing:border-box;
+            }
+        }
+
+        @media (max-width:480px){
+            .mypage-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .side-menu h2{
+                font-size:19px;
+            }
+
+            .page-title{
+                font-size:24px;
+            }
+
+            .detail-label,
+            .detail-value{
+                font-size:13px;
+            }
+
+            .content-box{
+                min-height:150px;
+                line-height:1.6;
+            }
+
+            .status{
+                font-size:11px;
+                padding:4px 8px;
+            }
+
+            .btn-area a{
+                padding:11px 0;
+                font-size:13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="mypage-wrap">
+
+    <aside class="side-menu">
+
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list">위시리스트</a>
+            <a href="/recent/list">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry" class="active">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/dormant">회원 탈퇴</a>
+        </div>
+
+    </aside>
+
+    <main class="content">
+
+        <div class="page-title">1:1문의 상세</div>
+
+        <div class="detail-box">
+
+            <div class="detail-row">
+                <div class="detail-label">분류</div>
+                <div class="detail-value" th:text="${inquiry.category}">배송문의</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">제목</div>
+                <div class="detail-value" th:text="${inquiry.title}">제목</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">작성자</div>
+                <div class="detail-value" th:text="${inquiry.writer}">작성자</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">이메일</div>
+                <div class="detail-value" th:text="${inquiry.email}">email@test.com</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">답변상태</div>
+                <div class="detail-value">
+                    <span class="status" th:text="${inquiry.answerStatus}">답변대기</span>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">작성일</div>
+                <div class="detail-value" th:text="${inquiry.createdAt}">2026-06-05</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">내용</div>
+                <div class="detail-value content-box" th:text="${inquiry.content}">
+                    문의 내용
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">관리자 답변</div>
+
+                <div class="detail-value content-box answer-box"
+                     th:if="${inquiry.answerContent != null && !#strings.isEmpty(inquiry.answerContent)}">
+                    <div th:text="${inquiry.answerContent}">관리자 답변 내용</div>
+
+                    <span class="answered-date"
+                          th:if="${inquiry.answeredAt != null}"
+                          th:text="'답변일 : ' + ${inquiry.answeredAt}">
+                        답변일
+                    </span>
+                </div>
+
+                <div class="detail-value answer-empty"
+                     th:if="${inquiry.answerContent == null || #strings.isEmpty(inquiry.answerContent)}">
+                    아직 등록된 답변이 없습니다.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="btn-area">
+            <a href="/admin/board/inquiry">목록</a>
+        </div>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

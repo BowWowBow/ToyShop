@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.MemberMapper">
+
+    <insert id="insertMember"
+            parameterType="com.example.toyshop.domain.Member">
+
+        INSERT INTO member (
+        login_id,
+        password,
+        name,
+        phone,
+        email,
+        address,
+        zipcode,
+        address_detail,
+        birth,
+        gender,
+        role,
+        status
+        )
+        VALUES (
+        #{loginId},
+        #{password},
+        #{name},
+        #{phone},
+        #{email},
+        #{address},
+        #{zipcode},
+        #{addressDetail},
+        #{birth},
+        #{gender},
+        'USER',
+        'ACTIVE'
+        )
+
+    </insert>
+
+    <select id="findByLoginId"
+            parameterType="string"
+            resultType="com.example.toyshop.domain.Member">
+
+        SELECT
+        id,
+        login_id AS loginId,
+        password,
+        name,
+        phone,
+        email,
+        address,
+        zipcode,
+        address_detail AS addressDetail,
+        birth,
+        gender,
+        role,
+        status,
+        created_at AS createdAt
+        FROM member
+        WHERE login_id = #{loginId}
+
+    </select>
+
+    <select id="findById"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Member">
+
+        SELECT
+        id,
+        login_id AS loginId,
+        password,
+        name,
+        phone,
+        email,
+        address,
+        zipcode,
+        address_detail AS addressDetail,
+        birth,
+        gender,
+        role,
+        status,
+        created_at AS createdAt
+        FROM member
+        WHERE id = #{id}
+
+    </select>
+
+    <update id="updateMember"
+            parameterType="com.example.toyshop.domain.Member">
+
+        UPDATE member
+        SET
+        password = #{password},
+        name = #{name},
+        phone = #{phone},
+        email = #{email},
+        address = #{address},
+        zipcode = #{zipcode},
+        address_detail = #{addressDetail},
+        birth = #{birth},
+        gender = #{gender}
+        WHERE id = #{id}
+
+    </update>
+
+    <update id="dormantMember"
+            parameterType="long">
+
+        UPDATE member
+        SET status = 'DORMANT'
+        WHERE id = #{id}
+
+    </update>
+
+    <update id="releaseDormant"
+            parameterType="long">
+
+        UPDATE member
+        SET status = 'ACTIVE'
+        WHERE id = #{id}
+
+    </update>
+
+    <select id="findIdByNameAndEmail"
+            resultType="com.example.toyshop.domain.Member">
+
+        SELECT
+        id,
+        login_id AS loginId,
+        password,
+        name,
+        phone,
+        email,
+        address,
+        zipcode,
+        address_detail AS addressDetail,
+        birth,
+        gender,
+        role,
+        status,
+        created_at AS createdAt
+        FROM member
+        WHERE name = #{name}
+        AND email = #{email}
+
+    </select>
+
+    <select id="findPasswordMember"
+            resultType="com.example.toyshop.domain.Member">
+
+        SELECT
+        id,
+        login_id AS loginId,
+        password,
+        name,
+        phone,
+        email,
+        address,
+        zipcode,
+        address_detail AS addressDetail,
+        birth,
+        gender,
+        role,
+        status,
+        created_at AS createdAt
+        FROM member
+        WHERE login_id = #{loginId}
+        AND name = #{name}
+        AND email = #{email}
+
+    </select>
+
+    <update id="updatePassword">
+
+        UPDATE member
+        SET password = #{password}
+        WHERE id = #{id}
+
+    </update>
+
+    <update id="changePassword">
+
+        UPDATE member
+        SET password = #{password}
+        WHERE id = #{id}
+
+    </update>
+
+    <select id="findAll" resultType="com.example.toyshop.domain.Member">
+        SELECT
+        m.id,
+        m.login_id AS loginId,
+        m.password,
+        m.name,
+        m.phone,
+        m.email,
+        m.address,
+        m.zipcode,
+        m.address_detail AS addressDetail,
+        m.birth,
+        m.gender,
+        m.role,
+        m.status,
+        m.created_at AS createdAt,
+
+        IFNULL(m.mileage, 0) AS mileage,
+
+        IFNULL((
+        SELECT SUM(o.final_price)
+        FROM orders o
+        WHERE o.member_id = m.id
+        ), 0) AS totalOrderAmount
+
+        FROM member m
+
+        ORDER BY
+        CASE WHEN m.role = 'ADMIN' THEN 0 ELSE 1 END,
+        m.id ASC
+    </select>
+
+    <select id="findAdminMemberList" resultType="com.example.toyshop.domain.Member">
+        SELECT
+        m.id,
+        m.login_id AS loginId,
+        m.password,
+        m.name,
+        m.phone,
+        m.email,
+        m.address,
+        m.zipcode,
+        m.address_detail AS addressDetail,
+        m.birth,
+        m.gender,
+        m.role,
+        m.status,
+        m.created_at AS createdAt,
+
+        IFNULL(m.mileage, 0) AS mileage,
+
+        IFNULL((
+        SELECT SUM(o.final_price)
+        FROM orders o
+        WHERE o.member_id = m.id
+        ), 0) AS totalOrderAmount
+
+        FROM member m
+        WHERE 1=1
+
+        <if test="startDate != null and startDate != ''">
+            AND DATE(m.created_at) <![CDATA[>=]]> #{startDate}
+        </if>
+
+        <if test="endDate != null and endDate != ''">
+            AND DATE(m.created_at) <![CDATA[<=]]> #{endDate}
+        </if>
+
+        ORDER BY
+        CASE WHEN m.role = 'ADMIN' THEN 0 ELSE 1 END,
+
+        <choose>
+            <when test="sort == 'id'">m.id</when>
+            <when test="sort == 'loginId'">m.login_id</when>
+            <when test="sort == 'name'">m.name</when>
+            <when test="sort == 'phone'">m.phone</when>
+            <when test="sort == 'email'">m.email</when>
+            <when test="sort == 'totalOrderAmount'">totalOrderAmount</when>
+            <when test="sort == 'mileage'">m.mileage</when>
+            <when test="sort == 'role'">m.role</when>
+            <when test="sort == 'status'">m.status</when>
+            <when test="sort == 'createdAt'">m.created_at</when>
+            <otherwise>m.id</otherwise>
+        </choose>
+
+        <choose>
+            <when test="dir == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </select>
+
+</mapper>

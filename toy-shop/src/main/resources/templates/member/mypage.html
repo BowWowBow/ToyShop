@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Malgun Gothic", sans-serif;
+            color: #333;
+            background: #fff;
+        }
+
+        .mypage-wrap {
+            width: 1100px;
+            margin: 50px auto 100px;
+            display: flex;
+            gap: 60px;
+        }
+
+        .side-menu {
+            width: 180px;
+        }
+
+        .side-menu h2 {
+            font-size: 22px;
+            margin-bottom: 35px;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .menu-section h3 {
+            font-size: 16px;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        .menu-section a {
+            display: block;
+            font-size: 14px;
+            color: #777;
+            text-decoration: none;
+            margin: 8px 0;
+        }
+
+        .menu-section a:hover,
+        .menu-section a.active {
+            color: #111;
+            font-weight: bold;
+        }
+
+        .mypage-content {
+            flex: 1;
+        }
+
+        .member-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .member-name {
+            font-size: 28px;
+            color: #777;
+        }
+
+        .member-name strong {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .member-sub {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .member-sub a {
+            color: #777;
+            text-decoration: none;
+        }
+
+        .summary-box {
+            display: flex;
+            gap: 30px;
+        }
+
+        .summary-item {
+            width: 90px;
+            text-align: center;
+            border-left: 1px solid #eee;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .summary-item:first-child {
+            border-left: none;
+        }
+
+        .summary-title {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .summary-count {
+            font-size: 26px;
+            color: #333;
+        }
+
+        .summary-count span {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title h3 {
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .section-title a {
+            font-size: 13px;
+            color: #777;
+            text-decoration: none;
+        }
+
+        .order-step {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .step-item {
+            width: 120px;
+            text-align: center;
+            color: #999;
+        }
+
+        .step-icon {
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            line-height: 42px;
+            font-size: 20px;
+            color: #bbb;
+        }
+
+        .step-name {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .step-arrow {
+            color: #ccc;
+            font-size: 28px;
+        }
+
+        .empty-order {
+            height: 170px;
+            border: 1px solid #e5e5e5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .empty-icon {
+            width: 52px;
+            height: 52px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            line-height: 52px;
+            text-align: center;
+            font-size: 24px;
+            color: #ccc;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-top: 2px solid #333;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .order-table th {
+            background: #fafafa;
+            border-bottom: 1px solid #ddd;
+            padding: 13px 8px;
+            color: #555;
+            font-weight: normal;
+        }
+
+        .order-table td {
+            border-bottom: 1px solid #eee;
+            padding: 14px 8px;
+            text-align: center;
+            color: #555;
+            vertical-align: middle;
+        }
+
+        .order-table tbody tr {
+            cursor: pointer;
+        }
+
+        .order-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .order-no {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .order-link {
+            color: #333;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .order-link:hover {
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #333;
+            color: white;
+            font-size: 12px;
+            border-radius: 12px;
+        }
+
+        .status-paid {
+            background: #2f80ed;
+        }
+
+        .status-ready {
+            background: #555;
+        }
+
+        .status-delivery {
+            background: #00a2a8;
+        }
+
+        .status-done {
+            background: #e67e22;
+        }
+
+        .delivery-info-box {
+            padding: 7px 8px;
+            border: 1px solid #d8eef0;
+            background: #f5feff;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #444;
+            border-radius: 6px;
+        }
+
+        .delivery-company {
+            font-weight: bold;
+            color: #008c92;
+        }
+
+        .tracking-no {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .no-delivery {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1200px){
+            .mypage-wrap{
+                width:94%;
+                gap:35px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .mypage-wrap{
+                flex-direction:column;
+                margin:45px auto 75px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1/-1;
+                text-align:center;
+                margin-bottom:8px;
+            }
+
+            .menu-section{
+                border:1px solid #eee;
+                border-radius:8px;
+                padding:14px;
+                margin-bottom:0;
+            }
+
+            .member-summary{
+                flex-direction:column;
+                gap:25px;
+            }
+
+            .summary-box{
+                width:100%;
+                justify-content:space-around;
+            }
+        }
+
+        @media (max-width:768px){
+            .mypage-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2,1fr);
+                gap:10px;
+            }
+
+            .page-title,
+            .section-title h3{
+                font-size:24px;
+            }
+
+            .order-step{
+                overflow-x:auto;
+                gap:10px;
+                justify-content:flex-start;
+            }
+
+            .step-item{
+                flex:0 0 100px;
+            }
+
+            .order-table{
+                display:block;
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+
+            .summary-item{
+                width:auto;
+                flex:1;
+            }
+        }
+
+        @media (max-width:480px){
+            .mypage-wrap{
+                width:100%;
+                padding:0 14px;
+                box-sizing:border-box;
+                margin:30px auto 50px;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .member-name{
+                font-size:22px;
+            }
+
+            .summary-box{
+                flex-direction:column;
+                gap:0;
+            }
+
+            .summary-item{
+                border-left:none;
+                border-top:1px solid #eee;
+                padding:12px 0;
+            }
+
+            .summary-item:first-child{
+                border-top:none;
+            }
+
+            .order-table th,
+            .order-table td{
+                font-size:12px;
+                padding:10px 8px;
+            }
+
+            .delivery-info-box{
+                font-size:11px;
+            }
+
+            .empty-order{
+                height:140px;
+                font-size:13px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="mypage-wrap">
+
+    <aside class="side-menu">
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list">위시리스트</a>
+            <a href="/recent/list">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/change-password">비밀번호 변경</a>
+            <a href="/member/dormant">휴면 전환</a>
+        </div>
+    </aside>
+
+    <main class="mypage-content">
+
+        <div class="member-summary">
+            <div>
+                <div class="member-name">
+                    <strong th:text="${session.loginMember != null ? session.loginMember.name : '회원'}">회원</strong>님 반갑습니다.
+                </div>
+                <div class="member-sub">
+                    <a href="/member/edit">회원정보 수정</a>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <a href="/member/mileage" class="summary-item">
+                    <div class="summary-title">마일리지</div>
+                    <div class="summary-count">
+                        <span th:text="${#numbers.formatInteger(mileage, 3, 'COMMA')}">0</span>
+                    </div>
+                </a>
+
+                <a href="/wishlist/list" class="summary-item">
+                    <div class="summary-title">위시리스트</div>
+                    <div class="summary-count">
+                        <span th:text="${wishlistCount}">0</span><span>개</span>
+                    </div>
+                </a>
+
+                <a href="/recent/list" class="summary-item">
+                    <div class="summary-title">최근 본 상품</div>
+                    <div class="summary-count">
+                        <span th:text="${recentCount}">0</span><span>개</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h3>최근 주문 내역</h3>
+            <a href="/order">전체조회 &gt;</a>
+        </div>
+
+        <div class="order-step">
+            <div class="step-item">
+                <div class="step-icon">✓</div>
+                <div class="step-name">주문접수</div>
+            </div>
+
+            <div class="step-arrow">&gt;</div>
+
+            <div class="step-item">
+                <div class="step-icon">💳</div>
+                <div class="step-name">결제완료</div>
+            </div>
+
+            <div class="step-arrow">&gt;</div>
+
+            <div class="step-item">
+                <div class="step-icon">□</div>
+                <div class="step-name">상품준비중</div>
+            </div>
+
+            <div class="step-arrow">&gt;</div>
+
+            <div class="step-item">
+                <div class="step-icon">🚚</div>
+                <div class="step-name">배송중</div>
+            </div>
+
+            <div class="step-arrow">&gt;</div>
+
+            <div class="step-item">
+                <div class="step-icon">📦</div>
+                <div class="step-name">배송완료</div>
+            </div>
+        </div>
+
+        <div class="empty-order" th:if="${orderList == null or #lists.isEmpty(orderList)}">
+            <div class="empty-icon">×</div>
+            최근 주문 내역이 없습니다.
+        </div>
+
+        <table class="order-table" th:if="${orderList != null and !#lists.isEmpty(orderList)}">
+            <thead>
+            <tr>
+                <th>주문번호</th>
+                <th>주문자</th>
+                <th>결제수단</th>
+                <th>결제금액</th>
+                <th>주문상태</th>
+                <th>배송정보</th>
+                <th>주문일</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="order : ${orderList}"
+                th:onclick="|location.href='/order/complete/${order.id}'|">
+
+                <td class="order-no">
+                    <a class="order-link"
+                       th:href="@{/order/complete/{id}(id=${order.id})}"
+                       th:text="${order.orderNo}"
+                       onclick="event.stopPropagation();">
+                        ORD202606050001
+                    </a>
+                </td>
+
+                <td th:text="${order.orderName}">주문자</td>
+
+                <td th:text="${order.paymentMethod == 'BANK' ? '무통장입금' : '카드결제'}">
+                    무통장입금
+                </td>
+
+                <td th:text="${#numbers.formatInteger(order.finalPrice, 3, 'COMMA') + '원'}">
+                    0원
+                </td>
+
+                <td>
+                    <span class="status-badge"
+                          th:classappend="${order.orderStatus == 'PAID'} ? ' status-paid' :
+                                          (${order.orderStatus == 'READY'} ? ' status-ready' :
+                                          (${order.orderStatus == 'DELIVERY'} ? ' status-delivery' :
+                                          (${order.orderStatus == 'DONE'} ? ' status-done' : '')))"
+                          th:text="${order.orderStatus == 'ORDERED' ? '주문접수' :
+                                   (order.orderStatus == 'WAITING_PAYMENT' ? '입금대기' :
+                                   (order.orderStatus == 'PAID' ? '결제완료' :
+                                   (order.orderStatus == 'READY' ? '상품준비중' :
+                                   (order.orderStatus == 'DELIVERY' ? '배송중' :
+                                   (order.orderStatus == 'DONE' ? '배송완료' : order.orderStatus)))))}">
+                        주문접수
+                    </span>
+                </td>
+
+                <td>
+                    <div th:if="${order.deliveryCompany != null and order.deliveryCompany != ''}">
+                        <div class="delivery-info-box">
+                            <div>
+                                택배사 :
+                                <span class="delivery-company" th:text="${order.deliveryCompany}">우체국택배</span>
+                            </div>
+                            <div>
+                                운송장 :
+                                <span class="tracking-no" th:text="${order.trackingNo}">1234-5678</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="no-delivery"
+                          th:if="${order.deliveryCompany == null or order.deliveryCompany == ''}">
+                        배송정보 등록 전
+                    </span>
+                </td>
+
+                <td th:text="${order.createdAt}">2026-06-05</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

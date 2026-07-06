@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품문의 작성</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic",sans-serif;
+            background:#fff;
+        }
+
+        .wrap{
+            width:1000px;
+            margin:60px auto;
+        }
+
+        .title{
+            text-align:center;
+            font-size:42px;
+            font-weight:bold;
+            margin-bottom:50px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            width:140px;
+            background:#f8f8f8;
+            border:1px solid #ddd;
+            padding:15px;
+        }
+
+        td{
+            border:1px solid #ddd;
+            padding:15px;
+        }
+
+        input[type=text]{
+            width:100%;
+            height:40px;
+            border:1px solid #ddd;
+            padding:0 10px;
+            box-sizing:border-box;
+        }
+
+        textarea{
+            width:100%;
+            height:300px;
+            border:1px solid #ddd;
+            resize:none;
+            padding:15px;
+            box-sizing:border-box;
+            font-family:"Malgun Gothic",sans-serif;
+        }
+
+        .btn-box{
+            text-align:center;
+            margin-top:30px;
+        }
+
+        .btn{
+            display:inline-block;
+            width:140px;
+            height:48px;
+            line-height:48px;
+            text-decoration:none;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+            box-sizing:border-box;
+        }
+
+        .save{
+            background:#333;
+            color:white;
+        }
+
+        .cancel{
+            background:#eee;
+            color:#333;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1100px){
+            .wrap{
+                width:92%;
+                margin:50px auto 70px;
+            }
+
+            .title{
+                font-size:34px;
+                margin-bottom:38px;
+            }
+        }
+
+        @media (max-width:768px){
+            .wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .title{
+                font-size:28px;
+                margin-bottom:28px;
+            }
+
+            table,
+            tbody,
+            tr,
+            th,
+            td{
+                display:block;
+                width:100%;
+            }
+
+            tr{
+                border-bottom:1px solid #ddd;
+                padding:10px 0;
+            }
+
+            th{
+                border:none;
+                background:#fff;
+                padding:8px 4px;
+                text-align:left;
+                font-size:14px;
+            }
+
+            td{
+                border:none;
+                padding:5px 0 10px;
+            }
+
+            input[type=text]{
+                height:40px;
+                font-size:14px;
+            }
+
+            textarea{
+                height:230px;
+                font-size:14px;
+            }
+
+            .btn-box{
+                display:flex;
+                gap:8px;
+            }
+
+            .btn{
+                flex:1;
+                width:auto;
+                height:44px;
+                line-height:44px;
+                font-size:15px;
+            }
+        }
+
+        @media (max-width:480px){
+            .wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .title{
+                font-size:24px;
+            }
+
+            th{
+                font-size:13px;
+            }
+
+            input[type=text]{
+                height:38px;
+                font-size:13px;
+            }
+
+            textarea{
+                height:190px;
+                font-size:13px;
+                padding:12px;
+            }
+
+            .btn-box{
+                flex-direction:column;
+                margin-top:22px;
+            }
+
+            .btn{
+                width:100%;
+                height:42px;
+                line-height:42px;
+                font-size:14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="wrap">
+
+    <div class="title">
+        상품문의 작성
+    </div>
+
+    <form action="/member/product-qna/save" method="post">
+
+        <table>
+
+            <tr>
+                <th>작성자</th>
+                <td>
+                    <input type="text"
+                           name="writer"
+                           th:value="${session.loginName}"
+                           readonly>
+                </td>
+            </tr>
+
+            <tr>
+                <th>제목</th>
+                <td>
+                    <input type="text"
+                           name="title"
+                           placeholder="제목을 입력해주세요">
+                </td>
+            </tr>
+
+            <tr>
+                <th>내용</th>
+                <td>
+                    <textarea name="content"
+                              placeholder="문의 내용을 입력해주세요"></textarea>
+                </td>
+            </tr>
+
+        </table>
+
+        <div class="btn-box">
+
+            <button type="submit"
+                    class="btn save">
+                등록
+            </button>
+
+            <a href="/member/product-qna"
+               class="btn cancel">
+                취소
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

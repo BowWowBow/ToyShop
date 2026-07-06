@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.MileageMapper">
+
+    <!-- 마일리지 증가 -->
+    <update id="increaseMileage">
+
+        UPDATE member
+        SET mileage = mileage + #{amount}
+        WHERE id = #{memberId}
+
+    </update>
+
+    <!-- 마일리지 차감 -->
+    <update id="decreaseMileage">
+
+        UPDATE member
+        SET mileage = mileage - #{amount}
+        WHERE id = #{memberId}
+
+    </update>
+
+    <!-- 현재 마일리지 조회 -->
+    <select id="findMileageByMemberId"
+            resultType="int">
+
+        SELECT mileage
+        FROM member
+        WHERE id = #{memberId}
+
+    </select>
+
+    <!-- 마일리지 내역 저장 -->
+    <insert id="insertHistory">
+
+        INSERT INTO mileage_history(
+        member_id,
+        amount,
+        type,
+        description
+        )
+        VALUES(
+        #{memberId},
+        #{amount},
+        #{type},
+        #{description}
+        )
+
+    </insert>
+
+    <!-- 마일리지 내역 조회 -->
+    <select id="findHistoryByMemberId"
+            resultType="com.example.toyshop.domain.MileageHistory">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        amount,
+        type,
+        description,
+        created_at AS createdAt
+        FROM mileage_history
+        WHERE member_id = #{memberId}
+        ORDER BY created_at DESC
+
+    </select>
+
+</mapper>

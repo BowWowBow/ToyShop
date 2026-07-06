@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.InquiryMapper">
+
+    <insert id="insertInquiry"
+            parameterType="com.example.toyshop.domain.Inquiry">
+        INSERT INTO inquiry (
+        member_id,
+        category,
+        writer,
+        email,
+        mail_receive,
+        title,
+        content,
+        answer_status
+        ) VALUES (
+        #{memberId},
+        #{category},
+        #{writer},
+        #{email},
+        #{mailReceive},
+        #{title},
+        #{content},
+        #{answerStatus}
+        )
+    </insert>
+
+    <select id="findAll"
+            resultType="com.example.toyshop.domain.Inquiry">
+        SELECT
+        id,
+        answer_content AS answerContent,
+        answered_at AS answeredAt,
+        member_id AS memberId,
+        category,
+        writer,
+        email,
+        mail_receive AS mailReceive,
+        title,
+        content,
+        answer_status AS answerStatus,
+        created_at AS createdAt
+        FROM inquiry
+        ORDER BY id DESC
+    </select>
+
+    <select id="findByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Inquiry">
+        SELECT
+        id,
+        member_id AS memberId,
+        answer_content AS answerContent,
+        answered_at AS answeredAt,
+        category,
+        writer,
+        email,
+        mail_receive AS mailReceive,
+        title,
+        content,
+        answer_status AS answerStatus,
+        created_at AS createdAt
+        FROM inquiry
+        WHERE member_id = #{memberId}
+        ORDER BY id DESC
+    </select>
+
+    <select id="findById"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Inquiry">
+        SELECT
+        id,
+        member_id AS memberId,
+        answer_content AS answerContent,
+        answered_at AS answeredAt,
+        category,
+        writer,
+        email,
+        mail_receive AS mailReceive,
+        title,
+        content,
+        answer_status AS answerStatus,
+        created_at AS createdAt
+        FROM inquiry
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateAnswer"
+            parameterType="com.example.toyshop.domain.Inquiry">
+        UPDATE inquiry
+        SET
+        answer_content = #{answerContent},
+        answer_status = '답변완료',
+        answered_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

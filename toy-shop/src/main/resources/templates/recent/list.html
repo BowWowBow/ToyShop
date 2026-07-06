@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>최근 본 상품 - TOY-SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Malgun Gothic", sans-serif;
+            background: #fff;
+            color: #333;
+        }
+
+        .recent-wrap {
+            width: 1100px;
+            margin: 60px auto 100px;
+            display: flex;
+            gap: 60px;
+        }
+
+        .side-menu {
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        .side-menu h2 {
+            font-size: 22px;
+            margin-bottom: 35px;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .menu-section h3 {
+            font-size: 16px;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        .menu-section a {
+            display: block;
+            font-size: 14px;
+            color: #777;
+            text-decoration: none;
+            margin: 8px 0;
+        }
+
+        .menu-section a:hover,
+        .menu-section a.active {
+            color: #111;
+            font-weight: bold;
+        }
+
+        .recent-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .page-title {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .recent-tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 25px;
+        }
+
+        .recent-tabs a {
+            width: 160px;
+            height: 44px;
+            line-height: 44px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            color: #777;
+            text-decoration: none;
+            font-size: 14px;
+            background: #fafafa;
+        }
+
+        .recent-tabs a.active {
+            color: #111;
+            font-weight: bold;
+            background: #fff;
+            border-color: #333;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
+        }
+
+        .top-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            font-size: 14px;
+        }
+
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 35px 25px;
+        }
+
+        .recent-item {
+            position: relative;
+        }
+
+        .recent-img-box {
+            width: 100%;
+            height: 230px;
+            border: 1px solid #eee;
+            background: #fafafa;
+            overflow: hidden;
+        }
+
+        .recent-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .recent-name {
+            display: block;
+            margin-top: 10px;
+            font-size: 15px;
+            color: #222;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .recent-name:hover {
+            text-decoration: underline;
+        }
+
+        .recent-price {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .recent-category {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .recent-btns {
+            margin-top: 12px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .recent-btns button {
+            border: none;
+            padding: 6px 9px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .cart-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background: #999;
+            color: #fff;
+        }
+
+        .empty-box {
+            height: 250px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 15px;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 45px;
+        }
+
+        .pagination span {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            line-height: 34px;
+            border: 1px solid #333;
+            font-size: 14px;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1200px){
+            .recent-wrap{
+                width:94%;
+                gap:35px;
+            }
+
+            .recent-grid{
+                gap:28px 18px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .recent-wrap{
+                flex-direction:column;
+                margin:45px auto 75px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1 / -1;
+                margin-bottom:8px;
+                text-align:center;
+            }
+
+            .menu-section{
+                border:1px solid #eee;
+                border-radius:8px;
+                margin-bottom:0;
+                padding:14px;
+            }
+
+            .recent-grid{
+                grid-template-columns:repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width:768px){
+            .recent-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+
+            .menu-section{
+                padding:12px;
+            }
+
+            .menu-section h3{
+                font-size:14px;
+            }
+
+            .menu-section a{
+                font-size:13px;
+            }
+
+            .page-title{
+                font-size:25px;
+                margin-bottom:26px;
+            }
+
+            .recent-tabs{
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+
+            .recent-tabs a{
+                min-width:130px;
+                width:auto;
+                padding:0 12px;
+                font-size:13px;
+            }
+
+            .top-control{
+                font-size:13px;
+                line-height:1.5;
+            }
+
+            .recent-grid{
+                grid-template-columns:repeat(2, 1fr);
+                gap:24px 14px;
+            }
+
+            .recent-img-box{
+                height:190px;
+            }
+
+            .recent-btns{
+                flex-direction:column;
+            }
+
+            .recent-btns button{
+                width:100%;
+                height:32px;
+            }
+
+            .empty-box{
+                height:200px;
+                font-size:14px;
+            }
+        }
+
+        @media (max-width:480px){
+            .recent-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .side-menu h2{
+                font-size:19px;
+            }
+
+            .page-title{
+                font-size:22px;
+            }
+
+            .recent-tabs a{
+                min-width:115px;
+                height:40px;
+                line-height:40px;
+                font-size:12px;
+            }
+
+            .recent-grid{
+                grid-template-columns:1fr;
+                gap:18px;
+            }
+
+            .recent-img-box{
+                height:240px;
+            }
+
+            .recent-name{
+                font-size:14px;
+            }
+
+            .recent-price{
+                font-size:14px;
+            }
+
+            .recent-category{
+                font-size:12px;
+            }
+
+            .empty-box{
+                height:160px;
+                font-size:13px;
+            }
+
+            .pagination{
+                margin-top:30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="recent-wrap">
+
+    <aside class="side-menu">
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list">위시리스트</a>
+            <a href="/recent/list" class="active">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/change-password">
+                비밀번호 변경
+            </a>
+            <a href="/member/dormant">휴면 전환</a>
+        </div>
+    </aside>
+
+    <main class="recent-content">
+
+        <h2 class="page-title">최근 본 상품</h2>
+
+        <div class="recent-tabs">
+            <a href="/cart">장바구니</a>
+            <a href="/wishlist/list">위시리스트</a>
+
+            <a href="/recent/list" class="active">
+                최근 본 상품
+                <span th:text="${recentList != null ? #lists.size(recentList) : 0}">0</span>
+            </a>
+        </div>
+
+        <div class="top-control" th:if="${recentList != null and !#lists.isEmpty(recentList)}">
+            <span>최근 본 상품은 최신순으로 최대 10개까지 저장됩니다.</span>
+        </div>
+
+        <div class="empty-box" th:if="${recentList == null or #lists.isEmpty(recentList)}">
+            최근 본 상품이 없습니다.
+        </div>
+
+        <div class="recent-grid" th:if="${recentList != null and !#lists.isEmpty(recentList)}">
+
+            <div class="recent-item" th:each="product : ${recentList}">
+
+                <a th:href="@{/product/detail/{id}(id=${product.productId})}">
+                    <div class="recent-img-box">
+                        <img th:src="@{${product.imageUrl}}" alt="상품이미지">
+                    </div>
+                </a>
+
+                <a class="recent-name"
+                   th:href="@{/product/detail/{id}(id=${product.productId})}"
+                   th:text="${product.productName}">
+                    상품명
+                </a>
+
+                <div class="recent-price"
+                     th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">
+                    0원
+                </div>
+
+                <div class="recent-category" th:text="${product.category}">
+                    카테고리
+                </div>
+
+                <div class="recent-btns">
+                    <button type="button"
+                            class="cart-btn"
+                            th:onclick="|addCart(${product.productId})|">
+                        장바구니 담기
+                    </button>
+
+                    <button type="button"
+                            class="delete-btn"
+                            th:onclick="|deleteRecent(${product.productId})|">
+                        삭제
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="pagination" th:if="${recentList != null and !#lists.isEmpty(recentList)}">
+            <span>1</span>
+        </div>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function deleteRecent(productId) {
+        if (!confirm("최근 본 상품에서 삭제하시겠습니까?")) {
+            return;
+        }
+
+        fetch("/recent/delete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "productId=" + productId
+        })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "success") {
+                    alert("삭제되었습니다.");
+                    location.reload();
+                }
+
+                if (result === "loginRequired") {
+                    alert("로그인 후 이용해주세요.");
+                    location.href = "/member/login";
+                }
+            });
+    }
+
+    function addCart(productId) {
+        fetch("/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "productId=" + productId + "&qty=1"
+        })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "login") {
+                    alert("로그인 후 이용해주세요.");
+                    location.href = "/member/login";
+                    return;
+                }
+
+                alert("장바구니에 담았습니다.");
+            });
+    }
+</script>
+
+</body>
+</html>

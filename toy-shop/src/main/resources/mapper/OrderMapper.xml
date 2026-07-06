@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.OrderMapper">
+
+    <insert id="insertOrder"
+            parameterType="com.example.toyshop.domain.Order"
+            useGeneratedKeys="true"
+            keyProperty="id">
+
+        INSERT INTO orders (
+        member_id,
+        order_no,
+        total_price,
+        delivery_fee,
+        final_price,
+        order_name,
+        order_phone,
+        receiver_name,
+        receiver_phone,
+        address,
+        delivery_message,
+        depositor_name,
+        bank_info,
+        order_status,
+        payment_method,
+        payment_status,
+        toss_payment_key,
+        delivery_company,
+        tracking_no
+        ) VALUES (
+        #{memberId},
+        #{orderNo},
+        #{totalPrice},
+        #{deliveryFee},
+        #{finalPrice},
+        #{orderName},
+        #{orderPhone},
+        #{receiverName},
+        #{receiverPhone},
+        #{address},
+        #{deliveryMessage},
+        #{depositorName},
+        #{bankInfo},
+        #{orderStatus},
+        #{paymentMethod},
+        #{paymentStatus},
+        #{tossPaymentKey},
+        #{deliveryCompany},
+        #{trackingNo}
+        )
+
+    </insert>
+
+    <insert id="insertOrderDetail"
+            parameterType="com.example.toyshop.domain.OrderDetail">
+
+        INSERT INTO order_detail (
+        order_id,
+        product_id,
+        product_name,
+        price,
+        qty,
+        total_price,
+        image_url
+        ) VALUES (
+        #{orderId},
+        #{productId},
+        #{productName},
+        #{price},
+        #{qty},
+        #{totalPrice},
+        #{imageUrl}
+        )
+
+    </insert>
+
+    <select id="findById"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Order">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        order_no AS orderNo,
+        total_price AS totalPrice,
+        delivery_fee AS deliveryFee,
+        final_price AS finalPrice,
+        order_name AS orderName,
+        order_phone AS orderPhone,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        address,
+        delivery_message AS deliveryMessage,
+        depositor_name AS depositorName,
+        bank_info AS bankInfo,
+        order_status AS orderStatus,
+        payment_method AS paymentMethod,
+        payment_status AS paymentStatus,
+        toss_payment_key AS tossPaymentKey,
+        delivery_company AS deliveryCompany,
+        tracking_no AS trackingNo,
+        created_at AS createdAt
+        FROM orders
+        WHERE id = #{id}
+
+    </select>
+
+    <select id="findAllOrders"
+            resultType="com.example.toyshop.domain.Order">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        order_no AS orderNo,
+        total_price AS totalPrice,
+        delivery_fee AS deliveryFee,
+        final_price AS finalPrice,
+        order_name AS orderName,
+        order_phone AS orderPhone,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        address,
+        delivery_message AS deliveryMessage,
+        depositor_name AS depositorName,
+        bank_info AS bankInfo,
+        order_status AS orderStatus,
+        payment_method AS paymentMethod,
+        payment_status AS paymentStatus,
+        toss_payment_key AS tossPaymentKey,
+        delivery_company AS deliveryCompany,
+        tracking_no AS trackingNo,
+        created_at AS createdAt
+        FROM orders
+        ORDER BY id DESC
+
+    </select>
+
+    <select id="findByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Order">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        order_no AS orderNo,
+        total_price AS totalPrice,
+        delivery_fee AS deliveryFee,
+        final_price AS finalPrice,
+        order_name AS orderName,
+        order_phone AS orderPhone,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        address,
+        delivery_message AS deliveryMessage,
+        depositor_name AS depositorName,
+        bank_info AS bankInfo,
+        order_status AS orderStatus,
+        payment_method AS paymentMethod,
+        payment_status AS paymentStatus,
+        toss_payment_key AS tossPaymentKey,
+        delivery_company AS deliveryCompany,
+        tracking_no AS trackingNo,
+        created_at AS createdAt
+        FROM orders
+        WHERE member_id = #{memberId}
+        ORDER BY id DESC
+
+    </select>
+
+    <update id="approveBankOrder" parameterType="long">
+
+        UPDATE orders
+        SET
+        order_status = 'PAID',
+        payment_status = 'PAID'
+        WHERE id = #{id}
+
+    </update>
+
+    <update id="updateOrderStatus">
+
+        UPDATE orders
+        SET
+        order_status = #{orderStatus}
+        WHERE id = #{id}
+
+    </update>
+
+    <update id="rollbackBankPayment" parameterType="long">
+
+        UPDATE orders
+        SET
+        payment_status = 'WAITING',
+        order_status = 'ORDERED'
+        WHERE id = #{id}
+
+    </update>
+
+    <update id="updateDeliveryInfo">
+
+        UPDATE orders
+        SET
+        delivery_company = #{deliveryCompany},
+        tracking_no = #{trackingNo},
+        order_status = 'DELIVERY'
+        WHERE id = #{id}
+
+    </update>
+
+    <select id="findAdminOrderList"
+            resultType="com.example.toyshop.domain.Order">
+
+        SELECT
+        id,
+        member_id AS memberId,
+        order_no AS orderNo,
+        total_price AS totalPrice,
+        delivery_fee AS deliveryFee,
+        final_price AS finalPrice,
+        order_name AS orderName,
+        order_phone AS orderPhone,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        address,
+        delivery_message AS deliveryMessage,
+        depositor_name AS depositorName,
+        bank_info AS bankInfo,
+        order_status AS orderStatus,
+        payment_method AS paymentMethod,
+        payment_status AS paymentStatus,
+        toss_payment_key AS tossPaymentKey,
+        delivery_company AS deliveryCompany,
+        tracking_no AS trackingNo,
+        created_at AS createdAt
+        FROM orders
+        WHERE 1=1
+
+        <if test="startDate != null and startDate != ''">
+            AND DATE(created_at) <![CDATA[>=]]> #{startDate}
+        </if>
+
+        <if test="endDate != null and endDate != ''">
+            AND DATE(created_at) <![CDATA[<=]]> #{endDate}
+        </if>
+
+        ORDER BY
+        <choose>
+            <when test="sort == 'id'">id</when>
+            <when test="sort == 'orderNo'">order_no</when>
+            <when test="sort == 'orderName'">order_name</when>
+            <when test="sort == 'orderPhone'">order_phone</when>
+            <when test="sort == 'paymentMethod'">payment_method</when>
+            <when test="sort == 'paymentStatus'">payment_status</when>
+            <when test="sort == 'orderStatus'">order_status</when>
+            <when test="sort == 'finalPrice'">final_price</when>
+            <when test="sort == 'createdAt'">created_at</when>
+            <otherwise>id</otherwise>
+        </choose>
+
+        <choose>
+            <when test="dir == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+
+    </select>
+
+    <select id="findOrderItems"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.OrderDetail">
+
+        SELECT
+        id,
+        order_id AS orderId,
+        product_id AS productId,
+        product_name AS productName,
+        price,
+        qty,
+        total_price AS totalPrice,
+        image_url AS imageUrl,
+        created_at AS createdAt
+        FROM order_detail
+        WHERE order_id = #{orderId}
+
+    </select>
+
+    <select id="findByMemberIdAndDate" resultType="com.example.toyshop.domain.Order">
+        SELECT
+        id,
+        member_id AS memberId,
+        order_no AS orderNo,
+        total_price AS totalPrice,
+        delivery_fee AS deliveryFee,
+        final_price AS finalPrice,
+        order_name AS orderName,
+        order_phone AS orderPhone,
+        receiver_name AS receiverName,
+        receiver_phone AS receiverPhone,
+        address,
+        delivery_message AS deliveryMessage,
+        depositor_name AS depositorName,
+        bank_info AS bankInfo,
+        order_status AS orderStatus,
+        payment_method AS paymentMethod,
+        payment_status AS paymentStatus,
+        toss_payment_key AS tossPaymentKey,
+        delivery_company AS deliveryCompany,
+        tracking_no AS trackingNo,
+        created_at AS createdAt
+        FROM orders
+        WHERE member_id = #{memberId}
+
+        <if test="startDate != null and startDate != ''">
+            AND DATE(created_at) <![CDATA[>=]]> #{startDate}
+        </if>
+
+        <if test="endDate != null and endDate != ''">
+            AND DATE(created_at) <![CDATA[<=]]> #{endDate}
+        </if>
+
+        ORDER BY id DESC
+    </select>
+
+    <update id="clearDeliveryInfo" parameterType="long">
+        UPDATE orders
+        SET
+        delivery_company = NULL,
+        tracking_no = NULL
+        WHERE id = #{id}
+    </update>
+
+    <select id="findPurchasedProducts"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Product">
+
+        SELECT DISTINCT
+        p.id,
+        p.product_name AS productName,
+        p.category,
+        p.price,
+        p.stock_qty AS stockQty,
+        p.image_url AS imageUrl,
+        p.description,
+        p.created_at AS createdAt
+
+        FROM orders o
+
+        JOIN order_detail od
+        ON o.id = od.order_id
+
+        JOIN product p
+        ON od.product_id = p.id
+
+        WHERE o.member_id = #{memberId}
+
+        ORDER BY p.product_name
+
+    </select>
+
+    <update id="cancelOrder" parameterType="long">
+
+        UPDATE orders
+        SET
+        order_status = 'CANCEL',
+        payment_status = 'CANCEL',
+        delivery_company = NULL,
+        tracking_no = NULL
+        WHERE id = #{id}
+        AND order_status IN ('ORDERED', 'PAID', 'READY')
+
+    </update>
+
+
+</mapper>

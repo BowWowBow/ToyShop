@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배송지 수정 - TOY-SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Malgun Gothic", sans-serif;
+            background: #fff;
+            color: #333;
+        }
+
+        .edit-wrap {
+            width: 650px;
+            margin: 70px auto 100px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .form-box {
+            border-top: 2px solid #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            width: 120px;
+            background: #fafafa;
+            text-align: left;
+            padding: 15px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        input {
+            height: 38px;
+            border: 1px solid #ccc;
+            padding: 0 10px;
+            font-size: 14px;
+        }
+
+        .w170 { width: 170px; }
+        .w100 { width: 100%; }
+
+        .zipcode-input {
+            width: 110px;
+        }
+
+        .phone-view {
+            width: 220px;
+            background: #f5f5f5;
+            color: #555;
+            cursor: default;
+        }
+
+        .btn-small {
+            height: 38px;
+            padding: 0 14px;
+            border: 1px solid #333;
+            background: #fff;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .btn-small:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-area {
+            margin-top: 25px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn,
+        .cancel-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 44px;
+            border: none;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .cancel-btn {
+            background: #eee;
+            color: #333;
+        }
+
+        .default-guide {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #777;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .edit-wrap {
+                width: calc(100% - 28px);
+                margin: 40px auto 70px;
+            }
+
+            .page-title {
+                font-size: 26px;
+                margin-bottom: 25px;
+            }
+
+            table,
+            tbody,
+            tr,
+            th,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            th {
+                border-bottom: none;
+                padding: 12px 8px 6px;
+                font-weight: bold;
+            }
+
+            td {
+                padding: 8px 8px 16px;
+            }
+
+            .w170,
+            .w100 {
+                width: 100%;
+            }
+
+            .zipcode-input {
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .edit-wrap {
+                width: calc(100% - 20px);
+                margin: 30px auto 55px;
+            }
+
+            .page-title {
+                font-size: 23px;
+            }
+
+            input,
+            .btn-small {
+                width: 100%;
+                height: 40px;
+            }
+
+            .zipcode-input {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+
+            .btn-small {
+                margin-left: 0;
+            }
+
+            .phone-view {
+                width: 100%;
+            }
+
+            .btn-area {
+                flex-direction: column;
+            }
+
+            .submit-btn,
+            .cancel-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="edit-wrap">
+
+    <div class="page-title">배송지 수정</div>
+
+    <form th:action="@{/address/update}" method="post">
+
+        <input type="hidden"
+               name="id"
+               th:value="${address.id}">
+
+        <input type="hidden"
+               name="receiverPhone"
+               th:value="${address.receiverPhone}">
+
+        <div class="form-box">
+            <table>
+                <tr>
+                    <th>받는분</th>
+                    <td>
+                        <input type="text"
+                               name="receiverName"
+                               class="w170"
+                               th:value="${address.receiverName}"
+                               required>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>주소</th>
+                    <td>
+                        <input type="text"
+                               name="zipcode"
+                               id="zipcode"
+                               class="zipcode-input"
+                               th:value="${address.zipcode}"
+                               readonly
+                               required>
+
+                        <button type="button"
+                                class="btn-small"
+                                onclick="searchZipcode()">
+                            우편번호 검색
+                        </button>
+
+                        <br><br>
+
+                        <input type="text"
+                               name="address"
+                               id="address"
+                               class="w100"
+                               th:value="${address.address}"
+                               readonly
+                               required>
+
+                        <br><br>
+
+                        <input type="text"
+                               name="addressDetail"
+                               id="addressDetail"
+                               class="w100"
+                               th:value="${address.addressDetail}"
+                               placeholder="상세 주소"
+                               required>
+
+                        <div class="default-guide">
+                            기본배송지 여부는 주소록 목록에서 변경할 수 있습니다.
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>휴대폰 확인</th>
+                    <td>
+                        <input type="text"
+                               id="phoneConfirm"
+                               class="phone-view"
+                               placeholder="회원정보 휴대폰 번호 입력"
+                               required>
+
+                        <input type="hidden"
+                               name="receiverPhone"
+                               th:value="${session.loginMember.phone}">
+
+                        <div class="default-guide">
+                            회원정보에 등록된 휴대폰 번호와 일치해야 수정할 수 있습니다.
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="btn-area">
+            <button type="submit"
+                    class="submit-btn"
+                    onclick="return checkPhone();">
+                수정
+            </button>
+
+            <a href="/address/list"
+               class="cancel-btn">
+                취소
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+
+    const memberPhone = /*[[${session.loginMember.phone}]]*/ "";
+
+    function checkPhone(){
+
+        const phone = document.getElementById("phoneConfirm").value.trim();
+
+        if(phone === ""){
+            alert("휴대폰 번호를 입력해주세요.");
+            return false;
+        }
+
+        if(phone !== memberPhone){
+            alert("회원정보의 휴대폰 번호와 일치하지 않습니다.");
+            return false;
+        }
+
+        return true;
+    }
+
+    function searchZipcode(){
+        new daum.Postcode({
+            oncomplete: function(data) {
+
+                document.getElementById("zipcode").value = data.zonecode;
+
+                document.getElementById("address").value =
+                    data.roadAddress || data.jibunAddress;
+
+                document.getElementById("addressDetail").focus();
+            }
+        }).open();
+    }
+
+</script>
+
+</body>
+</html>

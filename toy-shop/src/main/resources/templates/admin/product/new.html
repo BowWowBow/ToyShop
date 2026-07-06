@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품등록 - TOY-SHOP</title>
+
+    <link rel="stylesheet" href="/css/common.css">
+
+    <style>
+        body{
+            background:#fff;
+        }
+
+        .admin-wrap{
+            width:700px;
+            margin:70px auto 100px;
+        }
+
+        .admin-title{
+            text-align:center;
+            font-size:32px;
+            font-weight:bold;
+            margin-bottom:35px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:2px solid #333;
+        }
+
+        th{
+            width:150px;
+            background:#f7f7f7;
+            text-align:left;
+            padding:14px 12px;
+            border-bottom:1px solid #ddd;
+            font-size:14px;
+        }
+
+        td{
+            padding:10px 12px;
+            border-bottom:1px solid #ddd;
+        }
+
+        input, select, textarea{
+            width:100%;
+            border:1px solid #ddd;
+            padding:10px;
+            font-size:14px;
+            outline:none;
+            box-sizing:border-box;
+        }
+
+        input, select{
+            height:40px;
+        }
+
+        input[type="file"]{
+            height:auto;
+            padding:8px;
+        }
+
+        textarea{
+            height:140px;
+            resize:none;
+        }
+
+        .preview-box{
+            margin-top:10px;
+            width:180px;
+            height:180px;
+            border:1px solid #ddd;
+            background:#fafafa;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            color:#999;
+            font-size:13px;
+        }
+
+        .preview-box img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .guide{
+            margin-top:6px;
+            font-size:12px;
+            color:#777;
+        }
+
+        .btn-box{
+            display:flex;
+            gap:10px;
+            margin-top:25px;
+        }
+
+        .btn{
+            flex:1;
+            height:50px;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .save-btn{
+            background:#333;
+            color:white;
+        }
+
+        .cancel-btn{
+            background:white;
+            border:1px solid #aaa;
+            color:#333;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:900px){
+            .admin-wrap{
+                width:92%;
+                margin:45px auto 70px;
+            }
+
+            .admin-title{
+                font-size:28px;
+                margin-bottom:28px;
+            }
+        }
+
+        @media (max-width:768px){
+            .admin-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .admin-title{
+                font-size:25px;
+                margin-bottom:22px;
+            }
+
+            table,
+            tbody,
+            tr,
+            th,
+            td{
+                display:block;
+                width:100%;
+            }
+
+            table{
+                border-top:2px solid #333;
+            }
+
+            tr{
+                border-bottom:1px solid #ddd;
+                padding:10px 0;
+            }
+
+            th{
+                border-bottom:none;
+                background:white;
+                padding:8px 4px 5px;
+                font-size:13px;
+                color:#333;
+            }
+
+            td{
+                border-bottom:none;
+                padding:5px 0 10px;
+            }
+
+            input,
+            select,
+            textarea{
+                font-size:13px;
+            }
+
+            textarea{
+                height:130px;
+            }
+
+            .preview-box{
+                width:150px;
+                height:150px;
+            }
+
+            .btn-box{
+                flex-direction:column;
+                gap:8px;
+            }
+
+            .btn{
+                height:46px;
+                font-size:15px;
+            }
+        }
+
+        @media (max-width:480px){
+            .admin-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .admin-title{
+                font-size:22px;
+            }
+
+            input,
+            select{
+                height:38px;
+            }
+
+            input[type="file"]{
+                font-size:12px;
+            }
+
+            textarea{
+                height:120px;
+            }
+
+            .preview-box{
+                width:130px;
+                height:130px;
+                font-size:12px;
+            }
+
+            .guide{
+                font-size:11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-wrap">
+
+    <div class="admin-title">상품등록</div>
+
+    <form action="/admin/product/save"
+          method="post"
+          enctype="multipart/form-data">
+
+        <table>
+            <tr>
+                <th>상품명</th>
+                <td>
+                    <input type="text"
+                           name="productName"
+                           placeholder="상품명을 입력하세요"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <th>카테고리</th>
+                <td>
+                    <select name="category" required>
+                        <option value="">카테고리 선택</option>
+                        <option value="초합금">초합금</option>
+                        <option value="프라모델">프라모델</option>
+                        <option value="피규어">피규어</option>
+                        <option value="레이싱카">레이싱카</option>
+                        <option value="인형">인형</option>
+                        <option value="게임기">게임기</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <th>가격</th>
+                <td>
+                    <input type="number"
+                           name="price"
+                           placeholder="예: 43000"
+                           min="0"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <th>재고</th>
+                <td>
+                    <input type="number"
+                           name="stockQty"
+                           placeholder="예: 10"
+                           min="0"
+                           required>
+                </td>
+            </tr>
+
+            <tr>
+                <th>상품 이미지</th>
+                <td>
+                    <input type="file"
+                           name="imageFile"
+                           id="imageFile"
+                           accept="image/*"
+                           onchange="previewImage(event)"
+                           required>
+
+                    <div class="guide">
+                        이미지를 선택하면 자동으로 서버에 저장됩니다.
+                    </div>
+
+                    <div class="preview-box" id="previewBox">
+                        이미지 미리보기
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <th>상품설명</th>
+                <td>
+                    <textarea name="description"
+                              placeholder="상품 설명을 입력하세요"></textarea>
+                </td>
+            </tr>
+        </table>
+
+        <div class="btn-box">
+            <button type="submit" class="btn save-btn">등록하기</button>
+            <button type="button"
+                    class="btn cancel-btn"
+                    onclick="location.href='/admin/product/list'">
+                취소
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function previewImage(event){
+        const file = event.target.files[0];
+        const previewBox = document.getElementById("previewBox");
+
+        if(!file){
+            previewBox.innerHTML = "이미지 미리보기";
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+            previewBox.innerHTML =
+                "<img src='" + e.target.result + "' alt='미리보기'>";
+        };
+
+        reader.readAsDataURL(file);
+    }
+</script>
+
+</body>
+</html>

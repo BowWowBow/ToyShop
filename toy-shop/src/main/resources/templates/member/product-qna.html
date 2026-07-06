@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 상품문의</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic",sans-serif;
+            background:#fff;
+            color:#333;
+        }
+
+        .mypage-wrap{
+            width:1100px;
+            margin:60px auto 100px;
+            display:flex;
+            gap:60px;
+        }
+
+        .side-menu{ width:180px; flex-shrink:0; }
+
+        .side-menu h2{
+            font-size:22px;
+            margin-bottom:35px;
+        }
+
+        .menu-section{
+            border-bottom:1px solid #eee;
+            margin-bottom:25px;
+            padding-bottom:15px;
+        }
+
+        .menu-section h3{
+            font-size:16px;
+            margin-bottom:12px;
+        }
+
+        .menu-section a{
+            display:block;
+            text-decoration:none;
+            color:#777;
+            margin:8px 0;
+            font-size:14px;
+        }
+
+        .menu-section a:hover,
+        .active{
+            color:#111 !important;
+            font-weight:bold;
+        }
+
+        .content{
+            flex:1;
+            min-width:0;
+        }
+
+        .page-title{
+            text-align:center;
+            font-size:40px;
+            font-weight:bold;
+            margin-bottom:40px;
+        }
+
+        .empty-box{
+            border:1px solid #e5e5e5;
+            height:350px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:#999;
+            font-size:15px;
+        }
+
+        .qna-table{
+            width:100%;
+            border-collapse:collapse;
+            border-top:2px solid #333;
+            font-size:14px;
+        }
+
+        .qna-table th{
+            background:#fafafa;
+            border-bottom:1px solid #ddd;
+            padding:13px 8px;
+            color:#555;
+            font-weight:normal;
+            white-space:nowrap;
+        }
+
+        .qna-table td{
+            border-bottom:1px solid #eee;
+            padding:13px 8px;
+            text-align:center;
+            color:#555;
+        }
+
+        .qna-title{
+            text-align:left !important;
+            font-weight:bold;
+        }
+
+        .qna-title a{
+            color:#222;
+            text-decoration:none;
+        }
+
+        .qna-title a:hover{
+            text-decoration:underline;
+        }
+
+        .status{
+            display:inline-block;
+            padding:4px 10px;
+            background:#333;
+            color:white;
+            border-radius:12px;
+            font-size:12px;
+            white-space:nowrap;
+        }
+
+        .write-btn{
+            margin-top:15px;
+            text-align:right;
+        }
+
+        .write-btn a{
+            display:inline-block;
+            background:#333;
+            color:white;
+            text-decoration:none;
+            padding:10px 18px;
+            font-size:14px;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1200px){
+            .mypage-wrap{
+                width:94%;
+                gap:35px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .mypage-wrap{
+                flex-direction:column;
+                margin:45px auto 75px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1 / -1;
+                margin-bottom:8px;
+                text-align:center;
+            }
+
+            .menu-section{
+                border:1px solid #eee;
+                border-radius:8px;
+                margin-bottom:0;
+                padding:14px;
+            }
+        }
+
+        @media (max-width:768px){
+            .mypage-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+
+            .menu-section{
+                padding:12px;
+            }
+
+            .menu-section h3{
+                font-size:14px;
+            }
+
+            .menu-section a{
+                font-size:13px;
+            }
+
+            .page-title{
+                font-size:30px;
+                margin-bottom:28px;
+            }
+
+            .qna-table{
+                display:block;
+                overflow-x:auto;
+                white-space:nowrap;
+            }
+
+            .qna-table th,
+            .qna-table td{
+                padding:11px 8px;
+                font-size:13px;
+            }
+
+            .empty-box{
+                height:260px;
+                font-size:14px;
+            }
+
+            .write-btn a{
+                width:100%;
+                text-align:center;
+                box-sizing:border-box;
+            }
+        }
+
+        @media (max-width:480px){
+            .mypage-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .side-menu h2{
+                font-size:19px;
+            }
+
+            .page-title{
+                font-size:25px;
+            }
+
+            .qna-table th,
+            .qna-table td{
+                padding:10px 7px;
+                font-size:12px;
+            }
+
+            .status{
+                font-size:11px;
+                padding:4px 8px;
+            }
+
+            .empty-box{
+                height:210px;
+                font-size:13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="mypage-wrap">
+
+    <aside class="side-menu">
+
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="/wishlist/list">위시리스트</a>
+            <a href="/recent/list">최근 본 상품</a>
+            <a href="/address/list">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="/member/mileage">마일리지</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="/member/change-password">
+                비밀번호 변경
+            </a>
+            <a href="/member/dormant">휴면 전환</a>
+        </div>
+
+    </aside>
+
+    <main class="content">
+
+        <div class="page-title">
+            나의 상품문의
+        </div>
+
+        <div class="empty-box" th:if="${#lists.isEmpty(productQnaList)}">
+            등록된 상품문의가 없습니다.
+        </div>
+
+        <table class="qna-table" th:if="${!#lists.isEmpty(productQnaList)}">
+            <thead>
+            <tr>
+                <th style="width:70px;">번호</th>
+                <th>제목</th>
+                <th style="width:120px;">작성자</th>
+                <th style="width:120px;">답변상태</th>
+                <th style="width:170px;">작성일</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="qna, stat : ${productQnaList}">
+                <td th:text="${stat.count}">1</td>
+
+                <td class="qna-title">
+                    <a th:href="@{/member/product-qna/detail/{id}(id=${qna.id})}"
+                       th:text="${qna.title}">
+                        상품문의 제목
+                    </a>
+                </td>
+
+                <td th:text="${qna.writer}">작성자</td>
+
+                <td>
+                    <span class="status" th:text="${qna.answerStatus}">답변대기</span>
+                </td>
+
+                <td th:text="${qna.createdAt}">2026-06-05</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="write-btn">
+            <a href="/member/product-qna/write">상품문의 쓰기</a>
+        </div>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

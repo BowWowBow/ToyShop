@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="footer">
+
+    <style>
+        .footer{
+            background:#f7f7f7;
+            border-top:1px solid #ddd;
+            margin-top:80px;
+            padding:40px 0;
+        }
+
+        .footer-inner{
+            width:1200px;
+            margin:0 auto;
+            display:grid;
+            grid-template-columns:repeat(3, 1fr);
+            gap:40px;
+        }
+
+        .footer h3{
+            margin:0 0 12px;
+            font-size:24px;
+            color:#222;
+        }
+
+        .footer h4{
+            margin:0 0 12px;
+            font-size:17px;
+            color:#222;
+        }
+
+        .footer p{
+            margin:0;
+            color:#666;
+            font-size:14px;
+            line-height:1.8;
+        }
+
+        .footer-bottom{
+            background:#333;
+            text-align:center;
+            padding:14px 0;
+        }
+
+        .footer-bottom a{
+            display:inline-block;
+            margin:0 14px;
+            color:white;
+            text-decoration:none;
+            font-size:13px;
+        }
+
+        .footer-bottom a:hover{
+            text-decoration:underline;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1240px){
+            .footer-inner{
+                width:94%;
+            }
+        }
+
+        @media (max-width:768px){
+            .footer{
+                margin-top:55px;
+                padding:32px 0;
+            }
+
+            .footer-inner{
+                grid-template-columns:1fr;
+                gap:24px;
+            }
+
+            .footer h3{
+                font-size:22px;
+            }
+
+            .footer h4{
+                font-size:16px;
+            }
+
+            .footer p{
+                font-size:13px;
+            }
+
+            .footer-bottom{
+                padding:12px 10px;
+            }
+
+            .footer-bottom a{
+                margin:4px 8px;
+                font-size:12px;
+            }
+        }
+
+        @media (max-width:480px){
+            .footer{
+                margin-top:45px;
+                padding:28px 0;
+            }
+
+            .footer-inner{
+                width:100%;
+                padding:0 16px;
+                box-sizing:border-box;
+                gap:20px;
+            }
+
+            .footer h3{
+                font-size:20px;
+            }
+
+            .footer h4{
+                font-size:15px;
+            }
+
+            .footer p{
+                font-size:12px;
+                line-height:1.7;
+            }
+
+            .footer-bottom a{
+                display:block;
+                margin:7px 0;
+            }
+        }
+    </style>
+
+    <div class="footer">
+        <div class="footer-inner">
+            <div>
+                <h3>055-329-2566</h3>
+                <p>
+                    월-금 : AM 09:00 - PM 06:00<br>
+                    토 : AM 09:00 - PM 12:00<br>
+                    일, 공휴일 OFF<br>
+                    점심시간 : PM 12:00 - PM 01:00
+                </p>
+            </div>
+
+            <div>
+                <h4>입금계좌</h4>
+                <p>
+                    국민은행 563445-12-125545<br>
+                    예금주 : 토이샵<br><br>
+                    농협 179885-05-423556<br>
+                    예금주 : 토이샵
+                </p>
+            </div>
+
+            <div>
+                <h4>배송정보</h4>
+                <p>
+                    경남 김해시 금관대로 382<br>
+                    배송조회 : 로젠택배 1588-9988
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <a href="/">HOME</a>
+        <a href="/member/join">AGREEMENT</a>
+        <a href="#">PRIVACY POLICY</a>
+    </div>
+
+</div>
+
+</body>
+</html>

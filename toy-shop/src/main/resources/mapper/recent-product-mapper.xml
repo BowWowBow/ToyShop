@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.RecentProductMapper">
+
+    <delete id="deleteRecent">
+
+        DELETE FROM recent_product
+        WHERE member_id = #{memberId}
+        AND product_id = #{productId}
+
+    </delete>
+
+    <insert id="insertRecent">
+
+        INSERT INTO recent_product(
+        member_id,
+        product_id
+        )
+        VALUES(
+        #{memberId},
+        #{productId}
+        )
+
+    </insert>
+
+    <select id="findRecentList"
+            resultType="com.example.toyshop.domain.RecentProduct">
+
+        SELECT
+        r.id,
+        r.member_id AS memberId,
+        r.product_id AS productId,
+        r.viewed_at AS viewedAt,
+        p.product_name AS productName,
+        p.price,
+        p.image_url AS imageUrl
+        FROM recent_product r
+        JOIN product p
+        ON r.product_id = p.id
+        WHERE r.member_id = #{memberId}
+        ORDER BY r.viewed_at DESC
+        LIMIT 20
+
+    </select>
+
+</mapper>

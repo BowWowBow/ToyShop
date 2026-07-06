@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.WishlistMapper">
+
+    <insert id="insertWishlist">
+        INSERT INTO wishlist (
+        member_id,
+        product_id
+        )
+        VALUES (
+        #{memberId},
+        #{productId}
+        )
+    </insert>
+
+    <delete id="deleteWishlist">
+        DELETE FROM wishlist
+        WHERE member_id = #{memberId}
+        AND product_id = #{productId}
+    </delete>
+
+    <select id="countWishlist"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM wishlist
+        WHERE member_id = #{memberId}
+        AND product_id = #{productId}
+    </select>
+
+    <select id="findByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Wishlist">
+
+        SELECT
+        w.id,
+        w.member_id AS memberId,
+        w.product_id AS productId,
+        w.created_at AS createdAt,
+
+        p.product_name AS productName,
+        p.price,
+        p.image_url AS imageUrl,
+        p.category
+        FROM wishlist w
+        JOIN product p
+        ON w.product_id = p.id
+        WHERE w.member_id = #{memberId}
+        ORDER BY w.id DESC
+
+    </select>
+
+</mapper>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.ReviewMapper">
+
+    <!-- 후기 등록 -->
+    <insert id="insertReview"
+            parameterType="com.example.toyshop.domain.Review">
+
+        INSERT INTO review (
+        writer,
+        member_id,
+        product_id,
+        rating,
+        title,
+        content
+        ) VALUES (
+        #{writer},
+        #{memberId},
+        #{productId},
+        #{rating},
+        #{title},
+        #{content}
+        )
+
+    </insert>
+
+
+    <!-- 관리자 전체 조회 -->
+    <select id="findAll"
+            resultType="com.example.toyshop.domain.Review">
+
+        SELECT
+        r.id,
+        r.writer AS writer,
+        r.member_id AS memberId,
+        m.login_id AS loginId,
+        m.name AS memberName,
+        r.product_id AS productId,
+        r.rating,
+        r.title,
+        r.content,
+        r.created_at AS createdAt,
+        p.product_name AS productName,
+        p.product_name AS itemName,
+        p.image_url AS itemImage
+
+        FROM review r
+
+        JOIN product p
+        ON r.product_id = p.id
+
+        LEFT JOIN member m
+        ON r.member_id = m.id
+
+        ORDER BY r.id DESC
+
+    </select>
+
+
+    <!-- 회원 본인 후기 조회 -->
+    <select id="findByMemberId"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Review">
+
+        SELECT
+        r.id,
+        r.writer AS writer,
+        r.member_id AS memberId,
+        m.login_id AS loginId,
+        m.name AS memberName,
+        r.product_id AS productId,
+        r.rating,
+        r.title,
+        r.content,
+        r.created_at AS createdAt,
+        p.product_name AS productName,
+        p.product_name AS itemName,
+        p.image_url AS itemImage
+
+        FROM review r
+
+        JOIN product p
+        ON r.product_id = p.id
+
+        LEFT JOIN member m
+        ON r.member_id = m.id
+
+        WHERE r.member_id = #{memberId}
+
+        ORDER BY r.id DESC
+
+    </select>
+
+    <select id="findByProductId" resultType="com.example.toyshop.domain.Review">
+        SELECT
+        r.id,
+        r.product_id AS productId,
+        p.product_name AS productName,
+        p.image_url AS itemImage,
+        r.writer,
+        r.rating,
+        r.title,
+        r.content,
+        r.created_at AS createdAt
+        FROM review r
+        LEFT JOIN product p ON r.product_id = p.id
+        WHERE r.product_id = #{productId}
+        ORDER BY r.id DESC
+    </select>
+
+</mapper>

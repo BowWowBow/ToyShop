@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header">
+
+    <div class="top-menu">
+        <div class="top-menu-inner">
+
+            <th:block th:if="${session.loginName == null}">
+                <a href="/member/login">로그인</a>
+                <a href="/member/join">회원가입</a>
+            </th:block>
+
+            <th:block th:if="${session.loginName != null}">
+
+                <span class="welcome-name"
+                      th:text="${session.loginName + '님 반갑습니다.'}">
+                </span>
+
+                <th:block th:if="${session.loginRole == 'ADMIN'}">
+                    <a href="/admin/password">비밀번호 변경</a>
+                    <a href="/admin/product/list">상품관리</a>
+                    <a href="/admin/product/edit-search">상품수정</a>
+                    <a href="/admin/order/list">주문관리</a>
+                    <a href="/admin/board/inquiry">게시글관리</a>
+                    <a href="/admin/member/list">회원관리</a>
+                </th:block>
+
+                <th:block th:if="${session.loginRole != 'ADMIN'}">
+                    <a href="/cart">장바구니</a>
+                    <a href="/order">주문/배송</a>
+                    <a th:href="@{/member/mypage}">MYPAGE</a>
+                </th:block>
+
+                <a href="/member/logout">LOGOUT</a>
+
+            </th:block>
+
+        </div>
+    </div>
+
+    <div class="header">
+
+        <div class="logo">
+            <a href="/">
+                <img src="/images/TOY-SHOP.png" alt="TOY-SHOP">
+            </a>
+        </div>
+
+        <div class="search-box">
+            <input type="text"
+                   id="searchKeyword"
+                   placeholder="장난감을 검색하세요"
+                   onkeydown="handleSearchEnter(event)">
+            <button type="button" onclick="searchProductModal()">검색</button>
+        </div>
+
+    </div>
+
+    <div class="category">
+        <ul>
+            <li>
+                <a th:href="@{/product/list}"
+                   th:classappend="${category == '전체'} ? 'active' : ''">전체</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='초합금')}"
+                   th:classappend="${category == '초합금'} ? 'active' : ''">초합금</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='프라모델')}"
+                   th:classappend="${category == '프라모델'} ? 'active' : ''">프라모델</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='피규어')}"
+                   th:classappend="${category == '피규어'} ? 'active' : ''">피규어</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='레이싱카')}"
+                   th:classappend="${category == '레이싱카'} ? 'active' : ''">레이싱카</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='인형')}"
+                   th:classappend="${category == '인형'} ? 'active' : ''">인형</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='게임기')}"
+                   th:classappend="${category == '게임기'} ? 'active' : ''">게임기</a>
+            </li>
+            <li>
+                <a th:href="@{/product/list(category='기타')}"
+                   th:classappend="${category == '기타'} ? 'active' : ''">기타</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 검색 결과 모달 -->
+    <div id="searchModal" class="search-modal">
+        <div class="search-modal-box">
+
+            <button type="button"
+                    class="search-modal-close"
+                    onclick="closeSearchModal()">×</button>
+
+            <h2>
+                검색 결과
+                <span id="searchModalKeyword"></span>
+            </h2>
+
+            <div id="searchResultArea" class="search-result-area">
+                검색어를 입력해 주세요.
+            </div>
+
+        </div>
+    </div>
+
+    <style>
+        .search-modal{
+            display:none;
+            position:fixed;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.45);
+            z-index:99999;
+        }
+
+        .search-modal-box{
+            width:760px;
+            max-height:720px;
+            overflow-y:auto;
+            background:white;
+            margin:90px auto;
+            padding:30px;
+            box-sizing:border-box;
+            position:relative;
+            border-radius:4px;
+        }
+
+        .search-modal-box h2{
+            margin:0 0 25px;
+            font-size:26px;
+            text-align:center;
+        }
+
+        #searchModalKeyword{
+            color:#ffb400;
+            font-size:20px;
+        }
+
+        .search-modal-close{
+            position:absolute;
+            right:20px;
+            top:15px;
+            border:none;
+            background:white;
+            font-size:40px;
+            color:#777;
+            cursor:pointer;
+        }
+
+        .search-result-area{
+            min-height:120px;
+        }
+
+        .search-empty{
+            text-align:center;
+            padding:60px 0;
+            color:#999;
+            border-top:1px solid #eee;
+            border-bottom:1px solid #eee;
+        }
+
+        .search-product-list{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:14px;
+        }
+
+        .search-product-card{
+            display:flex;
+            gap:14px;
+            border:1px solid #ddd;
+            padding:12px;
+            text-decoration:none;
+            color:#333;
+            background:#fff;
+            transition:0.2s;
+        }
+
+        .search-product-card:hover{
+            background:#fafafa;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .search-product-img{
+            width:90px;
+            height:90px;
+            border:1px solid #eee;
+            background:#f7f7f7;
+            flex-shrink:0;
+            overflow:hidden;
+        }
+
+        .search-product-img img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .search-product-info{
+            flex:1;
+            min-width:0;
+        }
+
+        .search-product-category{
+            font-size:12px;
+            color:#999;
+            margin-bottom:6px;
+        }
+
+        .search-product-name{
+            font-size:15px;
+            font-weight:bold;
+            margin-bottom:10px;
+            line-height:1.4;
+        }
+
+        .search-product-price{
+            font-size:16px;
+            font-weight:bold;
+            color:#111;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1024px){
+            .top-menu-inner{
+                width:94%;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                flex-wrap:wrap;
+                gap:8px;
+            }
+
+            .welcome-name{
+                width:100%;
+                text-align:center;
+                margin-bottom:2px;
+            }
+
+            .header{
+                width:94%;
+                margin:0 auto;
+                gap:20px;
+            }
+
+            .category ul{
+                width:94%;
+                overflow-x:auto;
+                white-space:nowrap;
+                justify-content:flex-start;
+            }
+
+            .search-modal-box{
+                width:90%;
+                margin:70px auto;
+            }
+        }
+
+        @media (max-width:768px){
+            .top-menu{
+                padding:8px 0;
+            }
+
+            .top-menu-inner a{
+                font-size:12px;
+            }
+
+            .header{
+                flex-direction:column;
+                padding:18px 0;
+            }
+
+            .logo img{
+                max-width:180px;
+            }
+
+            .search-box{
+                width:100%;
+                display:flex;
+            }
+
+            .search-box input{
+                flex:1;
+                min-width:0;
+            }
+
+            .search-box button{
+                flex-shrink:0;
+            }
+
+            .category{
+                overflow:hidden;
+            }
+
+            .category ul{
+                padding:0 4px 8px;
+            }
+
+            .category li{
+                flex-shrink:0;
+            }
+
+            .category a{
+                font-size:13px;
+                padding:0 12px;
+            }
+
+            .search-modal-box{
+                width:92%;
+                max-height:80vh;
+                margin:55px auto;
+                padding:24px 18px;
+            }
+
+            .search-modal-box h2{
+                font-size:22px;
+                padding-right:28px;
+            }
+
+            #searchModalKeyword{
+                display:block;
+                margin-top:6px;
+                font-size:16px;
+            }
+
+            .search-modal-close{
+                right:14px;
+                top:10px;
+                font-size:34px;
+            }
+
+            .search-product-list{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media (max-width:480px){
+            .top-menu-inner{
+                width:100%;
+                padding:0 10px;
+                box-sizing:border-box;
+            }
+
+            .top-menu-inner a{
+                font-size:11px;
+            }
+
+            .welcome-name{
+                font-size:12px;
+            }
+
+            .logo img{
+                max-width:150px;
+            }
+
+            .search-box{
+                flex-direction:column;
+                gap:6px;
+            }
+
+            .search-box input,
+            .search-box button{
+                width:100%;
+                height:40px;
+            }
+
+            .category ul{
+                width:100%;
+                padding:0 10px 8px;
+                box-sizing:border-box;
+            }
+
+            .category a{
+                font-size:12px;
+                padding:0 10px;
+            }
+
+            .search-modal-box{
+                width:94%;
+                margin:38px auto;
+                padding:22px 14px;
+            }
+
+            .search-modal-box h2{
+                font-size:19px;
+                margin-bottom:18px;
+            }
+
+            .search-product-card{
+                gap:10px;
+                padding:10px;
+            }
+
+            .search-product-img{
+                width:72px;
+                height:72px;
+            }
+
+            .search-product-category{
+                font-size:11px;
+            }
+
+            .search-product-name{
+                font-size:13px;
+                margin-bottom:7px;
+            }
+
+            .search-product-price{
+                font-size:14px;
+            }
+
+            .search-empty{
+                padding:45px 0;
+                font-size:13px;
+            }
+        }
+    </style>
+
+    <script>
+        function handleSearchEnter(event){
+            if(event.key === "Enter"){
+                event.preventDefault();
+                searchProductModal();
+            }
+        }
+
+        function searchProductModal(){
+            const keywordInput = document.getElementById("searchKeyword");
+            const keyword = keywordInput.value.trim();
+
+            if(keyword === ""){
+                alert("검색어를 입력해 주세요.");
+                keywordInput.focus();
+                return;
+            }
+
+            const modal = document.getElementById("searchModal");
+            const keywordText = document.getElementById("searchModalKeyword");
+            const resultArea = document.getElementById("searchResultArea");
+
+            keywordText.innerText = " - " + keyword;
+            resultArea.innerHTML = "<div class='search-empty'>검색 중입니다...</div>";
+            modal.style.display = "block";
+
+            fetch("/api/product/search?keyword=" + encodeURIComponent(keyword))
+                .then(response => response.json())
+                .then(data => {
+                    renderSearchResult(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                    resultArea.innerHTML =
+                        "<div class='search-empty'>검색 중 오류가 발생했습니다.</div>";
+                });
+        }
+
+        function renderSearchResult(productList){
+            const resultArea = document.getElementById("searchResultArea");
+
+            if(!productList || productList.length === 0){
+                resultArea.innerHTML =
+                    "<div class='search-empty'>검색 결과가 없습니다.</div>";
+                return;
+            }
+
+            let html = "<div class='search-product-list'>";
+
+            productList.forEach(product => {
+                const id = product.id;
+                const name = product.productName || "";
+                const category = product.category || "";
+                const price = Number(product.price || 0).toLocaleString();
+                const imageUrl = product.imageUrl || "/images/no-image.png";
+
+                html += `
+                    <a class="search-product-card" href="/product/detail/${id}">
+                        <div class="search-product-img">
+                            <img src="${imageUrl}" alt="상품이미지">
+                        </div>
+
+                        <div class="search-product-info">
+                            <div class="search-product-category">${category}</div>
+                            <div class="search-product-name">${name}</div>
+                            <div class="search-product-price">${price}원</div>
+                        </div>
+                    </a>
+                `;
+            });
+
+            html += "</div>";
+
+            resultArea.innerHTML = html;
+        }
+
+        function closeSearchModal(){
+            document.getElementById("searchModal").style.display = "none";
+        }
+
+        window.addEventListener("click", function(event){
+            const modal = document.getElementById("searchModal");
+
+            if(event.target === modal){
+                closeSearchModal();
+            }
+        });
+    </script>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 1:1 문의</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic", sans-serif;
+            background:#fff;
+            color:#333;
+        }
+
+        .mypage-wrap{
+            width:1100px;
+            margin:55px auto 100px;
+            display:flex;
+            gap:60px;
+        }
+
+        .side-menu{
+            width:180px;
+        }
+
+        .side-menu h2{
+            font-size:22px;
+            margin-bottom:35px;
+        }
+
+        .menu-section{
+            border-bottom:1px solid #eee;
+            margin-bottom:25px;
+            padding-bottom:15px;
+        }
+
+        .menu-section h3{
+            font-size:16px;
+            margin-bottom:12px;
+        }
+
+        .menu-section a{
+            display:block;
+            text-decoration:none;
+            color:#777;
+            margin:8px 0;
+            font-size:14px;
+        }
+
+        .menu-section a:hover,
+        .active{
+            color:#111 !important;
+            font-weight:bold;
+        }
+
+        .content{
+            flex:1;
+        }
+
+        .page-title{
+            text-align:center;
+            font-size:30px;
+            font-weight:bold;
+            margin-bottom:35px;
+        }
+
+        .inquiry-form{
+            border-top:1px solid #777;
+            border-bottom:1px solid #777;
+        }
+
+        .form-row{
+            display:flex;
+            border-bottom:1px solid #ddd;
+            min-height:48px;
+        }
+
+        .form-row:last-child{
+            border-bottom:none;
+        }
+
+        .form-label{
+            width:110px;
+            background:#fafafa;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:14px;
+            color:#333;
+            border-right:1px solid #ddd;
+        }
+
+        .form-field{
+            flex:1;
+            padding:10px;
+            box-sizing:border-box;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .form-field input[type="text"],
+        .form-field input[type="email"]{
+            height:34px;
+            border:1px solid #ccc;
+            padding:0 10px;
+            box-sizing:border-box;
+            font-size:14px;
+        }
+
+        .form-field select{
+            height:34px;
+            border:1px solid #ccc;
+            padding:0 8px;
+            font-size:14px;
+            background:#fff;
+        }
+
+        .title-input{
+            width:100%;
+        }
+
+        .name-input{
+            width:220px;
+        }
+
+        .email-input{
+            width:260px;
+        }
+
+        .content-area{
+            display:block;
+            padding:12px 0;
+        }
+
+        textarea{
+            width:100%;
+            height:260px;
+            border:1px solid #ccc;
+            padding:12px;
+            box-sizing:border-box;
+            resize:none;
+            font-family:"Malgun Gothic", sans-serif;
+            font-size:14px;
+        }
+
+        .file-row{
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .file-row select{
+            width:160px;
+        }
+
+        .file-btn{
+            height:34px;
+            padding:0 14px;
+            border:1px solid #ccc;
+            background:#fff;
+            cursor:pointer;
+        }
+
+        .btn-area{
+            text-align:center;
+            margin-top:22px;
+        }
+
+        .btn-area button,
+        .btn-area a{
+            display:inline-block;
+            width:95px;
+            height:42px;
+            line-height:42px;
+            text-align:center;
+            text-decoration:none;
+            font-size:16px;
+            margin:0 3px;
+            cursor:pointer;
+            box-sizing:border-box;
+        }
+
+        .save-btn{
+            border:none;
+            background:#333;
+            color:#fff;
+        }
+
+        .cancel-btn{
+            border:1px solid #ccc;
+            background:#fff;
+            color:#333;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:1200px){
+            .mypage-wrap{
+                width:94%;
+                gap:35px;
+            }
+        }
+
+        @media (max-width:1024px){
+            .mypage-wrap{
+                flex-direction:column;
+                margin:45px auto 75px;
+            }
+
+            .side-menu{
+                width:100%;
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:12px;
+            }
+
+            .side-menu h2{
+                grid-column:1 / -1;
+                margin-bottom:8px;
+                text-align:center;
+            }
+
+            .menu-section{
+                border:1px solid #eee;
+                border-radius:8px;
+                margin-bottom:0;
+                padding:14px;
+            }
+        }
+
+        @media (max-width:768px){
+            .mypage-wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .side-menu{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+
+            .menu-section{
+                padding:12px;
+            }
+
+            .menu-section h3{
+                font-size:14px;
+            }
+
+            .menu-section a{
+                font-size:13px;
+            }
+
+            .page-title{
+                font-size:27px;
+                margin-bottom:28px;
+            }
+
+            .form-row{
+                flex-direction:column;
+            }
+
+            .form-label{
+                width:100%;
+                min-height:40px;
+                justify-content:flex-start;
+                padding:0 12px;
+                border-right:none;
+                border-bottom:1px solid #eee;
+                box-sizing:border-box;
+            }
+
+            .form-field{
+                width:100%;
+                flex-direction:column;
+                align-items:stretch;
+                gap:8px;
+            }
+
+            .form-field input[type="text"],
+            .form-field input[type="email"],
+            .form-field select,
+            .title-input,
+            .name-input,
+            .email-input{
+                width:100%;
+                height:40px;
+            }
+
+            .form-field label{
+                font-size:13px;
+            }
+
+            .content-area{
+                padding:10px;
+            }
+
+            textarea{
+                height:220px;
+            }
+
+            .file-row{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .file-row select,
+            .file-btn{
+                width:100%;
+                height:40px;
+            }
+
+            .btn-area{
+                display:flex;
+                gap:8px;
+            }
+
+            .btn-area button,
+            .btn-area a{
+                flex:1;
+                width:auto;
+                margin:0;
+            }
+        }
+
+        @media (max-width:480px){
+            .mypage-wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .side-menu{
+                grid-template-columns:1fr;
+            }
+
+            .side-menu h2{
+                font-size:19px;
+            }
+
+            .page-title{
+                font-size:23px;
+            }
+
+            .form-label{
+                font-size:13px;
+            }
+
+            .form-field input[type="text"],
+            .form-field input[type="email"],
+            .form-field select{
+                font-size:13px;
+            }
+
+            textarea{
+                height:190px;
+                font-size:13px;
+            }
+
+            .btn-area{
+                flex-direction:column;
+            }
+
+            .btn-area button,
+            .btn-area a{
+                width:100%;
+                height:42px;
+                line-height:42px;
+                font-size:14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="mypage-wrap">
+
+    <aside class="side-menu">
+        <h2>MY SHOPPING</h2>
+
+        <div class="menu-section">
+            <h3>나의 쇼핑</h3>
+            <a href="/order">주문/배송</a>
+            <a href="#">위시리스트</a>
+            <a href="#">최근 본 상품</a>
+            <a href="#">배송주소록</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 혜택</h3>
+            <a href="#">마일리지</a>
+            <a href="#">쿠폰</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 활동</h3>
+            <a href="/member/inquiry" class="active">나의 1:1문의</a>
+            <a href="/member/product-qna">나의 상품문의</a>
+            <a href="/member/review">나의 상품후기</a>
+        </div>
+
+        <div class="menu-section">
+            <h3>나의 정보</h3>
+            <a href="/member/edit">회원정보 수정</a>
+            <a href="#">회원 탈퇴</a>
+        </div>
+    </aside>
+
+    <main class="content">
+
+        <div class="page-title">나의 1:1 문의</div>
+
+        <form action="/member/inquiry/save" method="post">
+
+            <div class="inquiry-form">
+
+                <div class="form-row">
+                    <div class="form-label">분류</div>
+                    <div class="form-field">
+                        <select name="category">
+                            <option value="">- 분류선택 -</option>
+                            <option value="1:1문의">1:1 문의</option>
+                            <option value="배송문의">배송 문의</option>
+                            <option value="결제문의">결제 문의</option>
+                            <option value="교환/반품">교환/반품</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-label">작성자</div>
+                    <div class="form-field">
+                        <input type="text"
+                               class="name-input"
+                               name="writer"
+                               th:value="${session.loginName != null ? session.loginName : ''}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-label">답변받기</div>
+                    <div class="form-field">
+                        <input type="email"
+                               class="email-input"
+                               name="email"
+                               placeholder="이메일을 입력하세요">
+                        <label>
+                            <input type="checkbox" name="mailReceive" checked>
+                            메일받기
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-label">제목</div>
+                    <div class="form-field">
+                        <input type="text"
+                               class="title-input"
+                               name="title"
+                               placeholder="제목을 입력해 주세요">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field content-area">
+                        <textarea name="content" placeholder="내용을 입력하세요"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-label">첨부파일</div>
+                    <div class="form-field file-row">
+                        <select>
+                            <option>내용하단에 삽입</option>
+                            <option>내용상단에 삽입</option>
+                        </select>
+                        <button type="button" class="file-btn">+ 파일 추가</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="btn-area">
+                <button type="submit" class="save-btn">저장</button>
+                <a href="/member/inquiry" class="cancel-btn">취소</a>
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

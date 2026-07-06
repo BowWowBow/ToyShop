@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.toyshop.mapper.ProductMapper">
+
+    <select id="findAll" resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        description,
+        created_at AS createdAt
+        FROM product
+        ORDER BY id DESC
+    </select>
+
+    <select id="findByCategory"
+            parameterType="string"
+            resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        description,
+        created_at AS createdAt
+        FROM product
+        WHERE category = #{category}
+        ORDER BY id DESC
+    </select>
+
+    <select id="findById"
+            parameterType="long"
+            resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        description,
+        created_at AS createdAt
+        FROM product
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByName"
+            parameterType="string"
+            resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        description,
+        created_at AS createdAt
+        FROM product
+        WHERE product_name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+        LIMIT 10
+    </select>
+
+    <insert id="insertProduct"
+            parameterType="com.example.toyshop.domain.Product">
+        INSERT INTO product (
+        product_name,
+        category,
+        price,
+        stock_qty,
+        image_url,
+        description
+        ) VALUES (
+        #{productName},
+        #{category},
+        #{price},
+        #{stockQty},
+        #{imageUrl},
+        #{description}
+        )
+    </insert>
+
+    <update id="updateProduct"
+            parameterType="com.example.toyshop.domain.Product">
+        UPDATE product
+        SET
+        product_name = #{productName},
+        category = #{category},
+        price = #{price},
+        stock_qty = #{stockQty},
+        image_url = #{imageUrl},
+        description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAdminProductList" resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        created_at AS createdAt
+        FROM product
+        WHERE 1=1
+
+        <if test="startDate != null and startDate != ''">
+            AND DATE(created_at) <![CDATA[>=]]> #{startDate}
+        </if>
+
+        <if test="endDate != null and endDate != ''">
+            AND DATE(created_at) <![CDATA[<=]]> #{endDate}
+        </if>
+
+        ORDER BY
+        <choose>
+            <when test="sort == 'id'">id</when>
+            <when test="sort == 'productName'">product_name</when>
+            <when test="sort == 'category'">category</when>
+            <when test="sort == 'price'">price</when>
+            <when test="sort == 'stockQty'">stock_qty</when>
+            <when test="sort == 'createdAt'">created_at</when>
+            <otherwise>id</otherwise>
+        </choose>
+
+        <choose>
+            <when test="dir == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </select>
+
+    <update id="decreaseStock">
+        UPDATE product
+        SET stock_qty = stock_qty - #{qty}
+        WHERE id = #{productId}
+        AND stock_qty >= #{qty}
+    </update>
+
+    <update id="increaseStock">
+        UPDATE product
+        SET stock_qty = stock_qty + #{qty}
+        WHERE id = #{productId}
+    </update>
+
+    <select id="searchProducts"
+            parameterType="string"
+            resultType="com.example.toyshop.domain.Product">
+
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        image_url AS imageUrl
+        FROM product
+        WHERE product_name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+
+    </select>
+
+    <select id="findNewProductLimit"
+            resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        description,
+        created_at AS createdAt
+        FROM product
+        ORDER BY id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="findByCategoryLimit"
+            resultType="com.example.toyshop.domain.Product">
+        SELECT
+        id,
+        product_name AS productName,
+        category,
+        price,
+        stock_qty AS stockQty,
+        image_url AS imageUrl,
+        description,
+        created_at AS createdAt
+        FROM product
+        WHERE category = #{category}
+        ORDER BY id DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

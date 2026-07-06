@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품후기 쓰기</title>
+
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <style>
+        body{
+            margin:0;
+            font-family:"Malgun Gothic",sans-serif;
+            background:#fff;
+            color:#333;
+        }
+
+        .wrap{
+            width:800px;
+            margin:70px auto 100px;
+        }
+
+        .page-title{
+            text-align:center;
+            font-size:38px;
+            font-weight:bold;
+            margin-bottom:40px;
+        }
+
+        .form-box{
+            border-top:2px solid #333;
+        }
+
+        .form-row{
+            display:flex;
+            border-bottom:1px solid #eee;
+        }
+
+        .form-row label{
+            width:160px;
+            padding:18px;
+            background:#fafafa;
+            font-weight:bold;
+            font-size:14px;
+            box-sizing:border-box;
+        }
+
+        .form-row .input-area{
+            flex:1;
+            padding:12px;
+            box-sizing:border-box;
+        }
+
+        input, select, textarea{
+            width:100%;
+            box-sizing:border-box;
+            border:1px solid #ddd;
+            padding:11px;
+            font-size:14px;
+            font-family:"Malgun Gothic",sans-serif;
+        }
+
+        textarea{
+            height:180px;
+            resize:none;
+        }
+
+        .btn-area{
+            margin-top:25px;
+            text-align:center;
+        }
+
+        .btn-area button,
+        .btn-area a{
+            display:inline-block;
+            border:none;
+            text-decoration:none;
+            padding:12px 28px;
+            font-size:14px;
+            cursor:pointer;
+            box-sizing:border-box;
+        }
+
+        .submit-btn{
+            background:#333;
+            color:white;
+        }
+
+        .cancel-btn{
+            background:#eee;
+            color:#333;
+            margin-left:6px;
+        }
+
+        /* =========================
+           Responsive
+        ========================== */
+
+        @media (max-width:900px){
+            .wrap{
+                width:92%;
+                margin:55px auto 75px;
+            }
+
+            .page-title{
+                font-size:32px;
+                margin-bottom:32px;
+            }
+        }
+
+        @media (max-width:768px){
+            .wrap{
+                width:94%;
+                margin:35px auto 60px;
+            }
+
+            .page-title{
+                font-size:28px;
+                margin-bottom:28px;
+            }
+
+            .form-row{
+                flex-direction:column;
+            }
+
+            .form-row label{
+                width:100%;
+                padding:12px;
+                background:#fafafa;
+                border-bottom:1px solid #eee;
+            }
+
+            .form-row .input-area{
+                width:100%;
+                padding:10px 0 14px;
+            }
+
+            input,
+            select{
+                height:42px;
+            }
+
+            textarea{
+                height:160px;
+            }
+
+            .btn-area{
+                display:flex;
+                gap:8px;
+            }
+
+            .btn-area button,
+            .btn-area a{
+                flex:1;
+                margin-left:0;
+                padding:12px 0;
+                text-align:center;
+            }
+        }
+
+        @media (max-width:480px){
+            .wrap{
+                width:100%;
+                padding:0 14px;
+                margin:30px auto 50px;
+                box-sizing:border-box;
+            }
+
+            .page-title{
+                font-size:24px;
+            }
+
+            .form-row label{
+                font-size:13px;
+                padding:10px;
+            }
+
+            input,
+            select,
+            textarea{
+                font-size:13px;
+            }
+
+            textarea{
+                height:140px;
+            }
+
+            .btn-area{
+                flex-direction:column;
+                margin-top:20px;
+            }
+
+            .btn-area button,
+            .btn-area a{
+                width:100%;
+                font-size:14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="wrap">
+
+    <div class="page-title">상품후기 쓰기</div>
+
+    <form action="/member/review/write" method="post">
+
+        <div class="form-box">
+
+            <div class="form-row">
+
+                <label>상품선택</label>
+
+                <div class="input-area">
+
+                    <select name="productId">
+
+                        <option value="">
+                            상품을 선택하세요
+                        </option>
+
+                        <option th:each="product : ${productList}"
+                                th:value="${product.id}"
+                                th:text="${product.productName}">
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="form-row">
+                <label>별점</label>
+                <div class="input-area">
+                    <select name="rating">
+                        <option value="5">★★★★★ 아주 좋아요</option>
+                        <option value="4">★★★★☆ 좋아요</option>
+                        <option value="3">★★★☆☆ 보통이에요</option>
+                        <option value="2">★★☆☆☆ 아쉬워요</option>
+                        <option value="1">★☆☆☆☆ 별로예요</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>제목</label>
+                <div class="input-area">
+                    <input type="text" name="title" placeholder="후기 제목을 입력하세요">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label>내용</label>
+                <div class="input-area">
+                    <textarea name="content" placeholder="상품후기를 입력하세요"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="btn-area">
+            <button type="submit" class="submit-btn">등록하기</button>
+            <a href="/member/review" class="cancel-btn">취소</a>
+        </div>
+
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
