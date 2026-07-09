@@ -226,7 +226,9 @@
            th:href="@{/product/detail/{id}(id=${product.id})}">
 
             <div class="product-img">
-                <img th:src="${product.imageUrl}" alt="상품이미지">
+                <img th:src="@{${product.imageUrl}}"
+                     onerror="this.src='/images/no-image.png'"
+                     alt="상품이미지">
             </div>
 
             <div class="product-category" th:text="${product.category}">초합금</div>

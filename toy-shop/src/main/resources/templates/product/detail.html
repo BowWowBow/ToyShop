@@ -449,9 +449,9 @@
     <div class="detail-box">
 
         <div class="detail-img">
-    <img th:src="${product.imageUrl}"
-     th:attr="onerror=|this.src='/images/no-image.png'|"
-     alt="상품이미지">
+            <img th:src="@{${product.imageUrl}}"
+                 onerror="this.src='/images/no-image.png'"
+                 alt="상품이미지">
         </div>
 
         <div class="detail-info">
